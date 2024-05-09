@@ -7,8 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "AHIS",
+  "type": "module",
   "license": "ISC",
   "dependencies": {
+    "bson": "^6.7.0",
     "dotenv": "^16.4.5",
     "mongodb": "^6.6.1"
   }
