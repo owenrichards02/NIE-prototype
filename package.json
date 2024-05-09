@@ -1,0 +1,14 @@
+{
+  "name": "nie-prototype",
+  "version": "1.0.0",
+  "description": "Early stage prototype for the Neighbourhood Insight Engine.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "AHIS",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^6.6.1"
+  }
+}
