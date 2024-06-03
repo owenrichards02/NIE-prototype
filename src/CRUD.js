@@ -43,6 +43,26 @@ export async function addNewDocument(newdoc) {
     return insertedId
 }
 
+export async function addNewFragment(fragment) {
+    let mongoClient;
+    let insertedId;
+ 
+    try {
+        mongoClient = await connectToDB(mdb_uri)
+        const db = mongoClient.db('nie');
+        const collection = db.collection('fragments');
+
+        const result = await collection.insertOne(fragment)
+        insertedId = result.insertedId;
+
+    } finally {
+        await mongoClient.close();
+    }
+    console.log("fragment stored:", insertedId)
+
+    return insertedId
+}
+
 export async function getDocument(_id) {
     let mongoClient;
     let doc
@@ -69,4 +89,38 @@ export async function getDocument(_id) {
     return doc
 
 }
+
+export async function getFragment(_id) {
+    let mongoClient;
+    let doc
+ 
+    try {
+        mongoClient = await connectToDB(mdb_uri)
+        const db = mongoClient.db('nie');
+        const collection = db.collection('fragments');
+
+        doc = await collection.findOne({ _id: _id });
+        if (doc) {
+            //console.log('Found document:', doc);
+        } else {
+            console.log('No fragment found');
+        }
+
+    } catch (error) {
+        console.error('Could not retrieve fragment:', error);
+   
+    }finally { 
+        await mongoClient.close();
+    }
+
+    return doc
+
+}
+
+
+
+
+
+
+
 
