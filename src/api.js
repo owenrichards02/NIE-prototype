@@ -1,7 +1,4 @@
-import { config } from 'dotenv';
-config()
-
-import { addNewDocument, addNewFragment, getDocument, getFragment} from './CRUD.js';
+import { crud_addNewDocument, crud_addNewFragment, crud_getAllFragments, crud_getDocument, crud_getFragment} from './CRUD.js';
 
 import { JSDOM } from 'jsdom';
 
@@ -20,6 +17,28 @@ export async function docAdd(filepath) {
     return id
 }
 
+//N.B. returns a list either html strings or 
+export async function getFragmentsInFile(doc_id){
+    const rawFragList = await crud_getAllFragments(doc_id)
+    let htmlfragList = []
+    let binaryfragList = []
+
+    for (const frag of rawFragList){
+        if (frag.html != null){
+            htmlfragList.push(frag.html)
+        }else{
+            binaryfragList.push(frag.data)
+        }
+    }
+
+    const fragments = {
+        binaryDataFrags : binaryfragList,
+        htmlfragList : htmlfragList
+    }
+
+    return fragments
+}
+
 //dont use this directly
 async function docAdd_data(data, filepath) { 
 
@@ -31,7 +50,7 @@ async function docAdd_data(data, filepath) {
         html: null
     }
 
-    const id = await addNewDocument(newdoc)
+    const id = await crud_addNewDocument(newdoc)
 
     return id
 }
@@ -44,9 +63,10 @@ async function docAdd_html(html, filepath) {
     const newdoc = {
         name: filename,
         data: null,
+        html: html
     }
 
-    const id = await addNewDocument(newdoc)
+    const id = await crud_addNewDocument(newdoc)
 
     return id
 }
@@ -61,7 +81,7 @@ export async function fragmentAdd_html(html, docid, fragName="testFragment") {
         data: null
     }
 
-    const id = await addNewFragment(newfrag)
+    const id = await crud_addNewFragment(newfrag)
 
     return id
 }
@@ -75,7 +95,7 @@ export async function fragmentAdd_data(data, docid, fragName="testFragment") {
         data: data
     }
 
-    const id = await addNewFragment(newfrag)
+    const id = await crud_addNewFragment(newfrag)
 
     return id
 }
@@ -83,7 +103,7 @@ export async function fragmentAdd_data(data, docid, fragName="testFragment") {
 //returns the id mongodb assigned to the document
 export async function fragmentRetrieve(id) { 
 
-    const newfrag = await getFragment(id)
+    const newfrag = await crud_getFragment(id)
     if(newfrag.html != null){
         return newfrag.html
     }else if(newfrag.data != null){
@@ -98,7 +118,7 @@ export async function fragmentRetrieve(id) {
 //returns the id mongodb assigned to the document
 export async function docRetrieve(id) { 
 
-    const newDoc = await getDocument(id)
+    const newDoc = await crud_getDocument(id)
     if(newDoc.html != null){
         return newDoc.html
     }else if(newDoc.data != null){

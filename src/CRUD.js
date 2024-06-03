@@ -1,13 +1,14 @@
 //CRUD stands for Create, Read, Update, Delete
+//deals with the raw mongodb JSON
 
 import { config } from 'dotenv';
 config()
 
 const mdb_uri = process.env.LOCAL_URI
 
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 
-export async function connectToDB(uri) {
+async function connectToDB(uri) {
     let mongoClient;
  
     try {
@@ -23,7 +24,7 @@ export async function connectToDB(uri) {
     }
  }
 
-export async function addNewDocument(newdoc) {
+export async function crud_addNewDocument(newdoc) {
     let mongoClient;
     let insertedId;
  
@@ -43,7 +44,7 @@ export async function addNewDocument(newdoc) {
     return insertedId
 }
 
-export async function addNewFragment(fragment) {
+export async function crud_addNewFragment(fragment) {
     let mongoClient;
     let insertedId;
  
@@ -63,7 +64,7 @@ export async function addNewFragment(fragment) {
     return insertedId
 }
 
-export async function getDocument(_id) {
+export async function crud_getDocument(_id) {
     let mongoClient;
     let doc
  
@@ -90,7 +91,7 @@ export async function getDocument(_id) {
 
 }
 
-export async function getFragment(_id) {
+export async function crud_getFragment(_id) {
     let mongoClient;
     let doc
  
@@ -117,6 +118,36 @@ export async function getFragment(_id) {
 
 }
 
+export async function crud_getAllFragments(doc_id){
+    let mongoClient;
+    let fragList
+ 
+    try {
+        mongoClient = await connectToDB(mdb_uri)
+        const db = mongoClient.db('nie');
+        const collection = db.collection('fragments');
+
+        fragList = await collection.find({
+            docid: doc_id
+        }).toArray()
+
+    } catch (error) {
+        console.error('Could not retrieve any fragment:', error);
+   
+    }finally { 
+        await mongoClient.close();
+    }
+
+    return fragList
+}
+
+async function main(){
+    let id = new ObjectId("665ddaa530da81e06e5c5639")
+    const frags = await crud_getAllFragments(id)
+    console.log(frags)
+}
+
+//main()
 
 
 
