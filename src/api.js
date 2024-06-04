@@ -220,7 +220,7 @@ export async function docRetrieve(id) {
  *
  * @export
  * @param {ObjectId} id
- * @return {import('mongodb').DeleteResult} 
+ * @return {DeleteResult} 
  */
 export async function deleteDoc(id){return await crud_deleteDoc(id)}
 
@@ -230,6 +230,6 @@ export async function deleteDoc(id){return await crud_deleteDoc(id)}
  *
  * @export
  * @param {ObjectId} id
- * @return {import('mongodb').DeleteResult} 
+ * @return {DeleteResult} 
  */
 export async function deleteFrag(id){return await crud_deleteFragment(id)}
