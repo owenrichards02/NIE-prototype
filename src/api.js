@@ -3,10 +3,11 @@ import { crud_addNewDocument, crud_addNewFragment, crud_getAllFragments, crud_ge
 import { JSDOM } from 'jsdom';
 
 import { gethtmlFromFile, getBinaryFromFile, writehtmlBacktoFile } from "./fileTools.js"
+import { extractElementsContainingText } from './htmlTools.js';
 
 //returns the id mongodb assigned to the document
 export async function docAdd(filepath) { 
-    let id = ''
+    let id
     if (filepath.split(".").at(-1) == 'html'){
         const thishtml = await gethtmlFromFile(filepath)
         id = await docAdd_html(thishtml, filepath)
@@ -17,8 +18,33 @@ export async function docAdd(filepath) {
     return id
 }
 
+//auto adds textual fragments if the doc is html
+//returns the id mongodb assigned to the document with a list of fragment ids
+export async function docAdd_autoTextFrag(filepath) { 
+    let id
+    let fragIds = []
+    if (filepath.split(".").at(-1) == 'html'){
+        const thishtml = await gethtmlFromFile(filepath)
+        id = await docAdd_html(thishtml, filepath)
+
+        const frags = await extractElementsContainingText(thishtml)
+        for (const frag of frags){
+            const fragId = await fragmentAdd_html(frag, id, "Auto-extracted textual fragment")
+            fragIds.push(fragId)
+        }
+
+    }else{
+        const thisdata = await getBinaryFromFile(filepath)
+        id = await docAdd_data(thisdata, filepath)
+    }
+    return id, fragIds
+}
+
+
+
+
 //N.B. returns a list either html strings or 
-export async function getFragmentsInFile(doc_id){
+export async function getKnownFragmentsFromDoc(doc_id){
     const rawFragList = await crud_getAllFragments(doc_id)
     let htmlfragList = []
     let binaryfragList = []
@@ -71,7 +97,7 @@ async function docAdd_html(html, filepath) {
     return id
 }
 
-
+//returns the id mongodb assigned to the fragment
 export async function fragmentAdd_html(html, docid, fragName="testFragment") { 
 
     const newfrag = {
@@ -86,6 +112,7 @@ export async function fragmentAdd_html(html, docid, fragName="testFragment") {
     return id
 }
 
+//returns the id mongodb assigned to the fragment
 export async function fragmentAdd_data(data, docid, fragName="testFragment") { 
 
     const newfrag = {
@@ -100,7 +127,7 @@ export async function fragmentAdd_data(data, docid, fragName="testFragment") {
     return id
 }
 
-//returns the id mongodb assigned to the document
+//returns the data/html representation of the fragment
 export async function fragmentRetrieve(id) { 
 
     const newfrag = await crud_getFragment(id)
@@ -115,7 +142,7 @@ export async function fragmentRetrieve(id) {
 }
 
 
-//returns the id mongodb assigned to the document
+//returns the data/html representation of the doc
 export async function docRetrieve(id) { 
 
     const newDoc = await crud_getDocument(id)
@@ -127,6 +154,3 @@ export async function docRetrieve(id) {
         throw error("No binary data or html within this fragment")
     }
 }
-
-
-

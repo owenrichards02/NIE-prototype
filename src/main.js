@@ -1,6 +1,7 @@
 import { ObjectId } from "bson"
-import { docAdd, docRetrieve, fragmentAdd_data, fragmentAdd_html, fragmentRetrieve, getFragmentsInFile } from "./api.js"
+import { docAdd, docAdd_autoTextFrag, docRetrieve, fragmentAdd_data, fragmentAdd_html, fragmentRetrieve, getKnownFragmentsFromDoc } from "./api.js"
 import { getBinaryFromFile, gethtmlFromFile, writehtmlBacktoFile } from "./fileTools.js"
+import { extractElementsContainingText } from "./htmlTools.js"
 
 async function main(){
   /*   let filepath = "./htmlExample.html"
@@ -18,7 +19,7 @@ async function main(){
 
     const f_id3 = await fragmentAdd_data(await getBinaryFromFile("./test_img.jpg"), docid, "Example of an image fragment stored as binary data")
 
-    const fragList = await getFragmentsInFile(docid)
+    const fragList = await getKnownFragmentsFromDoc(docid)
     console.log(fragList)
 /*     filepath = "./htmlExample.html"
     const send_html = await gethtmlFromFile(filepath)
@@ -29,4 +30,16 @@ async function main(){
     //console.log("HTML:", return_html)
 }
 
-main()
+//main()
+
+
+async function queryingMain(){
+    //const html = await gethtmlFromFile("./htmlExample.html")
+
+    let id, fragIds = await docAdd_autoTextFrag("./htmlExample.html")
+
+    console.log(id)
+    console.log(fragIds)
+}
+
+queryingMain()
