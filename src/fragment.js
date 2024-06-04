@@ -1,6 +1,13 @@
 import { load } from "cheerio";
 
-export async function extractElementsContainingText(html){
+export async function extractFragments(html){
+    let fragments = []
+    fragments.push(await extractElementsContainingText(html))
+
+    return fragments
+}
+
+async function extractElementsContainingText(html){
     const $ = load(html, null, true)
 
     const outer = $("*").first().html().split('\n').filter(n => n)

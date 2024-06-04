@@ -1,7 +1,7 @@
 import { ObjectId } from "bson"
 import { deleteDoc, deleteFrag, docAdd, docAdd_autoTextFrag, docRetrieve, fragmentAdd_data, fragmentAdd_html, fragmentRetrieve, getKnownFragmentsFromDoc } from "./api.js"
 import { getBinaryFromFile, gethtmlFromFile, writehtmlBacktoFile } from "./fileTools.js"
-import { extractElementsContainingText } from "./htmlTools.js"
+import { extractElementsContainingText } from "./fragment.js"
 
 async function main(){
   /*   let filepath = "./resources/htmlExample.html"

@@ -3,7 +3,7 @@ import { crud_addNewDocument, crud_addNewFragment, crud_deleteDoc, crud_deleteFr
 import { JSDOM } from 'jsdom';
 
 import { gethtmlFromFile, getBinaryFromFile, writehtmlBacktoFile } from "./fileTools.js"
-import { extractElementsContainingText } from './htmlTools.js';
+import { extractFragments } from './fragment.js';
 
 //returns the id mongodb assigned to the document
 export async function docAdd(filepath) { 
@@ -20,22 +20,26 @@ export async function docAdd(filepath) {
 
 //auto adds textual fragments if the doc is html
 //returns the id mongodb assigned to the document with a list of fragment ids
-export async function docAdd_autoTextFrag(filepath) { 
+export async function docAdd_autoFrag(filepath) { 
     let id = null
     let fragIds = []
     if (filepath.split(".").at(-1) == 'html'){
         const thishtml = await gethtmlFromFile(filepath)
         id = await docAdd_html(thishtml, filepath)
 
-        const frags = await extractElementsContainingText(thishtml)
+        const frags = await extractFragments(thishtml)
         for (const frag of frags){
-            const fragId = await fragmentAdd_html(frag, id, "Auto-extracted textual fragment")
+            const fragId = await fragmentAdd_html(frag, id, "Auto-extracted fragment")
             fragIds.push(fragId)
         }
 
     }else{
         const thisdata = await getBinaryFromFile(filepath)
         id = await docAdd_data(thisdata, filepath)
+        //add doc as its own fragment
+
+        const fragId = await fragmentAdd_data(thisdata, id, "Auto-extracted fragment")
+        fragIds.push(fragId)
     }
     return [id, fragIds]
 }
