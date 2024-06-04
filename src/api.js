@@ -4,8 +4,17 @@ import { JSDOM } from 'jsdom';
 
 import { gethtmlFromFile, getBinaryFromFile, writehtmlBacktoFile } from "./fileTools.js"
 import { extractFragments } from './fragment.js';
+import { ObjectId } from 'bson';
 
-//returns the id mongodb assigned to the document
+/**
+ * Stores a document in the documents container.
+ * Returns the id mongodb assigned to the document.
+ * Keeps HTML native, stores other file types as binary
+ *
+ * @export
+ * @param {string} filepath
+ * @return {ObjectId} id
+ */
 export async function docAdd(filepath) { 
     let id
     if (filepath.split(".").at(-1) == 'html'){
@@ -18,8 +27,15 @@ export async function docAdd(filepath) {
     return id
 }
 
-//auto adds textual fragments if the doc is html
-//returns the id mongodb assigned to the document with a list of fragment ids
+
+/**
+ * Functionality of docAdd with automatic fragment extraction/storage
+ * Auto adds extracted fragments if the doc is html, and the doc as its own fragment otherwise.
+ * Returns the id mongodb assigned to the document with a list of fragment ids
+ * @export
+ * @param {string} filepath
+ * @return {Array.<ObjectId|Array.<ObjectId>>} 
+ */
 export async function docAdd_autoFrag(filepath) { 
     let id = null
     let fragIds = []
@@ -44,8 +60,14 @@ export async function docAdd_autoFrag(filepath) {
     return [id, fragIds]
 }
 
-
-//N.B. returns a list either html strings or 
+/** 
+ * Finds all fragments currently linked to this document in the fragments container
+ * Returns an object containing lists of both fragment types: HTML and Binary.
+ *
+ * @export
+ * @param {ObjectId} doc_id
+ * @return {Object.<string, Array<String|BinaryData>>} 
+ */
 export async function getKnownFragmentsFromDoc(doc_id){
     const rawFragList = await crud_getAllFragments(doc_id)
     let htmlfragList = []
@@ -99,8 +121,17 @@ async function docAdd_html(html, filepath) {
     return id
 }
 
-//returns the id mongodb assigned to the fragment
-export async function fragmentAdd_html(html, docid, fragName="testFragment") { 
+/**
+ * Stores an HTML based fragment in the fragments container. Requires a documentID.
+ * Returns the id mongodb assigned to the fragment
+ *
+ * @export
+ * @param {string} html
+ * @param {ObjectId} docid
+ * @param {string} [fragName="testFragment"]
+ * @return {ObjectId} 
+ */
+export async function fragmentAdd_html(html, docid, fragName="testFragment") {
 
     const newfrag = {
         name: fragName,
@@ -114,7 +145,17 @@ export async function fragmentAdd_html(html, docid, fragName="testFragment") {
     return id
 }
 
-//returns the id mongodb assigned to the fragment
+/**
+ * Stores an non-HTML based fragment in the fragments container, as a binary object.
+ * Requires a documentID.
+ * Returns the id mongodb assigned to the fragment
+ *
+ * @export
+ * @param {BinaryData} data
+ * @param {ObjectId} docid
+ * @param {string} [fragName="testFragment"]
+ * @return {ObjectId} 
+ */
 export async function fragmentAdd_data(data, docid, fragName="testFragment") { 
 
     const newfrag = {
@@ -129,7 +170,15 @@ export async function fragmentAdd_data(data, docid, fragName="testFragment") {
     return id
 }
 
-//returns the data/html representation of the fragment
+
+/**
+ * Fetches a fragment from the fragments container using the fragmentID.
+ * Returns the data/html representation of the fragment
+ *
+ * @export
+ * @param {ObjectId} id
+ * @return {BinaryData|string} 
+ */
 export async function fragmentRetrieve(id) { 
 
     const newfrag = await crud_getFragment(id)
@@ -143,8 +192,15 @@ export async function fragmentRetrieve(id) {
      
 }
 
-
-//returns the data/html representation of the doc
+//
+/**
+ * Fetches a document from the documents container using the documentID.
+ * Returns the data/html representation of the doc.
+ *
+ * @export
+ * @param {ObjectId} id
+ * @return {BinaryData|string} 
+ */
 export async function docRetrieve(id) { 
 
     const newDoc = await crud_getDocument(id)
@@ -158,6 +214,22 @@ export async function docRetrieve(id) {
 }
 
 
+
+/**
+ * Deletes a document from the documents container using a documentID. Returns a DeleteResult for confirmation.
+ *
+ * @export
+ * @param {ObjectId} id
+ * @return {import('mongodb').DeleteResult} 
+ */
 export async function deleteDoc(id){return await crud_deleteDoc(id)}
 
+
+/**
+ * Deletes a fragment from the fragments container using a fragmentID. Returns a DeleteResult for confirmation.
+ *
+ * @export
+ * @param {ObjectId} id
+ * @return {import('mongodb').DeleteResult} 
+ */
 export async function deleteFrag(id){return await crud_deleteFragment(id)}
