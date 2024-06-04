@@ -1,10 +1,10 @@
 import { ObjectId } from "bson"
-import { docAdd, docAdd_autoTextFrag, docRetrieve, fragmentAdd_data, fragmentAdd_html, fragmentRetrieve, getKnownFragmentsFromDoc } from "./api.js"
+import { deleteDoc, deleteFrag, docAdd, docAdd_autoTextFrag, docRetrieve, fragmentAdd_data, fragmentAdd_html, fragmentRetrieve, getKnownFragmentsFromDoc } from "./api.js"
 import { getBinaryFromFile, gethtmlFromFile, writehtmlBacktoFile } from "./fileTools.js"
 import { extractElementsContainingText } from "./htmlTools.js"
 
 async function main(){
-  /*   let filepath = "./htmlExample.html"
+  /*   let filepath = "./resources/htmlExample.html"
     const d_id = await docAdd(filepath)
 
     //console.log("ID:", id)
@@ -21,12 +21,12 @@ async function main(){
 
     const fragList = await getKnownFragmentsFromDoc(docid)
     console.log(fragList)
-/*     filepath = "./htmlExample.html"
+/*     filepath = "./resources/htmlExample.html"
     const send_html = await gethtmlFromFile(filepath)
     const f_id = await fragmentAdd_html(send_html, 'doc1', "Example PDF HTML section")
 
     const return_html = await fragmentRetrieve(f_id)
-    writehtmlBacktoFile(return_html) */
+    writehtmlBacktoFile(return_html, "./resources/return.html") */
     //console.log("HTML:", return_html)
 }
 
@@ -36,10 +36,19 @@ async function main(){
 async function queryingMain(){
     //const html = await gethtmlFromFile("./htmlExample.html")
 
-    let id, fragIds = await docAdd_autoTextFrag("./htmlExample.html")
+    let [id, fragIds] = await docAdd_autoTextFrag("./resources/htmlExample.html")
 
     console.log(id)
     console.log(fragIds)
+
+    const r1 = await deleteDoc(id)
+    console.log(r1)
+
+    for (const fragid of fragIds){
+        const r2 = await deleteFrag(fragid)
+        console.log(r2)
+    }
+
 }
 
 queryingMain()

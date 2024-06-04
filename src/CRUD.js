@@ -13,9 +13,9 @@ async function connectToDB(uri) {
  
     try {
         mongoClient =  new MongoClient(uri) 
-        console.log('Connecting to MongoDB Atlas cluster...');
+        //console.log('Connecting to MongoDB Atlas cluster...');
         await mongoClient.connect();
-        console.log('Successfully connected to MongoDB Atlas!');
+        //console.log('Successfully connected to MongoDB Atlas!');
  
         return mongoClient;
     } catch (error) {
@@ -63,6 +63,43 @@ export async function crud_addNewFragment(fragment) {
 
     return insertedId
 }
+
+export async function crud_deleteFragment(fragment_id) {
+    let mongoClient;
+    let result
+    try {
+        mongoClient = await connectToDB(mdb_uri)
+        const db = mongoClient.db('nie');
+        const collection = db.collection('fragments');
+
+        result = await collection.deleteOne({_id : fragment_id})
+
+    } finally {
+        await mongoClient.close();
+    }
+    console.log("fragment deleted:", fragment_id)
+
+    return result
+}
+
+export async function crud_deleteDoc(doc_id) {
+    let mongoClient;
+    let result
+    try {
+        mongoClient = await connectToDB(mdb_uri)
+        const db = mongoClient.db('nie');
+        const collection = db.collection('documents');
+
+        result = await collection.deleteOne({_id : doc_id})
+
+    } finally {
+        await mongoClient.close();
+    }
+    console.log("document deleted:", doc_id)
+
+    return result
+}
+
 
 export async function crud_getDocument(_id) {
     let mongoClient;

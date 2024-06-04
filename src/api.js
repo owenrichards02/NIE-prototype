@@ -1,4 +1,4 @@
-import { crud_addNewDocument, crud_addNewFragment, crud_getAllFragments, crud_getDocument, crud_getFragment} from './CRUD.js';
+import { crud_addNewDocument, crud_addNewFragment, crud_deleteDoc, crud_deleteFragment, crud_getAllFragments, crud_getDocument, crud_getFragment} from './CRUD.js';
 
 import { JSDOM } from 'jsdom';
 
@@ -21,7 +21,7 @@ export async function docAdd(filepath) {
 //auto adds textual fragments if the doc is html
 //returns the id mongodb assigned to the document with a list of fragment ids
 export async function docAdd_autoTextFrag(filepath) { 
-    let id
+    let id = null
     let fragIds = []
     if (filepath.split(".").at(-1) == 'html'){
         const thishtml = await gethtmlFromFile(filepath)
@@ -37,10 +37,8 @@ export async function docAdd_autoTextFrag(filepath) {
         const thisdata = await getBinaryFromFile(filepath)
         id = await docAdd_data(thisdata, filepath)
     }
-    return id, fragIds
+    return [id, fragIds]
 }
-
-
 
 
 //N.B. returns a list either html strings or 
@@ -154,3 +152,8 @@ export async function docRetrieve(id) {
         throw error("No binary data or html within this fragment")
     }
 }
+
+
+export async function deleteDoc(id){return await crud_deleteDoc(id)}
+
+export async function deleteFrag(id){return await crud_deleteFragment(id)}
