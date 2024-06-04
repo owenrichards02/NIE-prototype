@@ -4,7 +4,7 @@
 import { config } from 'dotenv';
 config()
 
-const mdb_uri = process.env.LOCAL_URI
+const mdb_uri = process.env.DB_CONNECTION
 
 import { MongoClient, ObjectId } from 'mongodb';
 

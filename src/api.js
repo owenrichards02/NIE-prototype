@@ -44,6 +44,7 @@ export async function docAdd_autoFrag(filepath) {
         id = await docAdd_html(thishtml, filepath)
 
         const frags = await extractFragments(thishtml)
+        console.log(frags)
         for (const frag of frags){
             const fragId = await fragmentAdd_html(frag, id, "Auto-extracted fragment")
             fragIds.push(fragId)

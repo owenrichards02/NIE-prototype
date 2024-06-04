@@ -2,7 +2,10 @@ import { load } from "cheerio";
 
 export async function extractFragments(html){
     let fragments = []
-    fragments.push(await extractElementsContainingText(html))
+    const textFrags = await extractElementsContainingText(html)
+    for (const frag of textFrags){
+        fragments.push(frag)
+    }
 
     return fragments
 }

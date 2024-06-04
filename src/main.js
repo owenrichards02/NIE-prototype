@@ -1,7 +1,6 @@
 import { ObjectId } from "bson"
-import { deleteDoc, deleteFrag, docAdd, docAdd_autoTextFrag, docRetrieve, fragmentAdd_data, fragmentAdd_html, fragmentRetrieve, getKnownFragmentsFromDoc } from "./api.js"
+import { deleteDoc, deleteFrag, docAdd, docAdd_autoFrag, docRetrieve, fragmentAdd_data, fragmentAdd_html, fragmentRetrieve, getKnownFragmentsFromDoc } from "./api.js"
 import { getBinaryFromFile, gethtmlFromFile, writehtmlBacktoFile } from "./fileTools.js"
-import { extractElementsContainingText } from "./fragment.js"
 
 async function main(){
   /*   let filepath = "./resources/htmlExample.html"
@@ -36,9 +35,10 @@ async function main(){
 async function queryingMain(){
     //const html = await gethtmlFromFile("./htmlExample.html")
 
-    let [id, fragIds] = await docAdd_autoTextFrag("./resources/htmlExample.html")
+    let [id, fragIds] = await docAdd_autoFrag("./resources/htmlExample.html")
+    console.log(fragIds)
 
-    console.log(id)
+    /* console.log(id)
     console.log(fragIds)
 
     const r1 = await deleteDoc(id)
@@ -47,7 +47,7 @@ async function queryingMain(){
     for (const fragid of fragIds){
         const r2 = await deleteFrag(fragid)
         console.log(r2)
-    }
+    } */
 
 }
 
