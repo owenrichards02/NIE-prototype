@@ -1,5 +1,5 @@
 import { ObjectId } from "bson"
-import { deleteDoc, deleteFrag, docAdd, docAdd_autoFrag, docRetrieve, fragmentAdd_data, fragmentAdd_html, fragmentRetrieve, getKnownFragmentsFromDoc } from "./api.js"
+import { deleteDoc, deleteFrag, docAdd, docAdd_autoFrag, docRetrieve, fragmentAdd_data, fragmentAdd_html, fragmentRetrieve, getKnownFragmentsFromDoc, searchByAttributeValue } from "./api.js"
 import { getBinaryFromFile, gethtmlFromFile, writehtmlBacktoFile } from "./fileTools.js"
 
 async function main(){
@@ -38,11 +38,16 @@ async function queryingMain(){
     //let [id, fragIds] = await docAdd_autoFrag("./resources/htmlExample.html")
     //console.log(fragIds)
 
-    let [id, fragids] = await docAdd_autoFrag("./resources/htmlExample.html")
+
+
+    /* let [id, fragids] = await docAdd_autoFrag("./resources/htmlExample.html")
 
     let res = await deleteDoc(id)
 
-    console.log(res)
+    console.log(res) */
+
+    
+
     /* console.log(id)
     console.log(fragIds)
 
@@ -54,6 +59,11 @@ async function queryingMain(){
         console.log(r2)
     } */
 
+    const id = await docAdd("./resources/survey_example.xlsx")
+
+    const matches = await searchByAttributeValue(id, "data-responseID", "R_3nT6Y0Sm27iTPaF")
+
+    console.log(matches)
 }
 
 queryingMain()

@@ -3,13 +3,14 @@ import { crud_addNewDocument, crud_addNewFragment, crud_deleteDoc, crud_deleteFr
 import { JSDOM } from 'jsdom';
 
 import { gethtmlFromFile, getBinaryFromFile, writehtmlBacktoFile } from "./fileTools.js"
-import { extractFragments } from './fragment.js';
-import { ObjectId } from 'bson';
+import { HTMLByAttribute, HTMLByAttributeValue, extractAllInterviewDialogueSections, extractAllSurveyQuestions, extractAllTextualFragments } from './fragment.js';
+import { Binary, ObjectId } from 'bson';
 import { imageToHTML } from './imageConversion.js';
 import { excelSurveyToHTML } from './surveyConversion.js';
 import { transcriptToHTML } from './transcriptConversion.js';
 
 import { existsSync } from 'fs';
+import { sep } from 'path';
 
 
 /**
@@ -34,17 +35,21 @@ export async function docAdd(filepath) {
     if (extension == 'html'){
         const thishtml = await gethtmlFromFile(filepath)
         id = await docAdd_html(thishtml, filepath, "html")
+
     }else if (extension == "png" || extension == "jpg" || extension == "gif"){
         const thishtml = imageToHTML(filepath)
         id = await docAdd_html(thishtml, filepath, "image")
+
     }else if (extension == "xlsx"){
         let surveyId = "SURVEY_ID" //need to get this from the user somehow
         const thishtml = excelSurveyToHTML(filepath, surveyId)
         id = await docAdd_html(thishtml, filepath, "survey")
+
     }else if (extension == "txt"){
         let interviewID = "INTERVIEW_ID" //need to get this from the user somehow
         const thishtml = transcriptToHTML(filepath, interviewID)
         id = await docAdd_html(thishtml, filepath, "transcript")
+
     }else {
         const thisdata = await getBinaryFromFile(filepath)
         id = await docAdd_data(thisdata, filepath, "unknown")
@@ -55,7 +60,7 @@ export async function docAdd(filepath) {
 
 /**
  * Functionality of docAdd with automatic fragment extraction/storage
- * Auto adds extracted fragments if the doc is html, and the doc as its own fragment otherwise.
+ * Auto adds extracted fragments if the doc is html or one of the html-convertible formats, and the doc as its own fragment otherwise.
  * Returns the id mongodb assigned to the document with a list of fragment ids
  * @export
  * @param {string} filepath
@@ -67,31 +72,62 @@ export async function docAdd_autoFrag(filepath) {
         throw new Error("File not found at " + filepath)
     }
 
+    let extension = filepath.split(".").at(-1)
+
     let id = null
     let fragIds = []
-    if (filepath.split(".").at(-1) == 'html'){
+    if (extension == 'html'){
         const thishtml = await gethtmlFromFile(filepath)
         id = await docAdd_html(thishtml, filepath, "html")
 
-        const frags = await extractFragments(thishtml)
+        const frags = await extractAllTextualFragments(thishtml)
         console.log(frags)
         for (const frag of frags){
-            const fragId = await fragmentAdd_html(frag, id, "Auto-extracted fragment", "html")
+            const fragId = await fragmentAdd_html(frag, id, "Auto-extracted html fragment: " + filepath.split(sep), "html")
             fragIds.push(fragId)
         }
 
-        //************************************************************ */
-        //NEEDS TO AUTOEXTRACT FOR (IMAGE), SURVEY AND TRANSCRIPT TYPES
-        //************************************************************ */
+    }else if(extension=="png" || extension=="jpg" || extension=="gif"){
+        //auto add entire image as a fragment
+        const thishtml = imageToHTML(filepath)
+        id = await docAdd_html(thishtml, filepath, "image")
 
+        const fragid = await fragmentAdd_html(null, id, "Whole image: " + filepath.split(sep), "image", null)
+        fragIds.push(fragid)
+
+
+    }else if(extension == "xlsx"){
+        let surveyId = "SURVEY_ID" //need to get this from the user somehow
+        const thishtml = excelSurveyToHTML(filepath, surveyId)
+        id = await docAdd_html(thishtml, filepath, "survey")
+
+        const frags = await extractAllSurveyQuestions(thishtml)
+        for (const frag of frags){
+            const fragId = await fragmentAdd_html(frag, id, "Auto-extracted survey question: " + filepath.split(sep), "survey")
+            fragIds.push(fragId)
+        }
+    
+
+    }else if(extension == "txt"){
+        let interviewID = "INTERVIEW_ID" //need to get this from the user somehow
+        const thishtml = transcriptToHTML(filepath, interviewID)
+        id = await docAdd_html(thishtml, filepath, "transcript")
+
+        const frags = await extractAllInterviewDialogueSections(thishtml)
+        for (const frag of frags){
+            const fragId = await fragmentAdd_html(frag, id, "Auto-extracted transcript segment: " + filepath.split(sep), "transcript")
+            fragIds.push(fragId)
+        }
+    
     }else{
         const thisdata = await getBinaryFromFile(filepath)
         id = await docAdd_data(thisdata, filepath, "unknown")
         //add doc as its own fragment
 
-        const fragId = await fragmentAdd_data(thisdata, id, "Auto-extracted fragment", "unknown")
+        const fragId = await fragmentAdd_data(thisdata, id, "Auto-extracted data fragment: "  + filepath.split(sep), "unknown")
         fragIds.push(fragId)
     }
+
     return [id, fragIds]
 }
 
@@ -282,3 +318,32 @@ export async function deleteDoc(id){return await crud_deleteDoc(id)}
  * @return {DeleteResult} 
  */
 export async function deleteFrag(id){return await crud_deleteFragment(id)}
+
+
+export async function searchByAttribute(docid, attribute){
+
+    let matches = []
+    const doc = await docRetrieve(docid)
+    if (!(doc instanceof Binary)){
+        matches = await HTMLByAttribute(doc, attribute)
+    }else{
+        console.error("No html inside this doc")
+    }
+
+    return matches
+
+}
+
+export async function searchByAttributeValue(docid, attribute, value){
+
+    let matches = []
+    const doc = await docRetrieve(docid)
+    if (!(doc instanceof Binary)){
+        matches = await HTMLByAttributeValue(doc, attribute, value)
+    }else{
+        console.error("No html inside this doc")
+    }
+
+    return matches
+    
+}
