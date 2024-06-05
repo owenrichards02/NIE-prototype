@@ -320,29 +320,38 @@ export async function deleteDoc(id){return await crud_deleteDoc(id)}
 export async function deleteFrag(id){return await crud_deleteFragment(id)}
 
 
+/**
+ * Searches through a registered html document for html sections with matching attributes. Returns a list of the tag sections that match
+ *
+ * @export
+ * @param {ObjectId} docid
+ * @param {String} attribute
+ * @return {Array<String>} 
+ */
 export async function searchByAttribute(docid, attribute){
 
     let matches = []
     const doc = await docRetrieve(docid)
-    if (!(doc instanceof Binary)){
-        matches = await HTMLByAttribute(doc, attribute)
-    }else{
-        console.error("No html inside this doc")
-    }
+    matches = await HTMLByAttribute(doc, attribute)
 
     return matches
 
 }
 
+/**
+ * Searches through a registered html document for html sections with matching attribute-value pairs. Returns a list of the tag sections that match
+ *
+ * @export
+ * @param {ObjectId} docid
+ * @param {String} attribute
+ * @param {String} value
+ * @return {Array<String>} 
+ */
 export async function searchByAttributeValue(docid, attribute, value){
 
     let matches = []
     const doc = await docRetrieve(docid)
-    if (!(doc instanceof Binary)){
-        matches = await HTMLByAttributeValue(doc, attribute, value)
-    }else{
-        console.error("No html inside this doc")
-    }
+    matches = await HTMLByAttributeValue(doc, attribute, value)
 
     return matches
     
