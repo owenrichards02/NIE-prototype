@@ -3,7 +3,7 @@ import { crud_addNewDocument, crud_addNewFragment, crud_deleteDoc, crud_deleteFr
 import { JSDOM } from 'jsdom';
 
 import { gethtmlFromFile, getBinaryFromFile, writehtmlBacktoFile } from "./fileTools.js"
-import { HTMLByAttribute, HTMLByAttributeValue, extractAllInterviewDialogueSections, extractAllSurveyQuestions, extractAllTextualFragments } from './fragment.js';
+import { HTMLByAttribute, HTMLByAttributeValue, HTMLByTagValueContains, extractAllInterviewDialogueSections, extractAllSurveyQuestions, extractAllTextualFragments } from './fragment.js';
 import { Binary, ObjectId } from 'bson';
 import { imageToHTML } from './imageConversion.js';
 import { excelSurveyToHTML } from './surveyConversion.js';
@@ -355,4 +355,25 @@ export async function searchByAttributeValue(docid, attribute, value){
 
     return matches
     
+}
+
+
+/**
+ *
+ * Searches through a registered html document for html sections with matching tag-value pairs. Returns a list of the tag sections that match.
+ * Provides the option to specify tag class, for greater refinement.
+ *
+ * @export
+ * @param {*} docid
+ * @param {*} tag
+ * @param {*} value
+ * @param {*} [t_class=null]
+ * @return {*} 
+ */
+export async function searchByTagValue(docid, tag, value, t_class=null){
+    let matches = []
+    const doc = await docRetrieve(docid)
+    matches = await HTMLByTagValueContains(doc, tag, value, t_class)
+
+    return matches
 }
