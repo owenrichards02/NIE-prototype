@@ -5,24 +5,49 @@ import { JSDOM } from 'jsdom';
 import { gethtmlFromFile, getBinaryFromFile, writehtmlBacktoFile } from "./fileTools.js"
 import { extractFragments } from './fragment.js';
 import { ObjectId } from 'bson';
+import { imageToHTML } from './imageConversion.js';
+import { excelSurveyToHTML } from './surveyConversion.js';
+import { transcriptToHTML } from './transcriptConversion.js';
+
+import { existsSync } from 'fs';
+
 
 /**
  * Stores a document in the documents container.
  * Returns the id mongodb assigned to the document.
- * Keeps HTML native, stores other file types as binary
+ * Keeps HTML native, embeds images, excel survey responses, and .txt interview transcripts in HTML, 
+ * and stores other file types as binary
  *
  * @export
  * @param {string} filepath
  * @return {ObjectId} id
  */
 export async function docAdd(filepath) { 
+
+    if (!(existsSync(filepath))){
+        throw new Error("File not found at " + filepath)
+    }
+
     let id
-    if (filepath.split(".").at(-1) == 'html'){
+    let extension = filepath.split(".").at(-1)
+    
+    if (extension == 'html'){
         const thishtml = await gethtmlFromFile(filepath)
-        id = await docAdd_html(thishtml, filepath)
-    }else{
+        id = await docAdd_html(thishtml, filepath, "html")
+    }else if (extension == "png" || extension == "jpg" || extension == "gif"){
+        const thishtml = imageToHTML(filepath)
+        id = await docAdd_html(thishtml, filepath, "image")
+    }else if (extension == "xlsx"){
+        let surveyId = "SURVEY_ID" //need to get this from the user somehow
+        const thishtml = excelSurveyToHTML(filepath, surveyId)
+        id = await docAdd_html(thishtml, filepath, "survey")
+    }else if (extension == "txt"){
+        let interviewID = "INTERVIEW_ID" //need to get this from the user somehow
+        const thishtml = transcriptToHTML(filepath, interviewID)
+        id = await docAdd_html(thishtml, filepath, "transcript")
+    }else {
         const thisdata = await getBinaryFromFile(filepath)
-        id = await docAdd_data(thisdata, filepath)
+        id = await docAdd_data(thisdata, filepath, "unknown")
     }
     return id
 }
@@ -37,25 +62,34 @@ export async function docAdd(filepath) {
  * @return {Array.<ObjectId|Array.<ObjectId>>} 
  */
 export async function docAdd_autoFrag(filepath) { 
+
+    if (!(existsSync(filepath))){
+        throw new Error("File not found at " + filepath)
+    }
+
     let id = null
     let fragIds = []
     if (filepath.split(".").at(-1) == 'html'){
         const thishtml = await gethtmlFromFile(filepath)
-        id = await docAdd_html(thishtml, filepath)
+        id = await docAdd_html(thishtml, filepath, "html")
 
         const frags = await extractFragments(thishtml)
         console.log(frags)
         for (const frag of frags){
-            const fragId = await fragmentAdd_html(frag, id, "Auto-extracted fragment")
+            const fragId = await fragmentAdd_html(frag, id, "Auto-extracted fragment", "html")
             fragIds.push(fragId)
         }
 
+        //************************************************************ */
+        //NEEDS TO AUTOEXTRACT FOR (IMAGE), SURVEY AND TRANSCRIPT TYPES
+        //************************************************************ */
+
     }else{
         const thisdata = await getBinaryFromFile(filepath)
-        id = await docAdd_data(thisdata, filepath)
+        id = await docAdd_data(thisdata, filepath, "unknown")
         //add doc as its own fragment
 
-        const fragId = await fragmentAdd_data(thisdata, id, "Auto-extracted fragment")
+        const fragId = await fragmentAdd_data(thisdata, id, "Auto-extracted fragment", "unknown")
         fragIds.push(fragId)
     }
     return [id, fragIds]
@@ -91,14 +125,15 @@ export async function getKnownFragmentsFromDoc(doc_id){
 }
 
 //dont use this directly
-async function docAdd_data(data, filepath) { 
+async function docAdd_data(data, filepath, type) { 
 
     const filename = filepath.split("/").at(-1)
 
     const newdoc = {
         name: filename,
         data: data,
-        html: null
+        html: null,
+        type: type
     }
 
     const id = await crud_addNewDocument(newdoc)
@@ -107,14 +142,15 @@ async function docAdd_data(data, filepath) {
 }
 
 //dont use this directly
-async function docAdd_html(html, filepath) {
+async function docAdd_html(html, filepath, type) {
 
     const filename = filepath.split("/").at(-1)
 
     const newdoc = {
         name: filename,
         data: null,
-        html: html
+        html: html,
+        type: type
     }
 
     const id = await crud_addNewDocument(newdoc)
@@ -132,19 +168,29 @@ async function docAdd_html(html, filepath) {
  * @param {string} [fragName="testFragment"]
  * @return {ObjectId} 
  */
-export async function fragmentAdd_html(html, docid, fragName="testFragment") {
+export async function fragmentAdd_html(html, docid, fragName="testFragment", type, coords = null) {
+
+    //image embed removed, to avoid data duplication
+    //source can be retrieved from the original docid.
+    const altHtml = html
+    if (type=="image"){
+        altHtml = null
+    }
 
     const newfrag = {
         name: fragName,
         docid: docid,
-        html: html,
-        data: null
+        html: altHtml,
+        data: null,
+        type: type,
+        coords: coords
     }
 
     const id = await crud_addNewFragment(newfrag)
 
     return id
 }
+
 
 /**
  * Stores an non-HTML based fragment in the fragments container, as a binary object.
@@ -157,13 +203,14 @@ export async function fragmentAdd_html(html, docid, fragName="testFragment") {
  * @param {string} [fragName="testFragment"]
  * @return {ObjectId} 
  */
-export async function fragmentAdd_data(data, docid, fragName="testFragment") { 
+export async function fragmentAdd_data(data, docid, fragName="testFragment", type) { 
 
     const newfrag = {
         name: fragName,
         docid: docid,
         html: null,
-        data: data
+        data: data,
+        type: type
     }
 
     const id = await crud_addNewFragment(newfrag)
@@ -218,6 +265,7 @@ export async function docRetrieve(id) {
 
 /**
  * Deletes a document from the documents container using a documentID. Returns a DeleteResult for confirmation.
+ * WILL ALSO DELETE ALL FRAGMENTS LINKED TO THE DOC.
  *
  * @export
  * @param {ObjectId} id

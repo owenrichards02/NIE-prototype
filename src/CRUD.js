@@ -88,9 +88,26 @@ export async function crud_deleteDoc(doc_id) {
     try {
         mongoClient = await connectToDB(mdb_uri)
         const db = mongoClient.db('nie');
-        const collection = db.collection('documents');
 
-        result = await collection.deleteOne({_id : doc_id})
+        //delete all relevant fragments first
+        const f_collection = db.collection('fragments');
+
+        const fragList = await f_collection.find({
+            docid: doc_id
+        }).toArray()
+
+        //console.log("FRAGLIST:" + fragList)
+        //console.log("DOCID: " + doc_id)
+
+        for (const frag of fragList){
+            const f_id = frag._id
+            result = await f_collection.deleteOne({_id : f_id})
+            console.log("fragment auto-deleted through inheritance:", f_id)
+        }
+
+        const d_collection = db.collection('documents');
+
+        result = await d_collection.deleteOne({_id : doc_id})
 
     } finally {
         await mongoClient.close();

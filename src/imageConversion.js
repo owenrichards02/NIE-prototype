@@ -1,7 +1,7 @@
 import { writehtmlBacktoFile } from "./fileTools.js";
 import { readFileSync } from 'fs';
 
-function imageToHTML(filepath){
+export function imageToHTML(filepath){
     const img64 = readFileSync(filepath, {encoding: 'base64'});
 
     const extension = filepath.split('.')[-1]
