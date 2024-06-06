@@ -24,14 +24,14 @@ async function connectToDB(uri) {
     }
  }
 
-export async function crud_addNewDocument(newdoc) {
+export async function crud_addNewItem(collectionName, newdoc) {
     let mongoClient;
     let insertedId;
  
     try {
         mongoClient = await connectToDB(mdb_uri)
         const db = mongoClient.db('nie');
-        const collection = db.collection('documents');
+        const collection = db.collection(collectionName);
 
         const result = await collection.insertOne(newdoc)
         insertedId = result.insertedId;
@@ -40,47 +40,6 @@ export async function crud_addNewDocument(newdoc) {
         await mongoClient.close();
     }
     console.log("document stored:", insertedId)
-
-    return insertedId
-}
-
-export async function crud_addNewFragment(fragment) {
-    let mongoClient;
-    let insertedId;
- 
-    try {
-        mongoClient = await connectToDB(mdb_uri)
-        const db = mongoClient.db('nie');
-        const collection = db.collection('fragments');
-
-        const result = await collection.insertOne(fragment)
-        insertedId = result.insertedId;
-
-    } finally {
-        await mongoClient.close();
-    }
-    console.log("fragment stored:", insertedId)
-
-    return insertedId
-}
-
-
-export async function crud_addNewAnnotation(annotation){
-    let mongoClient;
-    let insertedId;
- 
-    try {
-        mongoClient = await connectToDB(mdb_uri)
-        const db = mongoClient.db('nie');
-        const collection = db.collection('annotations');
-
-        const result = await collection.insertOne(annotation)
-        insertedId = result.insertedId;
-
-    } finally {
-        await mongoClient.close();
-    }
-    console.log("annotation stored:", insertedId)
 
     return insertedId
 }
@@ -162,25 +121,24 @@ export async function crud_deleteAnnotation(annotation_id) {
     return result
 }
 
-
-export async function crud_getDocument(_id) {
+export async function crud_getItem(collectionName, _id) {
     let mongoClient;
     let doc
  
     try {
         mongoClient = await connectToDB(mdb_uri)
         const db = mongoClient.db('nie');
-        const collection = db.collection('documents');
+        const collection = db.collection(collectionName);
 
         doc = await collection.findOne({ _id: _id });
         if (doc) {
             //console.log('Found document:', doc);
         } else {
-            console.log('No document found');
+            console.log('No item found');
         }
 
     } catch (error) {
-        console.error('Could not retrieve document:', error);
+        console.error('Could not retrieve item:', error);
    
     }finally { 
         await mongoClient.close();
@@ -190,59 +148,6 @@ export async function crud_getDocument(_id) {
 
 }
 
-export async function crud_getFragment(_id) {
-    let mongoClient;
-    let doc
- 
-    try {
-        mongoClient = await connectToDB(mdb_uri)
-        const db = mongoClient.db('nie');
-        const collection = db.collection('fragments');
-
-        doc = await collection.findOne({ _id: _id });
-        if (doc) {
-            //console.log('Found document:', doc);
-        } else {
-            console.log('No fragment found');
-        }
-
-    } catch (error) {
-        console.error('Could not retrieve fragment:', error);
-   
-    }finally { 
-        await mongoClient.close();
-    }
-
-    return doc
-
-}
-
-export async function crud_getAnnotation(_id) {
-    let mongoClient;
-    let doc
- 
-    try {
-        mongoClient = await connectToDB(mdb_uri)
-        const db = mongoClient.db('nie');
-        const collection = db.collection('annotations');
-
-        doc = await collection.findOne({ _id: _id });
-        if (doc) {
-            //console.log('Found document:', doc);
-        } else {
-            console.log('No annotation found');
-        }
-
-    } catch (error) {
-        console.error('Could not retrieve annotation:', error);
-   
-    }finally { 
-        await mongoClient.close();
-    }
-
-    return doc
-
-}
 
 export async function crud_getAllFragments_fromSpecificDoc(doc_id){
     let mongoClient;
@@ -267,89 +172,20 @@ export async function crud_getAllFragments_fromSpecificDoc(doc_id){
     return fragList
 }
 
-export async function crud_getAllAnnotations_fromSpecificFragment(doc_id){
+export async function crud_getAllAnnotations_fromSpecificFragment(fragment_id){
     /* 
     * Need to implement this. Would be useful for constructing the annotation board.
     */
-}
 
-
-
-
-
-export async function crud_TagDocument(docid, tag){
-    let mongoClient;
- 
-    try {
-        mongoClient = await connectToDB(mdb_uri)
-        const db = mongoClient.db('nie');
-        const collection = db.collection('documents');
-
-        const doc = await collection.findOne({_id: docid})
-        let tagsList = await doc.tags
-        tagsList.push(tag)
-
-        await collection.updateOne({_id: docid},
-            {
-                $set: {
-                    tags: tagsList
-                }
-            }
-        )
-
-    } catch (error) {
-        console.error('Could not retrieve/update the document:', error);
-        return -1
-   
-    }finally { 
-        await mongoClient.close();
-    }
-
-    return 0
-}
-
-export async function crud_TagFragment(fragid, tag){
-    let mongoClient;
- 
-    try {
-        mongoClient = await connectToDB(mdb_uri)
-        const db = mongoClient.db('nie');
-        const collection = db.collection('fragments');
-
-        const frag = await collection.findOne({_id: fragid})
-        let tagsList = await frag.tags
-        tagsList.push(tag)
-
-        await collection.updateOne({_id: fragid},
-            {
-                $set: {
-                    tags: tagsList
-                }
-            }
-        )
-
-    } catch (error) {
-        console.error('Could not retrieve/update the document:', error);
-        return -1
-   
-    }finally { 
-        await mongoClient.close();
-    }
-
-    return 0
-}
-
-
-export async function crud_searchForFragsByTagListOR(tagList){
     let mongoClient;
     let frags
  
     try {
         mongoClient = await connectToDB(mdb_uri)
         const db = mongoClient.db('nie');
-        const collection = db.collection('fragments');
+        const collection_a = db.collection('annotations');
 
-        frags = await collection.find({tags: { $in : tagList}})
+        annotations = await collection_a.find({linkedFragments: { $in : fragment_id}})
 
     } catch (error) {
         console.error('Could not find the relevant frags:', error);
@@ -362,73 +198,83 @@ export async function crud_searchForFragsByTagListOR(tagList){
     return frags
 }
 
-export async function crud_searchForDocsByTagListOR(tagList){
+
+export async function crud_TagItem(collectionName, itemid, tag){
     let mongoClient;
-    let docs
  
     try {
         mongoClient = await connectToDB(mdb_uri)
         const db = mongoClient.db('nie');
-        const collection = db.collection('documents');
+        const collection = db.collection(collectionName);
 
+        const item = await collection.findOne({_id: itemid})
+        let tagsList = await item.tags
+        tagsList.push(tag)
 
-        docs = await collection.find({tags: { $in : tagList}}).toArray()
+        await collection.updateOne({_id: itemid},
+            {
+                $set: {
+                    tags: tagsList
+                }
+            }
+        )
 
     } catch (error) {
-        console.error('Could not find the relevant docs:', error);
-        return []
+        console.error('Could not retrieve/update the item:', error);
+        return -1
    
     }finally { 
         await mongoClient.close();
     }
 
-    return docs
+    return 0
 }
 
-export async function crud_searchForDocsByTagListAND(tagList){
+
+export async function crud_searchByTagListAND(collectionName, tagList){
     let mongoClient;
-    let docs
+    let items
  
     try {
         mongoClient = await connectToDB(mdb_uri)
         const db = mongoClient.db('nie');
-        const collection = db.collection('documents');
+        const collection = db.collection(collectionName);
 
 
-        docs = await collection.find({ tags: { $all: tagList } }).toArray()
+        items = await collection.find({ tags: { $all: tagList } }).toArray()
 
     } catch (error) {
-        console.error('Could not find the relevant docs:', error);
+        console.error('Could not find the item:', error);
         return []
    
     }finally { 
         await mongoClient.close();
     }
 
-    return docs
+    return items
 }
 
-export async function crud_searchForFragsByTagListAND(tagList){
+export async function crud_searchByTagListOR(collectionName, tagList){
     let mongoClient;
-    let frags
+    let items
  
     try {
         mongoClient = await connectToDB(mdb_uri)
         const db = mongoClient.db('nie');
-        const collection = db.collection('fragments');
+        const collection = db.collection(collectionName);
 
 
-        frags = await collection.find({ tags: { $all: tagList } }).toArray()
+        items = await collection.find({tags: { $in : tagList}}).toArray()
 
     } catch (error) {
-        console.error('Could not find the relevant frags:', error);
+        console.error('Could not find the item:', error);
         return []
    
     }finally { 
         await mongoClient.close();
     }
 
-    return frags
+    return items
 }
 
 

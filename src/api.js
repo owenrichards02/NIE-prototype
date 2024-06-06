@@ -1,4 +1,4 @@
-import { crud_TagDocument, crud_TagFragment, crud_addNewDocument, crud_addNewFragment, crud_deleteDoc, crud_deleteFragment, crud_getAllFragments_fromSpecificDoc, crud_getDocument, crud_getFragment, crud_searchForDocsByTagListAND, crud_searchForDocsByTagListOR, crud_searchForFragsByTagListAND, crud_searchForFragsByTagListOR} from './CRUD.js';
+import { crud_TagItem, crud_addNewItem, crud_deleteDoc, crud_deleteFragment, crud_getAllAnnotations_fromSpecificFragment, crud_getAllFragments_fromSpecificDoc, crud_getItem, crud_searchByTagListAND, crud_searchByTagListOR} from './CRUD.js';
 
 import { JSDOM } from 'jsdom';
 
@@ -173,7 +173,7 @@ async function docAdd_data(data, filepath, type, tags=[]) {
         tags: tags
     }
 
-    const id = await crud_addNewDocument(newdoc)
+    const id = await crud_addNewItem("documents",newdoc)
 
     return id
 }
@@ -191,7 +191,7 @@ async function docAdd_html(html, filepath, type, tags=[]) {
         tags: tags
     }
 
-    const id = await crud_addNewDocument(newdoc)
+    const id = await crud_addNewItem("documents", newdoc)
 
     return id
 }
@@ -225,7 +225,7 @@ export async function fragmentAdd_html(html, docid, fragName="testFragment", typ
         tags: tags
     }
 
-    const id = await crud_addNewFragment(newfrag)
+    const id = await crud_addNewItem("fragments", newfrag)
 
     return id
 }
@@ -253,7 +253,7 @@ export async function fragmentAdd_data(data, docid, fragName="testFragment", typ
         tags: tags
     }
 
-    const id = await crud_addNewFragment(newfrag)
+    const id = await crud_addNewItem("fragments", newfrag)
 
     return id
 }
@@ -261,7 +261,7 @@ export async function fragmentAdd_data(data, docid, fragName="testFragment", typ
 
 /**
  * Fetches a fragment from the fragments container using the fragmentID.
- * Returns the data/html representation of the fragment
+ * Returns the object
  *
  * @export
  * @param {ObjectId} id
@@ -269,25 +269,39 @@ export async function fragmentAdd_data(data, docid, fragName="testFragment", typ
  */
 export async function fragmentRetrieve(id) { 
 
-    const newfrag = await crud_getFragment(id)
+    const newfrag = await crud_getItem("fragments", id)
     return newfrag
      
 }
 
-//
 /**
  * Fetches a document from the documents container using the documentID.
- * Returns the data/html representation of the doc.
+ * Returns the object
  *
  * @export
  * @param {ObjectId} id
- * @return {BinaryData|string} 
+ * @return {object} 
  */
 export async function docRetrieve(id) { 
 
-    const newDoc = await crud_getDocument(id)
+    const newDoc = await crud_getItem("documents", id)
     return newDoc
 }
+
+/**
+ * Fetches a annotation from the annotations container using the annotationID.
+ * Returns the object
+ *
+ * @export
+ * @param {ObjectId} id
+ * @return {object} 
+ */
+export async function annotationRetrieve(id) { 
+
+    const newDoc = await crud_getItem("annotations", id)
+    return newDoc
+}
+
 
 
 
@@ -393,7 +407,7 @@ export async function searchByHTMLTagValue(docid, tag, value, t_class=null){
  * @param {string} tag
  * @return {number} 
  */
-export async function tagDocument(docid, tag){const res = await crud_TagDocument(docid, tag); return res}
+export async function tagDocument(docid, tag){const res = await crud_TagItem("documents", docid, tag); return res}
 
 
 /**
@@ -404,7 +418,18 @@ export async function tagDocument(docid, tag){const res = await crud_TagDocument
  * @param {string} tag
  * @return {number} 
  */
-export async function tagFragment(fragid, tag){const res = await crud_TagFragment(fragid, tag); return res}
+export async function tagFragment(fragid, tag){const res = await crud_TagItem("fragments", fragid, tag); return res}
+
+
+/**
+ * Adds a tag (string) to an existing annotation. Returns 0 if successful, -1 otherwise.
+ *
+ * @export
+ * @param {ObjectId} fragid
+ * @param {string} tag
+ * @return {number} 
+ */
+export async function tagAnnotation(fragid, tag){const res = await crud_TagItem("annotations", fragid, tag); return res}
 
 
 /**
@@ -414,8 +439,8 @@ export async function tagFragment(fragid, tag){const res = await crud_TagFragmen
  * @param {Array<string>} tagList
  * @return {Array<object>} docs
  */
-export async function getDocumentsByTagListOR(tagList){
-    const docs = await crud_searchForDocsByTagListOR(tagList)
+export async function getDocuments_ByTagListOR(tagList){
+    const docs = await crud_searchByTagListOR("documents", tagList)
     return docs
 }
 
@@ -426,8 +451,8 @@ export async function getDocumentsByTagListOR(tagList){
  * @param {Array<string>} tagList
  * @return {Array<object>} docs
  */
-export async function getDocumentsByTagListAND(tagList){
-    const docs = await crud_searchForDocsByTagListAND(tagList)
+export async function getDocuments_ByTagListAND(tagList){
+    const docs = await crud_searchByTagListAND("documents", tagList)
     return docs
 }
 
@@ -438,8 +463,8 @@ export async function getDocumentsByTagListAND(tagList){
  * @param {Array<string>} tagList
  * @return {Array<object>} docs
  */
-export async function getFragmentsByTagListOR(tagList){
-    const frags = await crud_searchForFragsByTagListOR(tagList)
+export async function getFragments_ByTagListOR(tagList){
+    const frags = await crud_searchByTagListOR("fragments", tagList)
     return frags
 }
 
@@ -451,7 +476,69 @@ export async function getFragmentsByTagListOR(tagList){
  * @param {Array<string>} tagList
  * @return {Array<object>} docs
  */
-export async function getFragmentsByTagListAND(tagList){
-    const frags = await crud_searchForFragsByTagListAND(tagList)
+export async function getFragmentsBy_TagListAND(tagList){
+    const frags = await crud_searchByTagListAND("fragments", tagList)
     return frags
+}
+
+/**
+ * Retrieves all annotations tagged with AT LEAST ONE of the tags in tagList.
+ *
+ * @export
+ * @param {Array<string>} tagList
+ * @return {Array<object>} docs
+ */
+export async function getAnnotations_ByTagListOR(tagList){
+    const frags = await crud_searchByTagListOR("annotations", tagList)
+    return frags
+}
+
+
+/**
+ * Retrieves all annotations tagged with ALL of the tags in tagList.
+ *
+ * @export
+ * @param {Array<string>} tagList
+ * @return {Array<object>} docs
+ */
+export async function getAnnotationsBy_TagListAND(tagList){
+    const frags = await crud_searchByTagListAND("annotations", tagList)
+    return frags
+}
+
+
+/**
+ *  Creates an annotation from html content and links it to the available fragments. Options for naming and tagging the annotation are included.
+ * 
+ *
+ * @export
+ * @param {string} htmlContent
+ * @param {Array<ObjectId>} fragmentIDList
+ * @param {Array<string>} [tags=[]]
+ * @param {string} [annotationName="New annotation"]
+ * @return {<ObjectId} insertedID 
+ */
+export async function createAnnotation(htmlContent, fragmentIDList, tags=[], annotationName="New annotation"){
+    const newAnnot = {
+        name: annotationName,
+        content: htmlContent,
+        linkedFragments: fragmentIDList,
+        tags: tags,
+    }
+
+    const insertedId = await crud_addNewItem("annotations", newAnnot)
+    return insertedId
+}
+
+
+/**
+ *  Gets all the annotations linked to a specific fragment.
+ *
+ * @export
+ * @param {ObjectId} fragmentID
+ * @return {Array<object>} 
+ */
+export async function getAnnotationsForASpecificFragment(fragmentID){
+    const annotations = await crud_getAllAnnotations_fromSpecificFragment(newAnnot)
+    return annotations
 }

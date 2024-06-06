@@ -1,5 +1,5 @@
 import { ObjectId } from "bson"
-import { deleteDoc, deleteFrag, docAdd, docAdd_autoFrag, docRetrieve, fragmentAdd_data, fragmentAdd_html, fragmentRetrieve, getDocumentsByTagListAND, getDocumentsByTagListOR, getKnownFragmentsFromDoc, searchByAttributeValue, tagDocument } from "./api.js"
+import { deleteDoc, deleteFrag, docAdd, docAdd_autoFrag, docRetrieve, fragmentAdd_data, fragmentAdd_html, fragmentRetrieve, getDocuments_ByTagListAND, getDocuments_ByTagListOR, getKnownFragmentsFromDoc, searchByAttributeValue, tagDocument } from "./api.js"
 import { getBinaryFromFile, gethtmlFromFile, writehtmlBacktoFile } from "./fileTools.js"
 
 async function main(){
@@ -65,15 +65,17 @@ async function queryingMain(){
     await tagDocument(id, "Volunteering")
     await tagDocument(id, "NHS")
 
-    const docs = await getDocumentsByTagListAND(["Volunteering", "NHS", "TEst"])
+    const docs = await getDocuments_ByTagListAND(["Volunteering", "NHS", "TEst"])
     console.log(docs)
 
     await tagDocument(id, "Healthcare")
     await tagDocument(id, "TEst")
 
 
-    const docs2 = await getDocumentsByTagListAND(["Volunteering", "NHS", "TEst"])
+    const docs2 = await getDocuments_ByTagListAND(["Volunteering", "NHS", "TEst"])
     console.log(docs2)
+
+    await deleteDoc(id)
 
     //console.log(matches)
 
