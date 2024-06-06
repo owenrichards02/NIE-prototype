@@ -64,7 +64,33 @@ export async function crud_addNewFragment(fragment) {
     return insertedId
 }
 
+
+export async function crud_addNewAnnotation(annotation){
+    let mongoClient;
+    let insertedId;
+ 
+    try {
+        mongoClient = await connectToDB(mdb_uri)
+        const db = mongoClient.db('nie');
+        const collection = db.collection('annotations');
+
+        const result = await collection.insertOne(annotation)
+        insertedId = result.insertedId;
+
+    } finally {
+        await mongoClient.close();
+    }
+    console.log("annotation stored:", insertedId)
+
+    return insertedId
+}
+
+
 export async function crud_deleteFragment(fragment_id) {
+    /* 
+    * Do we want to delete all relevant annotations aswell?
+    * -> Need to decide at a later date
+    */
     let mongoClient;
     let result
     try {
@@ -113,6 +139,25 @@ export async function crud_deleteDoc(doc_id) {
         await mongoClient.close();
     }
     console.log("document deleted:", doc_id)
+
+    return result
+}
+
+
+export async function crud_deleteAnnotation(annotation_id) {
+    let mongoClient;
+    let result
+    try {
+        mongoClient = await connectToDB(mdb_uri)
+        const db = mongoClient.db('nie');
+        const collection = db.collection('annotations');
+
+        result = await collection.deleteOne({_id : annotation_id})
+
+    } finally {
+        await mongoClient.close();
+    }
+    console.log("annotation deleted:", annotation_id)
 
     return result
 }
@@ -172,7 +217,34 @@ export async function crud_getFragment(_id) {
 
 }
 
-export async function crud_getAllFragments(doc_id){
+export async function crud_getAnnotation(_id) {
+    let mongoClient;
+    let doc
+ 
+    try {
+        mongoClient = await connectToDB(mdb_uri)
+        const db = mongoClient.db('nie');
+        const collection = db.collection('annotations');
+
+        doc = await collection.findOne({ _id: _id });
+        if (doc) {
+            //console.log('Found document:', doc);
+        } else {
+            console.log('No annotation found');
+        }
+
+    } catch (error) {
+        console.error('Could not retrieve annotation:', error);
+   
+    }finally { 
+        await mongoClient.close();
+    }
+
+    return doc
+
+}
+
+export async function crud_getAllFragments_fromSpecificDoc(doc_id){
     let mongoClient;
     let fragList
  
@@ -195,9 +267,15 @@ export async function crud_getAllFragments(doc_id){
     return fragList
 }
 
+export async function crud_getAllAnnotations_fromSpecificFragment(doc_id){
+    /* 
+    * Need to implement this. Would be useful for constructing the annotation board.
+    */
+}
+
 async function main(){
     let id = new ObjectId("665ddaa530da81e06e5c5639")
-    const frags = await crud_getAllFragments(id)
+    const frags = await crud_getAllFragments_fromSpecificDoc(id)
     console.log(frags)
 }
 

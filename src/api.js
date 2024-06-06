@@ -1,4 +1,4 @@
-import { crud_addNewDocument, crud_addNewFragment, crud_deleteDoc, crud_deleteFragment, crud_getAllFragments, crud_getDocument, crud_getFragment} from './CRUD.js';
+import { crud_addNewDocument, crud_addNewFragment, crud_deleteDoc, crud_deleteFragment, crud_getAllFragments_fromSpecificDoc, crud_getDocument, crud_getFragment} from './CRUD.js';
 
 import { JSDOM } from 'jsdom';
 
@@ -140,7 +140,7 @@ export async function docAdd_autoFrag(filepath) {
  * @return {Object.<string, Array<String|BinaryData>>} 
  */
 export async function getKnownFragmentsFromDoc(doc_id){
-    const rawFragList = await crud_getAllFragments(doc_id)
+    const rawFragList = await crud_getAllFragments_fromSpecificDoc(doc_id)
     let htmlfragList = []
     let binaryfragList = []
 
