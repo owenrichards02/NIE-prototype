@@ -407,21 +407,50 @@ export async function tagDocument(docid, tag){const res = await crud_TagDocument
 export async function tagFragment(fragid, tag){const res = await crud_TagFragment(fragid, tag); return res}
 
 
+/**
+ * Retrieves all documents tagged with AT LEAST ONE of the tags in tagList.
+ *
+ * @export
+ * @param {Array<string>} tagList
+ * @return {Array<object>} docs
+ */
 export async function getDocumentsByTagListOR(tagList){
     const docs = await crud_searchForDocsByTagListOR(tagList)
     return docs
 }
 
+/**
+ * Retrieves all documents tagged with ALL of the tags in tagList.
+ *
+ * @export
+ * @param {Array<string>} tagList
+ * @return {Array<object>} docs
+ */
 export async function getDocumentsByTagListAND(tagList){
     const docs = await crud_searchForDocsByTagListAND(tagList)
     return docs
 }
 
+/**
+ * Retrieves all fragments tagged with AT LEAST ONE of the tags in tagList.
+ *
+ * @export
+ * @param {Array<string>} tagList
+ * @return {Array<object>} docs
+ */
 export async function getFragmentsByTagListOR(tagList){
     const frags = await crud_searchForFragsByTagListOR(tagList)
     return frags
 }
 
+
+/**
+ * Retrieves all fragments tagged with ALL of the tags in tagList.
+ *
+ * @export
+ * @param {Array<string>} tagList
+ * @return {Array<object>} docs
+ */
 export async function getFragmentsByTagListAND(tagList){
     const frags = await crud_searchForFragsByTagListAND(tagList)
     return frags
