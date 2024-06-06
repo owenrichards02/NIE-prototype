@@ -28,7 +28,7 @@ export async function transcriptToHTML(filepath, interviewID){
         const speakerTime = tsLines[i].split("  ")[1]
         const speech = tsLines[i+1]
         //ignore blank line
-        html += '<p class="speaker"><b>' + speakerName + '</b>: ' + speakerTime + '</p>\n'
+        html += '<p class="speaker"><b>' + speakerName + '</b></p><p class="timestamp">' + speakerTime + '</p>\n'
         html += '<p class="speech">' + speech + '</p>\n'
 
 
