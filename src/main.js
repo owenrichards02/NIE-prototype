@@ -24,7 +24,8 @@ async function main(){
     const send_html = await gethtmlFromFile(filepath)
     const f_id = await fragmentAdd_html(send_html, 'doc1', "Example PDF HTML section", "html")
 
-    const return_html = await fragmentRetrieve(f_id)
+    const return_frag = await fragmentRetrieve(f_id)
+    const return_html = return_frag.html
     writehtmlBacktoFile(return_html, "./resources/return.html") */
     //console.log("HTML:", return_html)
 }

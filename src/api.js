@@ -146,9 +146,9 @@ export async function getKnownFragmentsFromDoc(doc_id){
 
     for (const frag of rawFragList){
         if (frag.html != null){
-            htmlfragList.push(frag.html)
+            htmlfragList.push(frag)
         }else{
-            binaryfragList.push(frag.data)
+            binaryfragList.push(frag)
         }
     }
 
@@ -266,13 +266,7 @@ export async function fragmentAdd_data(data, docid, fragName="testFragment", typ
 export async function fragmentRetrieve(id) { 
 
     const newfrag = await crud_getFragment(id)
-    if(newfrag.html != null){
-        return newfrag.html
-    }else if(newfrag.data != null){
-        return newfrag.data
-    }else{
-        throw error("No binary data or html within this fragment")
-    }
+    return newfrag
      
 }
 
@@ -288,13 +282,7 @@ export async function fragmentRetrieve(id) {
 export async function docRetrieve(id) { 
 
     const newDoc = await crud_getDocument(id)
-    if(newDoc.html != null){
-        return newDoc.html
-    }else if(newDoc.data != null){
-        return newDoc.data
-    }else{
-        throw error("No binary data or html within this fragment")
-    }
+    return newDoc
 }
 
 
@@ -332,7 +320,11 @@ export async function searchByAttribute(docid, attribute){
 
     let matches = []
     const doc = await docRetrieve(docid)
-    matches = await HTMLByAttribute(doc, attribute)
+    if (doc.html!=null){
+        matches = await HTMLByAttribute(doc.html, attribute)
+    }else{
+        console.error("File has no HTML content: " + docid)
+    }
 
     return matches
 
@@ -351,7 +343,12 @@ export async function searchByAttributeValue(docid, attribute, value){
 
     let matches = []
     const doc = await docRetrieve(docid)
-    matches = await HTMLByAttributeValue(doc, attribute, value)
+
+    if (doc.html!=null){
+        matches = await HTMLByAttributeValue(doc, attribute, value)
+    }else{
+        console.error("File has no HTML content: " + docid)
+    }
 
     return matches
     
@@ -373,7 +370,12 @@ export async function searchByAttributeValue(docid, attribute, value){
 export async function searchByTagValue(docid, tag, value, t_class=null){
     let matches = []
     const doc = await docRetrieve(docid)
-    matches = await HTMLByTagValueContains(doc, tag, value, t_class)
+
+    if (doc.html!=null){
+        matches = await HTMLByTagValueContains(doc, tag, value, t_class)
+    }else{
+        console.error("File has no HTML content: " + docid)
+    }
 
     return matches
 }
