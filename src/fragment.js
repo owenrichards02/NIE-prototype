@@ -3,15 +3,7 @@ import { excelSurveyToHTML } from "./surveyConversion.js";
 import { transcriptToHTML } from "./transcriptConversion.js";
 
 
-
-/**
- * Finds all HTML tags containing text and returns them, in a list of html tags
- *
- * @export
- * @param {string} html
- * @return {Array<string>} 
- */
-export async function extractAllTextualFragments(html){
+export function extractAllTextualFragments(html){
     const $ = load(html, null, true)
 
     const outer = $("*").first().html().split('\n').filter(n => n)
@@ -29,15 +21,6 @@ export async function extractAllTextualFragments(html){
     //keeping outerHTML so that the fragments can be easily highlighted/selected
 }
 
-
-/**
- * Searches html representations of the .xlsx survey format, returning all questions and response pairs, denoted by the .qna class.
- * Returns a list of html strings
- *
- * @export
- * @param {string} html
- * @return {Array<string} 
- */
 export async function extractAllSurveyQuestions(html){
     const $ = load(html, null, true)
     const outer = $(".qna")
@@ -54,14 +37,6 @@ export async function extractAllSurveyQuestions(html){
     return questions
 }
 
-
-/**
- * Searches html representations of the known .txt transcript otter.ai format, returning all dialogue sections as a list, as dented by the .dialogue class.
- *
- * @export
- * @param {string} html
- * @return {Array<string>} 
- */
 export async function extractAllInterviewDialogueSections(html){
     const $ = load(html, null, true)
     const outer = $(".dialogue")
@@ -79,15 +54,6 @@ export async function extractAllInterviewDialogueSections(html){
 }
 
 
-
-/**
- * Searches html and returns tag sections with a given attribute. Returns an array of html tags.
- *
- * @export
- * @param {string} html
- * @param {string} attribute
- * @return {Array<string>} 
- */
 export async function HTMLByAttribute(html, attribute){
     let searchString = '[' + attribute + ']'
     console.log(searchString)
@@ -104,15 +70,6 @@ export async function HTMLByAttribute(html, attribute){
 }
 
 
-/**
- * Searches html and returns tag sections with a given attribute that matches the given value . Returns an array of html tags.
- *
- * @export
- * @param {string} html
- * @param {string} attribute
- * @param {string} value
- * @return {Array<string>} 
- */
 export async function HTMLByAttributeValue(html, attribute, value){
     let searchString = '[' + attribute + '=\'' + value + '\']'
     console.log(searchString)
@@ -128,17 +85,6 @@ export async function HTMLByAttributeValue(html, attribute, value){
     return matches
 }
 
-
-/**
- * Searches html and returns tag sections where the value between the tag holds a certain value. Returns an array of html tags.
- *
- * @export
- * @param {string} html
- * @param {string} tag
- * @param {string} value
- * @param {string} t_class
- * @return {Array<string>} 
- */
 export async function HTMLByTagValueContains(html, tag, value, t_class=null){
     let searchString = tag
     if (t_class != null){searchString += '.' + t_class}

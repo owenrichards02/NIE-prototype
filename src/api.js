@@ -516,7 +516,7 @@ export async function getAnnotationsBy_TagListAND(tagList){
  * @param {Array<ObjectId>} fragmentIDList
  * @param {Array<string>} [tags=[]]
  * @param {string} [annotationName="New annotation"]
- * @return {<ObjectId} insertedID 
+ * @return {ObjectId} insertedID 
  */
 export async function createAnnotation(htmlContent, fragmentIDList, tags=[], annotationName="New annotation"){
     const newAnnot = {
@@ -541,4 +541,41 @@ export async function createAnnotation(htmlContent, fragmentIDList, tags=[], ann
 export async function getAnnotationsForASpecificFragment(fragmentID){
     const annotations = await crud_getAllAnnotations_fromSpecificFragment(newAnnot)
     return annotations
+}
+
+
+/**
+ * Finds all HTML tags containing text and returns them, in a list of html tags
+ *
+ * @export
+ * @param {string} html
+ * @return {Array<string>} 
+ */
+export function HTML_2_Textual_Fragments(html){
+    return extractAllTextualFragments(html)
+}
+
+
+/**
+ * Searches html representations of the .xlsx survey format, returning all questions and response pairs, denoted by the .qna class.
+ * Returns a list of html strings
+ *
+ * @export
+ * @param {string} html
+ * @return {Array<string>} 
+ */
+export function HTML_2_Dialogue_List(html){
+    return extractAllInterviewDialogueSections(html)
+}
+
+
+/**
+ * Searches html representations of the known .txt transcript otter.ai format, returning all dialogue sections as a list, as dented by the .dialogue class.
+ *
+ * @export
+ * @param {string} html
+ * @return {Array<string>} 
+ */
+export function HTML_2_QnA_List(html){
+    return extractAllSurveyQuestions(html)
 }
