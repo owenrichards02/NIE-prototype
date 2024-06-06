@@ -1,5 +1,5 @@
 import { ObjectId } from "bson"
-import { deleteDoc, deleteFrag, docAdd, docAdd_autoFrag, docRetrieve, fragmentAdd_data, fragmentAdd_html, fragmentRetrieve, getKnownFragmentsFromDoc, searchByAttributeValue } from "./api.js"
+import { deleteDoc, deleteFrag, docAdd, docAdd_autoFrag, docRetrieve, fragmentAdd_data, fragmentAdd_html, fragmentRetrieve, getKnownFragmentsFromDoc, searchByAttributeValue, tagDocument } from "./api.js"
 import { getBinaryFromFile, gethtmlFromFile, writehtmlBacktoFile } from "./fileTools.js"
 
 async function main(){
@@ -62,9 +62,9 @@ async function queryingMain(){
 
     const id = await docAdd("./resources/survey_example.xlsx")
 
-    const matches = await searchByAttributeValue(id, "data-responseID", "R_3nT6Y0Sm27iTPaF")
+    tagDocument(id, "Volunteering")
 
-    console.log(matches)
+    //console.log(matches)
 }
 
 queryingMain()

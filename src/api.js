@@ -1,4 +1,4 @@
-import { crud_addNewDocument, crud_addNewFragment, crud_deleteDoc, crud_deleteFragment, crud_getAllFragments_fromSpecificDoc, crud_getDocument, crud_getFragment} from './CRUD.js';
+import { crud_TagDocument, crud_TagFragment, crud_addNewDocument, crud_addNewFragment, crud_deleteDoc, crud_deleteFragment, crud_getAllFragments_fromSpecificDoc, crud_getDocument, crud_getFragment} from './CRUD.js';
 
 import { JSDOM } from 'jsdom';
 
@@ -161,7 +161,7 @@ export async function getKnownFragmentsFromDoc(doc_id){
 }
 
 //dont use this directly
-async function docAdd_data(data, filepath, type) { 
+async function docAdd_data(data, filepath, type, tags=[]) { 
 
     const filename = filepath.split("/").at(-1)
 
@@ -169,7 +169,8 @@ async function docAdd_data(data, filepath, type) {
         name: filename,
         data: data,
         html: null,
-        type: type
+        type: type,
+        tags: tags
     }
 
     const id = await crud_addNewDocument(newdoc)
@@ -178,7 +179,7 @@ async function docAdd_data(data, filepath, type) {
 }
 
 //dont use this directly
-async function docAdd_html(html, filepath, type) {
+async function docAdd_html(html, filepath, type, tags=[]) {
 
     const filename = filepath.split("/").at(-1)
 
@@ -186,7 +187,8 @@ async function docAdd_html(html, filepath, type) {
         name: filename,
         data: null,
         html: html,
-        type: type
+        type: type,
+        tags: tags
     }
 
     const id = await crud_addNewDocument(newdoc)
@@ -204,7 +206,7 @@ async function docAdd_html(html, filepath, type) {
  * @param {string} [fragName="testFragment"]
  * @return {ObjectId} 
  */
-export async function fragmentAdd_html(html, docid, fragName="testFragment", type, coords = null) {
+export async function fragmentAdd_html(html, docid, fragName="testFragment", type, coords = null, tags=[]) {
 
     //image embed removed, to avoid data duplication
     //source can be retrieved from the original docid.
@@ -219,7 +221,8 @@ export async function fragmentAdd_html(html, docid, fragName="testFragment", typ
         html: altHtml,
         data: null,
         type: type,
-        coords: coords
+        coords: coords,
+        tags: tags
     }
 
     const id = await crud_addNewFragment(newfrag)
@@ -239,14 +242,15 @@ export async function fragmentAdd_html(html, docid, fragName="testFragment", typ
  * @param {string} [fragName="testFragment"]
  * @return {ObjectId} 
  */
-export async function fragmentAdd_data(data, docid, fragName="testFragment", type) { 
+export async function fragmentAdd_data(data, docid, fragName="testFragment", type, tags=[]) { 
 
     const newfrag = {
         name: fragName,
         docid: docid,
         html: null,
         data: data,
-        type: type
+        type: type,
+        tags: tags
     }
 
     const id = await crud_addNewFragment(newfrag)
@@ -361,13 +365,13 @@ export async function searchByAttributeValue(docid, attribute, value){
  * Provides the option to specify tag class, for greater refinement.
  *
  * @export
- * @param {*} docid
- * @param {*} tag
- * @param {*} value
- * @param {*} [t_class=null]
+ * @param {ObjectId} docid
+ * @param {string} tag
+ * @param {string} value
+ * @param {string} [t_class=null]
  * @return {*} 
  */
-export async function searchByTagValue(docid, tag, value, t_class=null){
+export async function searchByHTMLTagValue(docid, tag, value, t_class=null){
     let matches = []
     const doc = await docRetrieve(docid)
 
@@ -378,4 +382,43 @@ export async function searchByTagValue(docid, tag, value, t_class=null){
     }
 
     return matches
+}
+
+
+/**
+ * Adds a tag (string) to an existing document. Returns 0 if successful, -1 otherwise.
+ *
+ * @export
+ * @param {ObjectId} docid
+ * @param {string} tag
+ * @return {number} 
+ */
+export async function tagDocument(docid, tag){const res = await crud_TagDocument(docid, tag); return res}
+
+
+/**
+ * Adds a tag (string) to an existing fragment. Returns 0 if successful, -1 otherwise.
+ *
+ * @export
+ * @param {ObjectId} fragid
+ * @param {string} tag
+ * @return {number} 
+ */
+export async function tagFragment(fragid, tag){const res = await crud_TagFragment(fragid, tag); return res}
+
+
+export async function getDocumentsByTagListOR(docid, tag){
+    
+}
+
+export async function getDocumentsByTagListAND(docid, tag){
+    
+}
+
+export async function getFragmentsByTagListOR(docid, tag){
+    
+}
+
+export async function getFragmentsByTagListAND(docid, tag){
+    
 }

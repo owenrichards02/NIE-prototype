@@ -273,6 +273,76 @@ export async function crud_getAllAnnotations_fromSpecificFragment(doc_id){
     */
 }
 
+
+
+
+
+export async function crud_TagDocument(docid, tag){
+    let mongoClient;
+ 
+    try {
+        mongoClient = await connectToDB(mdb_uri)
+        const db = mongoClient.db('nie');
+        const collection = db.collection('documents');
+
+        const doc = await collection.findOne({_id: docid})
+        let tagsList = doc.tags
+        tagsList.push(tag)
+
+        await collection.updateOne({_id: docid},
+            {
+                $set: {
+                    tags: tagsList
+                }
+            }
+        )
+
+    } catch (error) {
+        console.error('Could not retrieve/update the document:', error);
+        return -1
+   
+    }finally { 
+        await mongoClient.close();
+    }
+
+    return 0
+}
+
+export async function crud_TagFragment(fragid, tag){
+    let mongoClient;
+ 
+    try {
+        mongoClient = await connectToDB(mdb_uri)
+        const db = mongoClient.db('nie');
+        const collection = db.collection('fragments');
+
+        const frag = await collection.findOne({_id: fragid})
+        let tagsList = frag.tags
+        tagsList.push(tag)
+
+        await collection.updateOne({_id: fragid},
+            {
+                $set: {
+                    tags: tagsList
+                }
+            }
+        )
+
+    } catch (error) {
+        console.error('Could not retrieve/update the document:', error);
+        return -1
+   
+    }finally { 
+        await mongoClient.close();
+    }
+
+    return 0
+}
+
+
+
+
+
 async function main(){
     let id = new ObjectId("665ddaa530da81e06e5c5639")
     const frags = await crud_getAllFragments_fromSpecificDoc(id)
