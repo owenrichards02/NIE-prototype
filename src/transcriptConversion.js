@@ -49,4 +49,4 @@ async function testMain(){
     writehtmlBacktoFile(html, "./resources/return_transcript.html")
 }
 
-testMain()
+//testMain()
