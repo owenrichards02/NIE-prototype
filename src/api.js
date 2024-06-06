@@ -23,7 +23,7 @@ import { sep } from 'path';
  * @param {string} filepath
  * @return {ObjectId} id
  */
-export async function docAdd(filepath) { 
+export async function document_add(filepath) { 
 
     if (!(existsSync(filepath))){
         throw new Error("File not found at " + filepath)
@@ -34,25 +34,25 @@ export async function docAdd(filepath) {
     
     if (extension == 'html'){
         const thishtml = await gethtmlFromFile(filepath)
-        id = await docAdd_html(thishtml, filepath, "html")
+        id = await document_add_html(thishtml, filepath, "html")
 
     }else if (extension == "png" || extension == "jpg" || extension == "gif"){
         const thishtml = imageToHTML(filepath)
-        id = await docAdd_html(thishtml, filepath, "image")
+        id = await document_add_html(thishtml, filepath, "image")
 
     }else if (extension == "xlsx"){
         let surveyId = "SURVEY_ID" //need to get this from the user somehow
         const thishtml = excelSurveyToHTML(filepath, surveyId)
-        id = await docAdd_html(thishtml, filepath, "survey")
+        id = await document_add_html(thishtml, filepath, "survey")
 
     }else if (extension == "txt"){
         let interviewID = "INTERVIEW_ID" //need to get this from the user somehow
         const thishtml = transcriptToHTML(filepath, interviewID)
-        id = await docAdd_html(thishtml, filepath, "transcript")
+        id = await document_add_html(thishtml, filepath, "transcript")
 
     }else {
         const thisdata = await getBinaryFromFile(filepath)
-        id = await docAdd_data(thisdata, filepath, "unknown")
+        id = await document_add_data(thisdata, filepath, "unknown")
     }
     return id
 }
@@ -66,7 +66,7 @@ export async function docAdd(filepath) {
  * @param {string} filepath
  * @return {Array.<ObjectId|Array.<ObjectId>>} 
  */
-export async function docAdd_autoFrag(filepath) { 
+export async function document_add_autoFrag(filepath) { 
 
     if (!(existsSync(filepath))){
         throw new Error("File not found at " + filepath)
@@ -78,32 +78,32 @@ export async function docAdd_autoFrag(filepath) {
     let fragIds = []
     if (extension == 'html'){
         const thishtml = await gethtmlFromFile(filepath)
-        id = await docAdd_html(thishtml, filepath, "html")
+        id = await document_add_html(thishtml, filepath, "html")
 
         const frags = await extractAllTextualFragments(thishtml)
         console.log(frags)
         for (const frag of frags){
-            const fragId = await fragmentAdd_html(frag, id, "Auto-extracted html fragment: " + filepath.split(sep), "html")
+            const fragId = await fragment_add_html(frag, id, "Auto-extracted html fragment: " + filepath.split(sep), "html")
             fragIds.push(fragId)
         }
 
     }else if(extension=="png" || extension=="jpg" || extension=="gif"){
         //auto add entire image as a fragment
         const thishtml = imageToHTML(filepath)
-        id = await docAdd_html(thishtml, filepath, "image")
+        id = await document_add_html(thishtml, filepath, "image")
 
-        const fragid = await fragmentAdd_html(null, id, "Whole image: " + filepath.split(sep), "image", null)
+        const fragid = await fragment_add_html(null, id, "Whole image: " + filepath.split(sep), "image", null)
         fragIds.push(fragid)
 
 
     }else if(extension == "xlsx"){
         let surveyId = "SURVEY_ID" //need to get this from the user somehow
         const thishtml = excelSurveyToHTML(filepath, surveyId)
-        id = await docAdd_html(thishtml, filepath, "survey")
+        id = await document_add_html(thishtml, filepath, "survey")
 
         const frags = await extractAllSurveyQuestions(thishtml)
         for (const frag of frags){
-            const fragId = await fragmentAdd_html(frag, id, "Auto-extracted survey question: " + filepath.split(sep), "survey")
+            const fragId = await fragment_add_html(frag, id, "Auto-extracted survey question: " + filepath.split(sep), "survey")
             fragIds.push(fragId)
         }
     
@@ -111,20 +111,20 @@ export async function docAdd_autoFrag(filepath) {
     }else if(extension == "txt"){
         let interviewID = "INTERVIEW_ID" //need to get this from the user somehow
         const thishtml = transcriptToHTML(filepath, interviewID)
-        id = await docAdd_html(thishtml, filepath, "transcript")
+        id = await document_add_html(thishtml, filepath, "transcript")
 
         const frags = await extractAllInterviewDialogueSections(thishtml)
         for (const frag of frags){
-            const fragId = await fragmentAdd_html(frag, id, "Auto-extracted transcript segment: " + filepath.split(sep), "transcript")
+            const fragId = await fragment_add_html(frag, id, "Auto-extracted transcript segment: " + filepath.split(sep), "transcript")
             fragIds.push(fragId)
         }
     
     }else{
         const thisdata = await getBinaryFromFile(filepath)
-        id = await docAdd_data(thisdata, filepath, "unknown")
+        id = await document_add_data(thisdata, filepath, "unknown")
         //add doc as its own fragment
 
-        const fragId = await fragmentAdd_data(thisdata, id, "Auto-extracted data fragment: "  + filepath.split(sep), "unknown")
+        const fragId = await fragment_add_data(thisdata, id, "Auto-extracted data fragment: "  + filepath.split(sep), "unknown")
         fragIds.push(fragId)
     }
 
@@ -139,7 +139,7 @@ export async function docAdd_autoFrag(filepath) {
  * @param {ObjectId} doc_id
  * @return {Object.<string, Array<String|BinaryData>>} 
  */
-export async function getKnownFragmentsFromDoc(doc_id){
+export async function fragments_search_by_linked_document(doc_id){
     const rawFragList = await crud_getAllFragments_fromSpecificDoc(doc_id)
     let htmlfragList = []
     let binaryfragList = []
@@ -161,7 +161,7 @@ export async function getKnownFragmentsFromDoc(doc_id){
 }
 
 //dont use this directly
-async function docAdd_data(data, filepath, type, tags=[]) { 
+async function document_add_data(data, filepath, type, tags=[]) { 
 
     const filename = filepath.split("/").at(-1)
 
@@ -179,7 +179,7 @@ async function docAdd_data(data, filepath, type, tags=[]) {
 }
 
 //dont use this directly
-async function docAdd_html(html, filepath, type, tags=[]) {
+async function document_add_html(html, filepath, type, tags=[]) {
 
     const filename = filepath.split("/").at(-1)
 
@@ -206,7 +206,7 @@ async function docAdd_html(html, filepath, type, tags=[]) {
  * @param {string} [fragName="testFragment"]
  * @return {ObjectId} 
  */
-export async function fragmentAdd_html(html, docid, fragName="testFragment", type, coords = null, tags=[]) {
+export async function fragment_add_html(html, docid, fragName="testFragment", type, coords = null, tags=[]) {
 
     //image embed removed, to avoid data duplication
     //source can be retrieved from the original docid.
@@ -242,7 +242,7 @@ export async function fragmentAdd_html(html, docid, fragName="testFragment", typ
  * @param {string} [fragName="testFragment"]
  * @return {ObjectId} 
  */
-export async function fragmentAdd_data(data, docid, fragName="testFragment", type, tags=[]) { 
+export async function fragment_add_data(data, docid, fragName="testFragment", type, tags=[]) { 
 
     const newfrag = {
         name: fragName,
@@ -267,7 +267,7 @@ export async function fragmentAdd_data(data, docid, fragName="testFragment", typ
  * @param {ObjectId} id
  * @return {BinaryData|string} 
  */
-export async function fragmentRetrieve(id) { 
+export async function fragment_find(id) { 
 
     const newfrag = await crud_getItem("fragments", id)
     return newfrag
@@ -282,7 +282,7 @@ export async function fragmentRetrieve(id) {
  * @param {ObjectId} id
  * @return {object} 
  */
-export async function docRetrieve(id) { 
+export async function document_find(id) { 
 
     const newDoc = await crud_getItem("documents", id)
     return newDoc
@@ -296,7 +296,7 @@ export async function docRetrieve(id) {
  * @param {ObjectId} id
  * @return {object} 
  */
-export async function annotationRetrieve(id) { 
+export async function annotation_find(id) { 
 
     const newDoc = await crud_getItem("annotations", id)
     return newDoc
@@ -313,7 +313,7 @@ export async function annotationRetrieve(id) {
  * @param {ObjectId} id
  * @return {DeleteResult} 
  */
-export async function deleteDoc(id){return await crud_deleteDoc(id)}
+export async function document_delete(id){return await crud_deleteDoc(id)}
 
 
 /**
@@ -323,7 +323,7 @@ export async function deleteDoc(id){return await crud_deleteDoc(id)}
  * @param {ObjectId} id
  * @return {DeleteResult} 
  */
-export async function deleteFrag(id){return await crud_deleteFragment(id)}
+export async function fragment_delete(id){return await crud_deleteFragment(id)}
 
 
 /**
@@ -334,10 +334,10 @@ export async function deleteFrag(id){return await crud_deleteFragment(id)}
  * @param {String} attribute
  * @return {Array<String>} 
  */
-export async function searchByAttribute(docid, attribute){
+export async function document_searchContentsFor_HTMLattribute(docid, attribute){
 
     let matches = []
-    const doc = await docRetrieve(docid)
+    const doc = await document_find(docid)
     if (doc.html!=null){
         matches = await HTMLByAttribute(doc.html, attribute)
     }else{
@@ -357,10 +357,10 @@ export async function searchByAttribute(docid, attribute){
  * @param {String} value
  * @return {Array<String>} 
  */
-export async function searchByAttributeValue(docid, attribute, value){
+export async function document_searchContentsFor_HTMLattributeValue(docid, attribute, value){
 
     let matches = []
-    const doc = await docRetrieve(docid)
+    const doc = await document_find(docid)
 
     if (doc.html!=null){
         matches = await HTMLByAttributeValue(doc, attribute, value)
@@ -385,9 +385,9 @@ export async function searchByAttributeValue(docid, attribute, value){
  * @param {string} [t_class=null]
  * @return {*} 
  */
-export async function searchByHTMLTagValue(docid, tag, value, t_class=null){
+export async function document_searchContentsFor_HTMLTagValue(docid, tag, value, t_class=null){
     let matches = []
-    const doc = await docRetrieve(docid)
+    const doc = await document_find(docid)
 
     if (doc.html!=null){
         matches = await HTMLByTagValueContains(doc, tag, value, t_class)
@@ -407,7 +407,7 @@ export async function searchByHTMLTagValue(docid, tag, value, t_class=null){
  * @param {string} tag
  * @return {number} 
  */
-export async function tagDocument(docid, tag){const res = await crud_TagItem("documents", docid, tag); return res}
+export async function document_addTag(docid, tag){const res = await crud_TagItem("documents", docid, tag); return res}
 
 
 /**
@@ -418,7 +418,7 @@ export async function tagDocument(docid, tag){const res = await crud_TagItem("do
  * @param {string} tag
  * @return {number} 
  */
-export async function tagFragment(fragid, tag){const res = await crud_TagItem("fragments", fragid, tag); return res}
+export async function fragment_addTag(fragid, tag){const res = await crud_TagItem("fragments", fragid, tag); return res}
 
 
 /**
@@ -429,7 +429,7 @@ export async function tagFragment(fragid, tag){const res = await crud_TagItem("f
  * @param {string} tag
  * @return {number} 
  */
-export async function tagAnnotation(fragid, tag){const res = await crud_TagItem("annotations", fragid, tag); return res}
+export async function annotation_addTag(fragid, tag){const res = await crud_TagItem("annotations", fragid, tag); return res}
 
 
 /**
@@ -439,7 +439,7 @@ export async function tagAnnotation(fragid, tag){const res = await crud_TagItem(
  * @param {Array<string>} tagList
  * @return {Array<object>} docs
  */
-export async function getDocuments_ByTagListOR(tagList){
+export async function document_searchByTagsList_OR(tagList){
     const docs = await crud_searchByTagListOR("documents", tagList)
     return docs
 }
@@ -451,7 +451,7 @@ export async function getDocuments_ByTagListOR(tagList){
  * @param {Array<string>} tagList
  * @return {Array<object>} docs
  */
-export async function getDocuments_ByTagListAND(tagList){
+export async function documents_searchByTagsList_AND(tagList){
     const docs = await crud_searchByTagListAND("documents", tagList)
     return docs
 }
@@ -463,7 +463,7 @@ export async function getDocuments_ByTagListAND(tagList){
  * @param {Array<string>} tagList
  * @return {Array<object>} docs
  */
-export async function getFragments_ByTagListOR(tagList){
+export async function fragment_searchByTagsList_OR(tagList){
     const frags = await crud_searchByTagListOR("fragments", tagList)
     return frags
 }
@@ -476,7 +476,7 @@ export async function getFragments_ByTagListOR(tagList){
  * @param {Array<string>} tagList
  * @return {Array<object>} docs
  */
-export async function getFragmentsBy_TagListAND(tagList){
+export async function fragment_searchByTagsList_AND(tagList){
     const frags = await crud_searchByTagListAND("fragments", tagList)
     return frags
 }
@@ -488,7 +488,7 @@ export async function getFragmentsBy_TagListAND(tagList){
  * @param {Array<string>} tagList
  * @return {Array<object>} docs
  */
-export async function getAnnotations_ByTagListOR(tagList){
+export async function annotation_searchByTagList_OR(tagList){
     const frags = await crud_searchByTagListOR("annotations", tagList)
     return frags
 }
@@ -501,7 +501,7 @@ export async function getAnnotations_ByTagListOR(tagList){
  * @param {Array<string>} tagList
  * @return {Array<object>} docs
  */
-export async function getAnnotationsBy_TagListAND(tagList){
+export async function annotation_searchByTagList_AND(tagList){
     const frags = await crud_searchByTagListAND("annotations", tagList)
     return frags
 }
@@ -518,7 +518,7 @@ export async function getAnnotationsBy_TagListAND(tagList){
  * @param {string} [annotationName="New annotation"]
  * @return {ObjectId} insertedID 
  */
-export async function createAnnotation(htmlContent, fragmentIDList, tags=[], annotationName="New annotation"){
+export async function annotation_create(htmlContent, fragmentIDList, tags=[], annotationName="New annotation"){
     const newAnnot = {
         name: annotationName,
         content: htmlContent,
@@ -538,7 +538,7 @@ export async function createAnnotation(htmlContent, fragmentIDList, tags=[], ann
  * @param {ObjectId} fragmentID
  * @return {Array<object>} 
  */
-export async function getAnnotationsForASpecificFragment(fragmentID){
+export async function annotation_search_by_linked_fragmentID(fragmentID){
     const annotations = await crud_getAllAnnotations_fromSpecificFragment(newAnnot)
     return annotations
 }

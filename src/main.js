@@ -1,5 +1,5 @@
 import { ObjectId } from "bson"
-import { deleteDoc, deleteFrag, docAdd, docAdd_autoFrag, docRetrieve, fragmentAdd_data, fragmentAdd_html, fragmentRetrieve, getDocuments_ByTagListAND, getDocuments_ByTagListOR, getKnownFragmentsFromDoc, searchByAttributeValue, tagDocument } from "./api.js"
+import { document_add, fragment_add_data, documents_searchByTagsList_AND, fragments_search_by_linked_document, document_addTag, document_delete, document_add_autoFrag, fragment_delete } from "./api.js"
 import { getBinaryFromFile, gethtmlFromFile, writehtmlBacktoFile } from "./fileTools.js"
 
 async function main(){
@@ -16,9 +16,9 @@ async function main(){
     //const f_id = await fragmentAdd_html("<p>test paragraph, this could be an example of a fragment</p>", docid, "Example PDF HTML section", "html")
     //const f_id2 = await fragmentAdd_html("<h1>Test Heading</h1>", docid, "Example 2 of a PDF HTML section", "html")
 
-    const f_id3 = await fragmentAdd_data(await getBinaryFromFile("./test_img.jpg"), docid, "Example of an image fragment stored as binary data", "image")
+    const f_id3 = await fragment_add_data(await getBinaryFromFile("./test_img.jpg"), docid, "Example of an image fragment stored as binary data", "image")
 
-    const fragList = await getKnownFragmentsFromDoc(docid)
+    const fragList = await fragments_search_by_linked_document(docid)
     console.log(fragList)
 /*     filepath = "./resources/htmlExample.html"
     const send_html = await gethtmlFromFile(filepath)
@@ -41,41 +41,41 @@ async function queryingMain(){
 
 
 
-    /* let [id, fragids] = await docAdd_autoFrag("./resources/htmlExample.html")
+    let [id, fragids] = await document_add_autoFrag("./resources/htmlExample.html")
 
-    let res = await deleteDoc(id)
+    let res = await document_delete(id)
 
-    console.log(res) */
+    console.log(res)
 
     
 
-    /* console.log(id)
-    console.log(fragIds)
+    console.log(id)
+    console.log(fragids)
 
-    const r1 = await deleteDoc(id)
+    const r1 = await document_delete(id)
     console.log(r1)
 
-    for (const fragid of fragIds){
-        const r2 = await deleteFrag(fragid)
+    for (const fragid of fragids){
+        const r2 = await fragment_delete(fragid)
         console.log(r2)
-    } */
+    }
 
-    const id = await docAdd("./resources/survey_example.xlsx")
+    /* const id = await document_add("./resources/survey_example.xlsx")
 
-    await tagDocument(id, "Volunteering")
-    await tagDocument(id, "NHS")
+    await document_addTag(id, "Volunteering")
+    await document_addTag(id, "NHS")
 
-    const docs = await getDocuments_ByTagListAND(["Volunteering", "NHS", "TEst"])
+    const docs = await documents_searchByTagsList_AND(["Volunteering", "NHS", "TEst"])
     console.log(docs)
 
-    await tagDocument(id, "Healthcare")
-    await tagDocument(id, "TEst")
+    await document_addTag(id, "Healthcare")
+    await document_addTag(id, "TEst")
 
 
-    const docs2 = await getDocuments_ByTagListAND(["Volunteering", "NHS", "TEst"])
+    const docs2 = await documents_searchByTagsList_AND(["Volunteering", "NHS", "TEst"])
     console.log(docs2)
 
-    await deleteDoc(id)
+    await document_delete(id) */
 
     //console.log(matches)
 
