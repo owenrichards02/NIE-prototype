@@ -286,7 +286,7 @@ export async function crud_TagDocument(docid, tag){
         const collection = db.collection('documents');
 
         const doc = await collection.findOne({_id: docid})
-        let tagsList = doc.tags
+        let tagsList = await doc.tags
         tagsList.push(tag)
 
         await collection.updateOne({_id: docid},
@@ -317,7 +317,7 @@ export async function crud_TagFragment(fragid, tag){
         const collection = db.collection('fragments');
 
         const frag = await collection.findOne({_id: fragid})
-        let tagsList = frag.tags
+        let tagsList = await frag.tags
         tagsList.push(tag)
 
         await collection.updateOne({_id: fragid},
@@ -337,6 +337,98 @@ export async function crud_TagFragment(fragid, tag){
     }
 
     return 0
+}
+
+
+export async function crud_searchForFragsByTagListOR(tagList){
+    let mongoClient;
+    let frags
+ 
+    try {
+        mongoClient = await connectToDB(mdb_uri)
+        const db = mongoClient.db('nie');
+        const collection = db.collection('fragments');
+
+        frags = await collection.find({tags: { $in : tagList}})
+
+    } catch (error) {
+        console.error('Could not find the relevant frags:', error);
+        return []
+   
+    }finally { 
+        await mongoClient.close();
+    }
+
+    return frags
+}
+
+export async function crud_searchForDocsByTagListOR(tagList){
+    let mongoClient;
+    let docs
+ 
+    try {
+        mongoClient = await connectToDB(mdb_uri)
+        const db = mongoClient.db('nie');
+        const collection = db.collection('documents');
+
+
+        docs = await collection.find({tags: { $in : tagList}}).toArray()
+
+    } catch (error) {
+        console.error('Could not find the relevant docs:', error);
+        return []
+   
+    }finally { 
+        await mongoClient.close();
+    }
+
+    return docs
+}
+
+export async function crud_searchForDocsByTagListAND(tagList){
+    let mongoClient;
+    let docs
+ 
+    try {
+        mongoClient = await connectToDB(mdb_uri)
+        const db = mongoClient.db('nie');
+        const collection = db.collection('documents');
+
+
+        docs = await collection.find({ tags: { $all: tagList } }).toArray()
+
+    } catch (error) {
+        console.error('Could not find the relevant docs:', error);
+        return []
+   
+    }finally { 
+        await mongoClient.close();
+    }
+
+    return docs
+}
+
+export async function crud_searchForFragsByTagListAND(tagList){
+    let mongoClient;
+    let frags
+ 
+    try {
+        mongoClient = await connectToDB(mdb_uri)
+        const db = mongoClient.db('nie');
+        const collection = db.collection('fragments');
+
+
+        frags = await collection.find({ tags: { $all: tagList } }).toArray()
+
+    } catch (error) {
+        console.error('Could not find the relevant frags:', error);
+        return []
+   
+    }finally { 
+        await mongoClient.close();
+    }
+
+    return frags
 }
 
 

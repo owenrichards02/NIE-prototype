@@ -1,4 +1,4 @@
-import { crud_TagDocument, crud_TagFragment, crud_addNewDocument, crud_addNewFragment, crud_deleteDoc, crud_deleteFragment, crud_getAllFragments_fromSpecificDoc, crud_getDocument, crud_getFragment} from './CRUD.js';
+import { crud_TagDocument, crud_TagFragment, crud_addNewDocument, crud_addNewFragment, crud_deleteDoc, crud_deleteFragment, crud_getAllFragments_fromSpecificDoc, crud_getDocument, crud_getFragment, crud_searchForDocsByTagListAND, crud_searchForDocsByTagListOR, crud_searchForFragsByTagListAND, crud_searchForFragsByTagListOR} from './CRUD.js';
 
 import { JSDOM } from 'jsdom';
 
@@ -407,18 +407,22 @@ export async function tagDocument(docid, tag){const res = await crud_TagDocument
 export async function tagFragment(fragid, tag){const res = await crud_TagFragment(fragid, tag); return res}
 
 
-export async function getDocumentsByTagListOR(docid, tag){
-    
+export async function getDocumentsByTagListOR(tagList){
+    const docs = await crud_searchForDocsByTagListOR(tagList)
+    return docs
 }
 
-export async function getDocumentsByTagListAND(docid, tag){
-    
+export async function getDocumentsByTagListAND(tagList){
+    const docs = await crud_searchForDocsByTagListAND(tagList)
+    return docs
 }
 
-export async function getFragmentsByTagListOR(docid, tag){
-    
+export async function getFragmentsByTagListOR(tagList){
+    const frags = await crud_searchForFragsByTagListOR(tagList)
+    return frags
 }
 
-export async function getFragmentsByTagListAND(docid, tag){
-    
+export async function getFragmentsByTagListAND(tagList){
+    const frags = await crud_searchForFragsByTagListAND(tagList)
+    return frags
 }
