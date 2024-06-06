@@ -539,7 +539,7 @@ export async function annotation_create(htmlContent, fragmentIDList, tags=[], an
  * @return {Array<object>} 
  */
 export async function annotation_search_by_linked_fragmentID(fragmentID){
-    const annotations = await crud_getAllAnnotations_fromSpecificFragment(newAnnot)
+    const annotations = await crud_getAllAnnotations_fromSpecificFragment(fragmentID)
     return annotations
 }
 

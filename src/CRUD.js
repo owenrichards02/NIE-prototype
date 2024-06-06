@@ -178,14 +178,14 @@ export async function crud_getAllAnnotations_fromSpecificFragment(fragment_id){
     */
 
     let mongoClient;
-    let frags
+    let annotations
  
     try {
         mongoClient = await connectToDB(mdb_uri)
         const db = mongoClient.db('nie');
         const collection_a = db.collection('annotations');
 
-        annotations = await collection_a.find({linkedFragments: { $in : fragment_id}})
+        annotations = await collection_a.find({linkedFragments: { $in : fragment_id}}).toArray()
 
     } catch (error) {
         console.error('Could not find the relevant frags:', error);
@@ -195,7 +195,7 @@ export async function crud_getAllAnnotations_fromSpecificFragment(fragment_id){
         await mongoClient.close();
     }
 
-    return frags
+    return annotations
 }
 
 
