@@ -372,11 +372,12 @@ export async function document_searchContentsFor_HTMLattributeValue(docid, attri
     
 }
 
-
 /**
  *
  * Searches through a registered html document for html sections with matching tag-value pairs. Returns a list of the tag sections that match.
  * Provides the option to specify tag class, for greater refinement.
+ * 
+ * Leaving the value field null means all matching tags, regardless of tag-value will be returned.
  *
  * @export
  * @param {ObjectId} docid
@@ -385,12 +386,16 @@ export async function document_searchContentsFor_HTMLattributeValue(docid, attri
  * @param {string} [t_class=null]
  * @return {*} 
  */
-export async function document_searchContentsFor_HTMLTagValue(docid, tag, value, t_class=null){
+export async function document_searchContentsFor_HTMLTagValue(docid, tag, value=null, t_class=null){
     let matches = []
     const doc = await document_find(docid)
 
     if (doc.html!=null){
-        matches = await HTMLByTagValueContains(doc, tag, value, t_class)
+        if (value != null){
+            matches = await HTMLByTagValueContains(doc, tag, value, t_class)
+        }else{
+            matches = await HTMLByTag(doc,tag,t_class)
+        }
     }else{
         console.error("File has no HTML content: " + docid)
     }
@@ -616,7 +621,7 @@ export async function getAllAnswersToASpecificQuestion(doc_id, questionName){
 }
 
 /**
- * Get HTML tags containing each answer to a specific survey question. Provide the document ID of the survey, and the name of the question you would like to query.
+ * Get HTML tags containing each dialogue section from a specific speaker. Provide the document ID of the transcript, and the name of the speaker you would like to query.
  * 
  *
  * @export
@@ -634,7 +639,7 @@ export async function getAllDialogueFromASpecificSpeaker(doc_id, speakerName){
     }else{
         const html = await doc.html
 
-        const sections = await HTMLByTagValueContains(html,"li",speakerName,"dialogue" )
+        const sections = await HTMLByTagValueContains(html,"li",speakerName,"dialogue")
 
         for (const sect of sections){
             const dialogue = await HTMLByTag(sect, "p", "speech")
