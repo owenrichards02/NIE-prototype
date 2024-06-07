@@ -3,7 +3,7 @@ import { crud_TagItem, crud_addNewItem, crud_deleteDoc, crud_deleteFragment, cru
 import { JSDOM } from 'jsdom';
 
 import { gethtmlFromFile, getBinaryFromFile, writehtmlBacktoFile } from "./fileTools.js"
-import { HTMLByAttribute, HTMLByAttributeValue, HTMLByTagValueContains, extractAllInterviewDialogueSections, extractAllSurveyQuestions, extractAllTextualFragments } from './fragment.js';
+import { HTMLByAttribute, HTMLByAttributeValue, HTMLByTag, HTMLByTagValueContains, extractAllInterviewDialogueSections, extractAllSurveyQuestions, extractAllTextualFragments } from './fragment.js';
 import { Binary, ObjectId } from 'bson';
 import { imageToHTML } from './imageConversion.js';
 import { excelSurveyToHTML } from './surveyConversion.js';
@@ -578,4 +578,39 @@ export function HTML_2_Dialogue_List(html){
  */
 export function HTML_2_QnA_List(html){
     return extractAllSurveyQuestions(html)
+}
+
+
+
+/**
+ * Get HTML tags containing each answer to a specific survey question. Provide the document ID of the survey, and the name of the question you would like to query.
+ * 
+ *
+ * @export
+ * @param {ObjectId} doc_id
+ * @param {string} questionName
+ * @return {Array<string>} questionList [HTML String]
+ */
+export async function getAllAnswersToASpecificQuestion(doc_id, questionName){
+    const doc = await document_find(doc_id)
+
+    let questionList = []
+
+    if (doc.type != "survey"){
+        console.error("Wrong doc type! It must be a survey.")
+    }else{
+        const html = await doc.html
+
+        const qnas = await HTMLByTagValueContains(html,"li",questionName,"qna" )
+
+        for (const qna of qnas){
+            const a = await HTMLByTag(qna, "p", "answer")
+            questionList.push(a)
+        }
+        //console.log(qnas)
+
+    }
+
+    return questionList
+
 }

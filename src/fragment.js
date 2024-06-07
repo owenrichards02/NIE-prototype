@@ -101,6 +101,21 @@ export async function HTMLByTagValueContains(html, tag, value, t_class=null){
     return matches
 }
 
+export async function HTMLByTag(html, tag, t_class=null){
+    let searchString = tag
+    if (t_class != null){searchString += '.' + t_class}
+    const $ = load(html, null, true)
+    const outer = $(searchString)
+
+    let matches = []
+    outer.each((index, element) => {
+        var $this = $(element);
+        matches.push($.html($this))
+    })
+
+    return matches
+}
+
 
 async function extractionMain(){
     const html = excelSurveyToHTML("./resources/survey_example.xlsx", "testID")

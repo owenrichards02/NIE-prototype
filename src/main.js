@@ -1,5 +1,5 @@
 import { ObjectId } from "bson"
-import { document_add, fragment_add_data, documents_searchByTagsList_AND, fragments_search_by_linked_document, document_addTag, document_delete, document_add_autoFrag, fragment_delete, annotation_create, annotation_search_by_linked_fragmentID } from "./api.js"
+import { document_add, fragment_add_data, documents_searchByTagsList_AND, fragments_search_by_linked_document, document_addTag, document_delete, document_add_autoFrag, fragment_delete, annotation_create, annotation_search_by_linked_fragmentID, getAllAnswersToASpecificQuestion } from "./api.js"
 import { getBinaryFromFile, gethtmlFromFile, writehtmlBacktoFile } from "./fileTools.js"
 
 async function main(){
@@ -41,13 +41,13 @@ async function queryingMain(){
 
 
 
-    let [id, fragids] = await document_add_autoFrag("./resources/htmlExample.html")
+    /* let [id, fragids] = await document_add_autoFrag("./resources/htmlExample.html")
 
     const annotationid = await annotation_create("<h1>Breaking News</h1><p>This is an annotation</p>", fragids, "NHS", "Test Annotation")
 
     const annotations = await annotation_search_by_linked_fragmentID([fragids[0]])
 
-    console.log(annotations)
+    console.log(annotations) */
 
    /*  let res = await document_delete(id)
 
@@ -85,8 +85,11 @@ async function queryingMain(){
 
     //console.log(matches)
 
+    const id = await document_add("./resources/survey_example.xlsx")
 
+    const answers = await getAllAnswersToASpecificQuestion(id, "Q8")
 
+    console.log(answers)
 }
 
 queryingMain()
