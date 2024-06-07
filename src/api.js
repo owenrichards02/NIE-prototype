@@ -596,7 +596,7 @@ export function HTML_2_QnA_List(html){
  * @param {string} questionName
  * @return {Array<string>} questionList [HTML String]
  */
-export async function getAllAnswersToASpecificQuestion(doc_id, questionName){
+export async function survey_AnswersToASpecificQuestion(doc_id, questionName){
     const doc = await document_find(doc_id)
 
     let questionList = []
@@ -629,7 +629,7 @@ export async function getAllAnswersToASpecificQuestion(doc_id, questionName){
  * @param {string} speakerName
  * @return {Array<string>} questionList [HTML String]
  */
-export async function getAllDialogueFromASpecificSpeaker(doc_id, speakerName){
+export async function transcript_DialogueFromASpecificSpeaker(doc_id, speakerName){
     const doc = await document_find(doc_id)
 
     let dialogueList = []
