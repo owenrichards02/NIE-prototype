@@ -47,7 +47,7 @@ export async function document_add(filepath) {
 
     }else if (extension == "txt"){
         let interviewID = "INTERVIEW_ID" //need to get this from the user somehow
-        const thishtml = transcriptToHTML(filepath, interviewID)
+        const thishtml = await transcriptToHTML(filepath, interviewID)
         id = await document_add_html(thishtml, filepath, "transcript")
 
     }else {
@@ -110,7 +110,7 @@ export async function document_add_autoFrag(filepath) {
 
     }else if(extension == "txt"){
         let interviewID = "INTERVIEW_ID" //need to get this from the user somehow
-        const thishtml = transcriptToHTML(filepath, interviewID)
+        const thishtml = await transcriptToHTML(filepath, interviewID)
         id = await document_add_html(thishtml, filepath, "transcript")
 
         const frags = await extractAllInterviewDialogueSections(thishtml)
@@ -605,12 +605,43 @@ export async function getAllAnswersToASpecificQuestion(doc_id, questionName){
 
         for (const qna of qnas){
             const a = await HTMLByTag(qna, "p", "answer")
-            questionList.push(a)
+            questionList.push(a[0])
         }
         //console.log(qnas)
 
     }
 
     return questionList
+
+}
+
+/**
+ * Get HTML tags containing each answer to a specific survey question. Provide the document ID of the survey, and the name of the question you would like to query.
+ * 
+ *
+ * @export
+ * @param {ObjectId} doc_id
+ * @param {string} speakerName
+ * @return {Array<string>} questionList [HTML String]
+ */
+export async function getAllDialogueFromASpecificSpeaker(doc_id, speakerName){
+    const doc = await document_find(doc_id)
+
+    let dialogueList = []
+
+    if (doc.type != "transcript"){
+        console.error("Wrong doc type! It must be a transcript. : " + doc.type)
+    }else{
+        const html = await doc.html
+
+        const sections = await HTMLByTagValueContains(html,"li",speakerName,"dialogue" )
+
+        for (const sect of sections){
+            const dialogue = await HTMLByTag(sect, "p", "speech")
+            dialogueList.push(dialogue[0])
+        }
+    }
+
+    return dialogueList
 
 }
