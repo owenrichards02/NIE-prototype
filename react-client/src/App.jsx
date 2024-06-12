@@ -6,6 +6,7 @@ import { ObjectId } from 'bson';
 import './App.css'
 //import { document_add } from './api/react_api';
 import FileUploader from './FileUploader';
+import ItemList from './ItemList';
 
 function App() {
 
@@ -37,6 +38,7 @@ function App() {
 
 
       <FileUploader></FileUploader>
+      <ItemList></ItemList>
     </>
   )
 }
