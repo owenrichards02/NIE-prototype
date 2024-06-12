@@ -1,135 +1,8 @@
-import { crud_TagItem, crud_addNewItem, crud_deleteDoc, crud_deleteFragment, crud_getAllAnnotations_fromSpecificFragment, crud_getAllFragments_fromSpecificDoc, crud_getItem, crud_searchByTagListAND, crud_searchByTagListOR} from './CRUD.js';
-
-import { JSDOM } from 'jsdom';
-
-import { gethtmlFromFile, getBinaryFromFile, writehtmlBacktoFile } from "./fileTools.js"
-import { HTMLByAttribute, HTMLByAttributeValue, HTMLByTag, HTMLByTagValueContains, extractAllInterviewDialogueSections, extractAllSurveyQuestions, extractAllTextualFragments } from './fragment.js';
+import { HTMLByAttribute, HTMLByAttributeValue, HTMLByTag, HTMLByTagValueContains } from './fragment.js';
 import { Binary, ObjectId } from 'bson';
-import { imageToHTML } from './imageConversion.js';
-import { excelSurveyToHTML } from './surveyConversion.js';
-import { transcriptToHTML } from './transcriptConversion.js';
 
-import { existsSync } from 'fs';
-import { sep } from 'path';
+import { realm_addNewItem, realm_deleteDocument, realm_deleteFragment, realm_getAllAnnotations_fromSpecificFragment, realm_getAllFragments_fromSpecificDoc, realm_getItem, realm_searchByTagList_AND, realm_searchByTagList_OR, realm_tagItem } from './realm_CRUD.js';
 
-
-/**
- * Stores a document in the documents container.
- * Returns the id mongodb assigned to the document.
- * Keeps HTML native, embeds images, excel survey responses, and .txt interview transcripts in HTML, 
- * and stores other file types as binary
- *
- * @export
- * @param {string} filepath
- * @return {ObjectId} id
- */
-export async function document_add(filepath) { 
-
-    if (!(existsSync(filepath))){
-        throw new Error("File not found at " + filepath)
-    }
-
-    let id
-    let extension = filepath.split(".").at(-1)
-    
-    if (extension == 'html'){
-        const thishtml = await gethtmlFromFile(filepath)
-        id = await document_add_html(thishtml, filepath, "html")
-
-    }else if (extension == "png" || extension == "jpg" || extension == "gif"){
-        const thishtml = imageToHTML(filepath)
-        id = await document_add_html(thishtml, filepath, "image")
-
-    }else if (extension == "xlsx"){
-        let surveyId = "SURVEY_ID" //need to get this from the user somehow
-        const thishtml = excelSurveyToHTML(filepath, surveyId)
-        id = await document_add_html(thishtml, filepath, "survey")
-
-    }else if (extension == "txt"){
-        let interviewID = "INTERVIEW_ID" //need to get this from the user somehow
-        const thishtml = await transcriptToHTML(filepath, interviewID)
-        id = await document_add_html(thishtml, filepath, "transcript")
-
-    }else {
-        const thisdata = await getBinaryFromFile(filepath)
-        id = await document_add_data(thisdata, filepath, "unknown")
-    }
-    return id
-}
-
-
-/**
- * Functionality of docAdd with automatic fragment extraction/storage
- * Auto adds extracted fragments if the doc is html or one of the html-convertible formats, and the doc as its own fragment otherwise.
- * Returns the id mongodb assigned to the document with a list of fragment ids
- * @export
- * @param {string} filepath
- * @return {Array.<ObjectId|Array.<ObjectId>>} 
- */
-export async function document_add_autoFrag(filepath) { 
-
-    if (!(existsSync(filepath))){
-        throw new Error("File not found at " + filepath)
-    }
-
-    let extension = filepath.split(".").at(-1)
-
-    let id = null
-    let fragIds = []
-    if (extension == 'html'){
-        const thishtml = await gethtmlFromFile(filepath)
-        id = await document_add_html(thishtml, filepath, "html")
-
-        const frags = await extractAllTextualFragments(thishtml)
-        console.log(frags)
-        for (const frag of frags){
-            const fragId = await fragment_add_html(frag, id, "Auto-extracted html fragment: " + filepath.split(sep), "html")
-            fragIds.push(fragId)
-        }
-
-    }else if(extension=="png" || extension=="jpg" || extension=="gif"){
-        //auto add entire image as a fragment
-        const thishtml = imageToHTML(filepath)
-        id = await document_add_html(thishtml, filepath, "image")
-
-        const fragid = await fragment_add_html(null, id, "Whole image: " + filepath.split(sep), "image", null)
-        fragIds.push(fragid)
-
-
-    }else if(extension == "xlsx"){
-        let surveyId = "SURVEY_ID" //need to get this from the user somehow
-        const thishtml = excelSurveyToHTML(filepath, surveyId)
-        id = await document_add_html(thishtml, filepath, "survey")
-
-        const frags = await extractAllSurveyQuestions(thishtml)
-        for (const frag of frags){
-            const fragId = await fragment_add_html(frag, id, "Auto-extracted survey question: " + filepath.split(sep), "survey")
-            fragIds.push(fragId)
-        }
-    
-
-    }else if(extension == "txt"){
-        let interviewID = "INTERVIEW_ID" //need to get this from the user somehow
-        const thishtml = await transcriptToHTML(filepath, interviewID)
-        id = await document_add_html(thishtml, filepath, "transcript")
-
-        const frags = await extractAllInterviewDialogueSections(thishtml)
-        for (const frag of frags){
-            const fragId = await fragment_add_html(frag, id, "Auto-extracted transcript segment: " + filepath.split(sep), "transcript")
-            fragIds.push(fragId)
-        }
-    
-    }else{
-        const thisdata = await getBinaryFromFile(filepath)
-        id = await document_add_data(thisdata, filepath, "unknown")
-        //add doc as its own fragment
-
-        const fragId = await fragment_add_data(thisdata, id, "Auto-extracted data fragment: "  + filepath.split(sep), "unknown")
-        fragIds.push(fragId)
-    }
-
-    return [id, fragIds]
-}
 
 
 /** 
@@ -141,7 +14,7 @@ export async function document_add_autoFrag(filepath) {
  * @return {Object.<string, Array<String|BinaryData>>} 
  */
 export async function fragments_search_by_linked_document(doc_id){
-    const rawFragList = await crud_getAllFragments_fromSpecificDoc(doc_id)
+    const rawFragList = await realm_getAllFragments_fromSpecificDoc(doc_id)
     let htmlfragList = []
     let binaryfragList = []
 
@@ -174,7 +47,7 @@ async function document_add_data(data, filepath, type, tags=[]) {
         tags: tags
     }
 
-    const id = await crud_addNewItem("documents",newdoc)
+    const id = await realm_addNewItem("documents", newdoc)
 
     return id
 }
@@ -191,7 +64,7 @@ export async function document_add_html(html, filepath, type, tags=[]) {
         tags: tags
     }
 
-    const id = await crud_addNewItem("documents", newdoc)
+    const id = await realm_addNewItem("documents", newdoc)
 
     return id
 }
@@ -210,7 +83,7 @@ export async function fragment_add_html(html, docid, fragName="testFragment", ty
 
     //image embed removed, to avoid data duplication
     //source can be retrieved from the original docid.
-    const altHtml = html
+    let altHtml = html
     if (type=="image"){
         altHtml = null
     }
@@ -225,7 +98,7 @@ export async function fragment_add_html(html, docid, fragName="testFragment", ty
         tags: tags
     }
 
-    const id = await crud_addNewItem("fragments", newfrag)
+    const id = await realm_addNewItem("fragments", newfrag)
 
     return id
 }
@@ -253,7 +126,7 @@ export async function fragment_add_data(data, docid, fragName="testFragment", ty
         tags: tags
     }
 
-    const id = await crud_addNewItem("fragments", newfrag)
+    const id = await realm_addNewItem("fragments", newfrag)
 
     return id
 }
@@ -269,7 +142,7 @@ export async function fragment_add_data(data, docid, fragName="testFragment", ty
  */
 export async function fragment_find(id) { 
 
-    const newfrag = await crud_getItem("fragments", id)
+    const newfrag = await realm_getItem("fragments", id)
     return newfrag
      
 }
@@ -284,7 +157,7 @@ export async function fragment_find(id) {
  */
 export async function document_find(id) { 
 
-    const newDoc = await crud_getItem("documents", id)
+    const newDoc = await realm_getItem("documents", id)
     return newDoc
 }
 
@@ -298,7 +171,7 @@ export async function document_find(id) {
  */
 export async function annotation_find(id) { 
 
-    const newDoc = await crud_getItem("annotations", id)
+    const newDoc = await realm_getItem("annotations", id)
     return newDoc
 }
 
@@ -313,7 +186,7 @@ export async function annotation_find(id) {
  * @param {ObjectId} id
  * @return {DeleteResult} 
  */
-export async function document_delete(id){return await crud_deleteDoc(id)}
+export async function document_delete(id){return await realm_deleteDocument(id)}
 
 
 /**
@@ -323,7 +196,7 @@ export async function document_delete(id){return await crud_deleteDoc(id)}
  * @param {ObjectId} id
  * @return {DeleteResult} 
  */
-export async function fragment_delete(id){return await crud_deleteFragment(id)}
+export async function fragment_delete(id){return await realm_deleteFragment(id)}
 
 
 /**
@@ -412,7 +285,7 @@ export async function document_searchContentsFor_HTMLTagValue(docid, tag, value=
  * @param {string} tag
  * @return {number} 
  */
-export async function document_addTag(docid, tag){const res = await crud_TagItem("documents", docid, tag); return res}
+export async function document_addTag(docid, tag){const res = await realm_tagItem("documents", docid, tag); return res}
 
 
 /**
@@ -423,7 +296,7 @@ export async function document_addTag(docid, tag){const res = await crud_TagItem
  * @param {string} tag
  * @return {number} 
  */
-export async function fragment_addTag(fragid, tag){const res = await crud_TagItem("fragments", fragid, tag); return res}
+export async function fragment_addTag(fragid, tag){const res = await realm_tagItem("fragments", fragid, tag); return res}
 
 
 /**
@@ -434,7 +307,7 @@ export async function fragment_addTag(fragid, tag){const res = await crud_TagIte
  * @param {string} tag
  * @return {number} 
  */
-export async function annotation_addTag(fragid, tag){const res = await crud_TagItem("annotations", fragid, tag); return res}
+export async function annotation_addTag(fragid, tag){const res = await realm_tagItem("annotations", fragid, tag); return res}
 
 
 /**
@@ -445,7 +318,7 @@ export async function annotation_addTag(fragid, tag){const res = await crud_TagI
  * @return {Array<object>} docs
  */
 export async function document_searchByTagsList_OR(tagList){
-    const docs = await crud_searchByTagListOR("documents", tagList)
+    const docs = await realm_searchByTagList_OR("documents", tagList)
     return docs
 }
 
@@ -457,7 +330,7 @@ export async function document_searchByTagsList_OR(tagList){
  * @return {Array<object>} docs
  */
 export async function documents_searchByTagsList_AND(tagList){
-    const docs = await crud_searchByTagListAND("documents", tagList)
+    const docs = await realm_searchByTagList_AND("documents", tagList)
     return docs
 }
 
@@ -469,7 +342,7 @@ export async function documents_searchByTagsList_AND(tagList){
  * @return {Array<object>} docs
  */
 export async function fragment_searchByTagsList_OR(tagList){
-    const frags = await crud_searchByTagListOR("fragments", tagList)
+    const frags = await realm_searchByTagList_OR("fragments", tagList)
     return frags
 }
 
@@ -482,7 +355,7 @@ export async function fragment_searchByTagsList_OR(tagList){
  * @return {Array<object>} docs
  */
 export async function fragment_searchByTagsList_AND(tagList){
-    const frags = await crud_searchByTagListAND("fragments", tagList)
+    const frags = await realm_searchByTagList_AND("fragments", tagList)
     return frags
 }
 
@@ -494,7 +367,7 @@ export async function fragment_searchByTagsList_AND(tagList){
  * @return {Array<object>} docs
  */
 export async function annotation_searchByTagList_OR(tagList){
-    const frags = await crud_searchByTagListOR("annotations", tagList)
+    const frags = await realm_searchByTagList_OR("annotations", tagList)
     return frags
 }
 
@@ -507,7 +380,7 @@ export async function annotation_searchByTagList_OR(tagList){
  * @return {Array<object>} docs
  */
 export async function annotation_searchByTagList_AND(tagList){
-    const frags = await crud_searchByTagListAND("annotations", tagList)
+    const frags = await realm_searchByTagList_AND("annotations", tagList)
     return frags
 }
 
@@ -531,7 +404,7 @@ export async function annotation_create(htmlContent, fragmentIDList, tags=[], an
         tags: tags,
     }
 
-    const insertedId = await crud_addNewItem("annotations", newAnnot)
+    const insertedId = await realm_addNewItem("annotations", newAnnot)
     return insertedId
 }
 
@@ -544,7 +417,7 @@ export async function annotation_create(htmlContent, fragmentIDList, tags=[], an
  * @return {Array<object>} 
  */
 export async function annotation_search_by_linked_fragmentID(fragmentID){
-    const annotations = await crud_getAllAnnotations_fromSpecificFragment(fragmentID)
+    const annotations = await realm_getAllAnnotations_fromSpecificFragment(fragmentID)
     return annotations
 }
 

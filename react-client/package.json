@@ -19,6 +19,7 @@
     "jsdom": "^24.1.0",
     "mongodb": "^6.7.0",
     "node-fetch": "^3.3.2",
+    "primereact": "^10.6.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "realm-web": "^2.0.1",

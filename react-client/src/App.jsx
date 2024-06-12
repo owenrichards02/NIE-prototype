@@ -4,36 +4,29 @@ import * as Realm from 'realm-web'
 import { ObjectId } from 'bson';
 
 import './App.css'
+//import { document_add } from './api/react_api';
+import FileUploader from './FileUploader';
 
 function App() {
 
   const message = "hi"
+  const fp = "./resources/survey_example.xlsx"
 
+  
 
-  const app_id = import.meta.env.VITE_REALM_APP_KEY
+/*   const item = {
+    html: "Test html",
+    name: "filenameTest", 
+    data: null,
+    tags: ["hello", "there"]
+  } */
 
-  const app = new Realm.App({id: app_id})
-
-
-  async function loginEmailPassword(email, password) {
-    const credentials = Realm.Credentials.emailPassword(email, password);
-    const user = await app.logIn(credentials);
-    return user;
-  }
-
-  async function realm_addNewItem(){
-    const user = await loginEmailPassword("or1g20@soton.ac.uk", "realmpass");
-    const item = {
-      html: "test",
-      tags: ["fromReact", "hi"]
-    }
-
-    const id = await user.functions.addNewItem("documents", item)
+  /* async function testAdd(){
+    const id = await document_add(fp)
     console.log(id)
-    return id
-  }
-
-  realm_addNewItem()
+  } */
+  
+  //testAdd()
 
   return (
     <>
@@ -41,6 +34,9 @@ function App() {
       <p className="test">
         {message}
       </p>
+
+
+      <FileUploader></FileUploader>
     </>
   )
 }

@@ -1,6 +1,4 @@
 import { load } from "cheerio";
-import { excelSurveyToHTML } from "./surveyConversion.js";
-import { transcriptToHTML } from "./transcriptConversion.js";
 
 
 export function extractAllTextualFragments(html){
@@ -115,14 +113,3 @@ export async function HTMLByTag(html, tag, t_class=null){
 
     return matches
 }
-
-
-async function extractionMain(){
-    const html = excelSurveyToHTML("./resources/survey_example.xlsx", "testID")
-    const matches = await HTMLByTagValueContains(html, "li", "Q4", "qna")
-    console.log(matches)
-}
-
-
-
-//extractionMain()
