@@ -28,8 +28,8 @@ export async function realm_addNewItem(collectionName, item){
     const [app, user, mongoCli] = await setUp()
     const fragCollection = mongoCli.db(dbName).collection(collectionName)
 
-    const id = await fragCollection.insertOne(item)
-    return id
+    const result = await fragCollection.insertOne(item)
+    return result.insertedId
 }
 
 export async function realm_deleteFragment(fragId){

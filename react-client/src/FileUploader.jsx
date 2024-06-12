@@ -15,6 +15,7 @@ function FileUploader(){
         fr.onload = async function (event) {
             setHtmlDisplay(event.target.result);
             const id = await document_add_html(event.target.result, file.name, "html")
+            console.log(id.toString())
             setReturnIdDisplay(id.toString())
         }
 
