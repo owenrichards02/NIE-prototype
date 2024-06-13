@@ -3,8 +3,10 @@ const HTMLViewer = ({html}) => {
 
     return(
         <>
-        <h2>HTML Viewer</h2>
-        { <div className="html-window" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(html) }} /> }
+        <div className="html-window">
+            <h2>HTML Viewer</h2>
+            { <div className="html-content-view" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(html) }} /> }
+        </div>
         </>
     )
 

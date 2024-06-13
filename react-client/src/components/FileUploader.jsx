@@ -21,8 +21,10 @@ const FileUploader = ({itemList, setItemList}) => {
     return(
         <>
             <h2>Upload HTML Documents</h2>
-            <input type="file" accept=".html" onChange={(e) => {setFile(e.target.files[0])}}/> 
-            <button onClick={onUpload}>Upload</button>
+            <div className='bottom-three'>
+                <input type="file" accept=".html" onChange={(e) => {setFile(e.target.files[0])}}/> 
+                <button onClick={onUpload}>Upload</button>
+            </div>
         </>
 
     )

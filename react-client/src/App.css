@@ -50,5 +50,28 @@
 }
 
 .html-window {
-  border:#7b0000aa;
+  flex: grow 1;
+  width: 50%;
+  margin-left: 3cm;
+}
+
+.html-content-view {
+  border:3px solid#7b0000aa;
+}
+
+.component-block{
+  display:flex; 
+  flex-direction:rowl;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1000px
+}
+
+
+.side-panel{
+  display: inline-block;
+  background-color: aliceblue;
+  width: 750px;
 }

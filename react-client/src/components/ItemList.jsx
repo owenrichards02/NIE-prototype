@@ -23,7 +23,7 @@ const ItemList = forwardRef(({itemList, setItemList, onDoubleClick, name}, ref) 
 
     return(
         <>
-            
+            <div className='bottom-three'>
             <h2>{name}</h2>
             {itemList.length > 0 ? 
                 <ul className="list-group">
@@ -38,6 +38,7 @@ const ItemList = forwardRef(({itemList, setItemList, onDoubleClick, name}, ref) 
                     ))}
                 </ul>
             : <i>No items in the list</i>}
+            </div>
         
         </>
 

@@ -49,20 +49,17 @@ function App() {
 
   return (
     <>
-      <div className="bottom-three">
-        <FileUploader itemList={documentIDList} setItemList={setDocumentIDList}></FileUploader>
-      </div>
-      
-      <div className="bottom-three">
-        <ItemList itemList={documentIDList}  setItemList={setDocumentIDList} onDoubleClick={changeHTMLView} ref={docListRef} name="List of Documents" className="top-space"></ItemList>
-      </div>
       
       {/*<button onClick={() => {docListRef.current.addItem("Hello")}}></button> */}
+      <div className='component-block'> 
 
-      <div className="html-window">
-        <HTMLViewer class="html-window" html={current_html}></HTMLViewer>
+        <div className='side-panel'>
+          <ItemList itemList={documentIDList}  setItemList={setDocumentIDList} onDoubleClick={changeHTMLView} ref={docListRef} name="List of Documents" className="top-space"></ItemList>
+          <FileUploader itemList={documentIDList} setItemList={setDocumentIDList}></FileUploader>
+        </div>
+
+        <HTMLViewer class="html-window" html={current_html}></HTMLViewer>        
       </div>
-      
       
     </>
   )
