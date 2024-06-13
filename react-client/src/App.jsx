@@ -1,18 +1,36 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import * as Realm from 'realm-web'
 import { ObjectId } from 'bson';
 
 import './App.css'
 //import { document_add } from './api/react_api';
-import FileUploader from './FileUploader';
-import ItemList from './ItemList';
+import FileUploader from './components/FileUploader';
+import ItemList from './components/ItemList';
+import HTMLViewer from './components/HTMLViewer';
+import { document_find } from './api/react_api';
 
 function App() {
 
+  const docListRef = useRef()
   const message = "hi"
   const fp = "./resources/survey_example.xlsx"
 
+  const [documentIDList, setDocumentIDList] = useState([]) 
+  const [current_html, setCurrent_html] = useState("None Loaded") 
+
+
+  async function changeHTMLView(newDocID){
+      const o_id = new ObjectId(newDocID)
+      const document = await document_find(o_id)
+      console.log(document)
+      const html = document.html
+      setCurrent_html(html)
+  }
+
+  /* useEffect(() => {
+    setDocumentIDList([...documentIDList, "itemFromApp"])
+  }, []) */
   
 
 /*   const item = {
@@ -31,14 +49,21 @@ function App() {
 
   return (
     <>
-     
-      <p className="test">
-        {message}
-      </p>
+      <div className="bottom-three">
+        <FileUploader itemList={documentIDList} setItemList={setDocumentIDList}></FileUploader>
+      </div>
+      
+      <div className="bottom-three">
+        <ItemList itemList={documentIDList}  setItemList={setDocumentIDList} onDoubleClick={changeHTMLView} ref={docListRef} name="List of Documents" className="top-space"></ItemList>
+      </div>
+      
+      {/*<button onClick={() => {docListRef.current.addItem("Hello")}}></button> */}
 
-
-      <FileUploader></FileUploader>
-      <ItemList></ItemList>
+      <div className="html-window">
+        <HTMLViewer class="html-window" html={current_html}></HTMLViewer>
+      </div>
+      
+      
     </>
   )
 }
