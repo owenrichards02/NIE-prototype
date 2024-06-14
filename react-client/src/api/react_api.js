@@ -1,7 +1,7 @@
 import { HTMLByAttribute, HTMLByAttributeValue, HTMLByTag, HTMLByTagValueContains } from './fragment.js';
 import { Binary, ObjectId } from 'bson';
 
-import { realm_addNewItem, realm_deleteDocument, realm_deleteFragment, realm_getAllAnnotations_fromSpecificFragment, realm_getAllFragments_fromSpecificDoc, realm_getItem, realm_searchByTagList_AND, realm_searchByTagList_OR, realm_tagItem } from './realm_CRUD.js';
+import { realm_addNewItem, realm_deleteDocument, realm_deleteFragment, realm_getAllAnnotations_fromSpecificFragment, realm_getAllDocuments, realm_getAllFragments_fromSpecificDoc, realm_getItem, realm_searchByTagList_AND, realm_searchByTagList_OR, realm_tagItem } from './realm_CRUD.js';
 
 
 
@@ -522,4 +522,10 @@ export async function transcript_DialogueFromASpecificSpeaker(doc_id, speakerNam
 
     return dialogueList
 
+}
+
+
+export async function documents_findAll(){
+    const docs = await realm_getAllDocuments()
+    return docs
 }

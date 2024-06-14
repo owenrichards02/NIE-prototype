@@ -114,5 +114,13 @@ export async function realm_searchByTagList_AND(collectionName, tagList){
 }
 
 
+export async function realm_getAllDocuments(){
+    const [app, user, mongoCli] = await setUp()
+    const docCollection = mongoCli.db(dbName).collection("documents")
+
+    const matches = await docCollection.find({})
+    return matches
+}
+
 //export {realm_addNewItem}
 

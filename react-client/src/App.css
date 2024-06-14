@@ -75,3 +75,8 @@
   background-color: aliceblue;
   width: 750px;
 }
+
+.scrollable .list-group{
+  overflow: auto;
+  height: 500px
+}

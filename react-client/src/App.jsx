@@ -8,22 +8,38 @@ import './App.css'
 import FileUploader from './components/FileUploader';
 import ItemList from './components/ItemList';
 import HTMLViewer from './components/HTMLViewer';
-import { document_find } from './api/react_api';
+import { document_find, documents_findAll } from './api/react_api';
 
 function App() {
 
   const docListRef = useRef()
-  const message = "hi"
-  const fp = "./resources/survey_example.xlsx"
+/*   const message = "hi"
+  const fp = "./resources/survey_example.xlsx" */
 
   const [documentIDList, setDocumentIDList] = useState([]) 
   const [current_html, setCurrent_html] = useState("None Loaded") 
 
 
+  useEffect(() => {
+    async function loadAllDocs(){
+      const docList = await documents_findAll()
+      console.log(docList.length)
+      let newlist = []
+      for (const doc of docList){
+        newlist.push(doc._id.toString())
+      }
+      setDocumentIDList([...documentIDList, ...newlist])
+    }
+
+    loadAllDocs()
+
+  }, [])
+  
+
   async function changeHTMLView(newDocID){
       const o_id = new ObjectId(newDocID)
       const document = await document_find(o_id)
-      console.log(document)
+      //console.log(document)
       const html = document.html
       setCurrent_html(html)
   }
@@ -57,7 +73,7 @@ function App() {
           <ItemList itemList={documentIDList}  setItemList={setDocumentIDList} onDoubleClick={changeHTMLView} ref={docListRef} name="List of Documents" className="top-space"></ItemList>
           <FileUploader itemList={documentIDList} setItemList={setDocumentIDList}></FileUploader>
         </div>
-
+        
         <HTMLViewer class="html-window" html={current_html}></HTMLViewer>        
       </div>
       
