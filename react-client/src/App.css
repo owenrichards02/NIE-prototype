@@ -57,6 +57,8 @@
 
 .html-content-view {
   border:3px solid#7b0000aa;
+  max-height: 900px;
+  overflow-y:auto
 }
 
 .component-block{
@@ -76,7 +78,13 @@
   width: 750px;
 }
 
-.scrollable .list-group{
-  overflow: auto;
-  height: 500px
+.list-group{
+  overflow-y: auto;
+  max-height: 400px
+}
+
+.file-uploader{
+  position: fixed;
+  top: 500px;
+  left: 140px
 }

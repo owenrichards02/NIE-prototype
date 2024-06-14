@@ -26,7 +26,7 @@ const ItemList = forwardRef(({itemList, setItemList, onDoubleClick, name}, ref) 
             <div className='bottom-three'>
             <h2>{name}</h2>
             {itemList.length > 0 ? 
-                <ul className="list-group scrollable">
+                <ul className="list-group">
                     {itemList.map((item, index) => (
                         <li className={selectedIndex === index ? 'list-group-item active' : 'list-group-item'} 
                             onClick={() => {setSelectedIndex(index)}} 
