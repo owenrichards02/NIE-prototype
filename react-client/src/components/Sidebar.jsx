@@ -3,6 +3,7 @@ import {
     Typography,
     List,
     ListItem,
+    Box,
     ListItemPrefix,
     ListItemSuffix,
     Chip,
@@ -24,13 +25,13 @@ function Sidebar() {
     }
     
     return (
-      <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
+      <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/2">
         <div className="mb-2 p-4">
-          <Typography variant="h2" color="blue-gray">
+          <Typography variant="h2" color="blue-gray" >
             Neighbourhood Insight Engine
           </Typography>
         </div>
-        <List>
+        <List>         
           <ListItem onClick={() => nav("")}>
             <ListItemPrefix>
               <HomeIcon className="h-5 w-5" />

@@ -14,6 +14,7 @@ function DocumentViewer(){
     const docListRef = useRef()
 
     const [documentIDList, setDocumentIDList] = useState([]) 
+    const [documentList, setDocumentList] = useState([]) 
     const [current_html, setCurrent_html] = useState("None Loaded") 
 
 
@@ -21,11 +22,14 @@ function DocumentViewer(){
         async function loadAllDocs(){
         const docList = await documents_findAll()
         console.log(docList.length)
+        let newlistId = []
         let newlist = []
         for (const doc of docList){
-            newlist.push(doc._id.toString())
+            newlistId.push(doc._id.toString())
+            newlist.push(doc)
         }
-        setDocumentIDList([...documentIDList, ...newlist])
+        setDocumentIDList([...documentIDList, ...newlistId])
+        setDocumentList([...documentList, ...newlist])
         }
 
         loadAllDocs()
