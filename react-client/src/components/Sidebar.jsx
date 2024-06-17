@@ -17,6 +17,7 @@ import { useEffect } from "react";
    
 function Sidebar() {
 
+
     const navigate = useNavigate()
     
     const nav = (route) => {
@@ -26,11 +27,7 @@ function Sidebar() {
     
     return (
       <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/2">
-        <div className="mb-2 p-4">
-          <Typography variant="h2" color="blue-gray" >
-            Neighbourhood Insight Engine
-          </Typography>
-        </div>
+        <h1 class="block antialiased tracking-normal text-4xl">Neighbourhood Insight Engine</h1> <br/>
         <List>         
           <ListItem onClick={() => nav("")}>
             <ListItemPrefix>

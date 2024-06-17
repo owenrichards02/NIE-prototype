@@ -33,7 +33,7 @@ const ItemList = forwardRef(({itemList, setItemList, onDoubleClick, name}, ref) 
                             onDoubleClick={() => {onDoubleClick(item[0])}}
                             key={item[0]}>
                             <b>{item[1]}</b> <br/>
-                            <b>ID: </b> {item[0]}
+                            <small><b>ID: </b> {item[0]}</small>
                         </li>
                     ))}
                 </ul>
