@@ -24,7 +24,7 @@ const ItemList = forwardRef(({itemList, setItemList, onDoubleClick, name}, ref) 
     return(
         <>
             <div className='bottom-three'>
-            <h2>{name}</h2>
+            <h2 className='mb-4 text-xl font-extrabold leading-none tracking-tight text-gray-900 md:text-xl lg:text-xl dark:text-white'>{name}</h2>
             {itemList.length > 0 ? 
                 <ul className="list-group">
                     {itemList.map((item, index) => (

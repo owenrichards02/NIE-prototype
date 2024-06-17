@@ -21,9 +21,9 @@ const FileUploader = ({itemList, setItemList}) => {
     return(
         <>
             <div className='file-uploader'>
-                <h2>Upload HTML Documents</h2>
+                <h2 className='mb-4 text-xl font-extrabold leading-none tracking-tight text-gray-900 md:text-xl lg:text-xl dark:text-white'>Upload HTML Documents</h2>
                 <input type="file" accept=".html" onChange={(e) => {setFile(e.target.files[0])}}/> 
-                <button onClick={onUpload}>Upload</button>
+                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={onUpload}>Upload</button>
             </div>
         </>
 

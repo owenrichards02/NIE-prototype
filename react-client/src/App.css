@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -64,18 +68,26 @@
 .component-block{
   display:flex; 
   flex-direction:rowl;
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 1000px
+  height: 1000px;
+  gap: 100px;
+}
+
+.component-block-vert{
+  display:flex; 
+  flex-direction:column;
+  width: 100%;
+  height: 1000px;
+  gap: 100px;
 }
 
 
 .side-panel{
   display: inline-block;
-  background-color: aliceblue;
-  width: 750px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 500px;
 }
 
 .list-group{
@@ -83,8 +95,4 @@
   max-height: 400px
 }
 
-.file-uploader{
-  position: fixed;
-  top: 500px;
-  left: 140px
-}
+
