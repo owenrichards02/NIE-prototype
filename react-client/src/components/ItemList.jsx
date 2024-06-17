@@ -30,10 +30,10 @@ const ItemList = forwardRef(({itemList, setItemList, onDoubleClick, name}, ref) 
                     {itemList.map((item, index) => (
                         <li className={selectedIndex === index ? 'list-group-item active' : 'list-group-item'} 
                             onClick={() => {setSelectedIndex(index)}} 
-                            onDoubleClick={() => {onDoubleClick(item)}}
-                            key={item}>
-
-                            {item}
+                            onDoubleClick={() => {onDoubleClick(item[0])}}
+                            key={item[0]}>
+                            <b>{item[1]}</b> <br/>
+                            <b>ID: </b> {item[0]}
                         </li>
                     ))}
                 </ul>

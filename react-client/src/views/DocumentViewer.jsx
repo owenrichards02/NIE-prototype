@@ -13,7 +13,7 @@ function DocumentViewer(){
 
     const docListRef = useRef()
 
-    const [documentIDList, setDocumentIDList] = useState([]) 
+    const [documentID2NameList, setDocumentID2NameList] = useState([]) 
     const [documentList, setDocumentList] = useState([]) 
     const [current_html, setCurrent_html] = useState("None Loaded") 
 
@@ -25,10 +25,10 @@ function DocumentViewer(){
         let newlistId = []
         let newlist = []
         for (const doc of docList){
-            newlistId.push(doc._id.toString())
+            newlistId.push([doc._id.toString(), doc.name.toString()])
             newlist.push(doc)
         }
-        setDocumentIDList([...documentIDList, ...newlistId])
+        setDocumentID2NameList([...documentID2NameList, ...newlistId])
         setDocumentList([...documentList, ...newlist])
         }
 
@@ -55,8 +55,8 @@ function DocumentViewer(){
           <div className='component-block'> 
     
             <div className='component-block-vert'>
-            <ItemList itemList={documentIDList}  setItemList={setDocumentIDList} onDoubleClick={changeHTMLView} ref={docListRef} name="List of Documents"></ItemList>
-            <FileUploader itemList={documentIDList} setItemList={setDocumentIDList}></FileUploader>
+            <ItemList itemList={documentID2NameList}  setItemList={setDocumentID2NameList} onDoubleClick={changeHTMLView} ref={docListRef} name="List of Documents"></ItemList>
+            <FileUploader itemList={documentID2NameList} setItemList={setDocumentID2NameList}></FileUploader>
             </div>
               
               
