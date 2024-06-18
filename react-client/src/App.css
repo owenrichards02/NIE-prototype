@@ -60,7 +60,7 @@
 }
 
 .html-content-view {
-  border:3px solid#7b0000aa;
+  border:3px solid#362158;
   max-height: 900px;
   overflow-y:auto
 }
@@ -95,4 +95,6 @@
   max-height: 400px
 }
 
-
+.fragment-box {
+  border:3px solid#362158;
+}

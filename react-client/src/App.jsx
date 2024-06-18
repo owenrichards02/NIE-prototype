@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import DocumentViewer from './views/DocumentViewer';
 import Home from './views/Home';
 import Sidebar from './components/Sidebar';
+import VirtualFloor from './views/VirtualFloor';
 
 function App() {
 
@@ -41,6 +42,7 @@ function App() {
           <Routes>
             <Route path='/' Component={Home}></Route>
             <Route path='/docviewer' Component={DocumentViewer}></Route>
+            <Route path='/virtualfloor' Component={VirtualFloor}></Route>
           </Routes>
           </div>
       </BrowserRouter>
