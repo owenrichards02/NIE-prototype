@@ -62,6 +62,7 @@
 .html-content-view {
   border:3px solid#362158;
   max-height: 900px;
+  max-width: 750px;
   overflow-y:auto
 }
 
@@ -96,5 +97,24 @@
 }
 
 .fragment-box {
-  border:3px solid#362158;
+  border:1px solid#362158;
+  padding: 10px;
+  box-shadow: 5px 5px #d3d1d1;
+  max-width: 300px;
+  max-height: 400px
+}
+
+.floorcanvas {
+  border:3px solid#101115;
+  position: fixed;
+  left: 400px;
+  top: 100px;
+}
+
+.vf-title{
+  position: fixed;
+  left: 900px;
+  top: 20px;
+  font-size: 30pt;
+  font-weight: 700;
 }

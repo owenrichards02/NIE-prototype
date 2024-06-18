@@ -28,7 +28,7 @@ function Sidebar() {
 
     
     return (
-      <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/2">
+      <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-600">
         <h1 className="block antialiased tracking-normal text-4xl">Neighbourhood Insight Engine</h1> <br/>
         <List>         
           <ListItem onClick={() => nav("")}>

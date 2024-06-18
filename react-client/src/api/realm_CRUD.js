@@ -122,5 +122,13 @@ export async function realm_getAllDocuments(){
     return matches
 }
 
+export async function realm_getAllFragments(){
+    const [app, user, mongoCli] = await setUp()
+    const fragCollection = mongoCli.db(dbName).collection("fragments")
+
+    const matches = await fragCollection.find({})
+    return matches
+}
+
 //export {realm_addNewItem}
 
