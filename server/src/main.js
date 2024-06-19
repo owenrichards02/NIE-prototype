@@ -1,5 +1,5 @@
 import { ObjectId } from "bson"
-import { document_add, fragment_add_data, documents_searchByTagsList_AND, fragments_search_by_linked_document, document_addTag, document_delete, document_add_autoFrag, fragment_delete, annotation_create, annotation_search_by_linked_fragmentID, getAllAnswersToASpecificQuestion } from "./api.js"
+import { document_add, fragment_add_data, documents_searchByTagsList_AND, fragments_search_by_linked_document, document_add_autoFrag } from "./api.js"
 import { getBinaryFromFile, gethtmlFromFile, writehtmlBacktoFile } from "./fileTools.js"
 
 async function main(){
@@ -34,10 +34,10 @@ async function main(){
 
 
 async function queryingMain(){
-    //const html = await gethtmlFromFile("./htmlExample.html")
+   //const html = await gethtmlFromFile("./resources/htmlExample.html")
 
-    //let [id, fragIds] = await docAdd_autoFrag("./resources/htmlExample.html")
-    //console.log(fragIds)
+    let [thisid, fragIds] = await document_add_autoFrag("./resources/htmlExample.html")
+    console.log(fragIds)
 
 
 
@@ -85,11 +85,11 @@ async function queryingMain(){
 
     //console.log(matches)
 
-    const id = await document_add("./resources/survey_example.xlsx")
+    /* const id = await document_add("./resources/survey_example.xlsx")
 
     const answers = await getAllAnswersToASpecificQuestion(id, "Q8")
 
-    console.log(answers)
+    console.log(answers) */
 }
 
 queryingMain()

@@ -13,7 +13,6 @@ function DocumentViewer(){
 
     const docListRef = useRef()
 
-    const [documentID2NameList, setDocumentID2NameList] = useState([]) 
     const [documentList, setDocumentList] = useState([]) 
     const [current_html, setCurrent_html] = useState("None Loaded") 
 
@@ -21,14 +20,11 @@ function DocumentViewer(){
     useEffect(() => {
         async function loadAllDocs(){
         const docList = await documents_findAll()
-        console.log(docList.length)
-        let newlistId = []
+
         let newlist = []
         for (const doc of docList){
-            newlistId.push([doc._id.toString(), doc.name.toString()])
             newlist.push(doc)
         }
-        setDocumentID2NameList([...documentID2NameList, ...newlistId])
         setDocumentList([...documentList, ...newlist])
         }
 
@@ -55,11 +51,9 @@ function DocumentViewer(){
           <div className='component-block'> 
     
             <div className='component-block-vert'>
-            <ItemList itemList={documentID2NameList}  setItemList={setDocumentID2NameList} onDoubleClick={changeHTMLView} ref={docListRef} name="List of Documents"></ItemList>
-            <FileUploader itemList={documentID2NameList} setItemList={setDocumentID2NameList}></FileUploader>
+            <ItemList itemList={documentList}  setItemList={setDocumentList} onDoubleClick={changeHTMLView} ref={docListRef} name="List of Documents"></ItemList>
+            <FileUploader itemList={documentList} setItemList={setDocumentList}></FileUploader>
             </div>
-              
-              
             
             <HTMLViewer html={current_html}></HTMLViewer>        
           </div>

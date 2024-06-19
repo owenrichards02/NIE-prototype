@@ -13,7 +13,11 @@ const FileUploader = ({itemList, setItemList}) => {
         fr.onload = async function (event) {
             const id = await document_add_html(event.target.result, file.name, "html")
             console.log(id.toString())
-            setItemList([...itemList, id.toString()])
+            const newItem = {
+                _id: id,
+                name: file.name
+            }
+            setItemList([...itemList, newItem])
         }
 
     }

@@ -93,7 +93,8 @@
 
 .list-group{
   overflow-y: auto;
-  max-height: 400px
+  max-height: 400px;
+  width: 450px;
 }
 
 .fragment-box {
@@ -117,4 +118,10 @@
   top: 20px;
   font-size: 30pt;
   font-weight: 700;
+}
+
+.pick-frags{
+  position: fixed;
+  left: 2000px;
+  top: 20px;
 }
