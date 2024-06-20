@@ -26,7 +26,7 @@ const TextualList = ({itemList, onDoubleClick}) => {
                         </li>
                     ))}
                 </ul>
-            : <i>No items in the list</i>}
+            : <i>No textual elements found</i>}
             </div>
         
         </>

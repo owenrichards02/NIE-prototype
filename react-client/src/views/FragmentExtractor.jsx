@@ -53,7 +53,7 @@ function FragmentExtractor(){
         <>
         <div className="component-block-vert">
             <div className='component-block'>
-                <ItemList itemList={documentList}  setItemList={setDocumentList} onDoubleClick={changeHTMLView} ref={feRef} name="List of Documents"></ItemList>
+                <ItemList itemList={documentList}  setItemList={setDocumentList} onDoubleClick={changeHTMLView} ref={feRef} name="Select document"></ItemList>
                 <TextualList itemList={textFragsList} setItemList={setTextFragsList} onDoubleClick={chooseTextSection}></TextualList>        
             </div>
             {showFragCreator ? <FragmentCreator docid={chosenDocId} html={chosenFrag}></FragmentCreator> : <></>}
