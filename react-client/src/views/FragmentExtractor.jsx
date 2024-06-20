@@ -15,6 +15,7 @@ function FragmentExtractor(){
     const [textFragsList, setTextFragsList] = useState([])
     const [chosenDocId, setChosenDocID] = useState([])
     const [chosenFrag, setChosenFrag] = useState("None Loaded") 
+    const [showFragCreator, setShowFragCreator] = useState(false)
 
 
     useEffect(() => {
@@ -45,6 +46,7 @@ function FragmentExtractor(){
 
     async function chooseTextSection(text){
         setChosenFrag(text)
+        setShowFragCreator(true)
     }
 
     return (
@@ -53,8 +55,9 @@ function FragmentExtractor(){
             <div className='component-block'>
                 <ItemList itemList={documentList}  setItemList={setDocumentList} onDoubleClick={changeHTMLView} ref={feRef} name="List of Documents"></ItemList>
                 <TextualList itemList={textFragsList} setItemList={setTextFragsList} onDoubleClick={chooseTextSection}></TextualList>        
-            </div> 
-            <FragmentCreator docid={chosenDocId} html={chosenFrag}></FragmentCreator>
+            </div>
+            {showFragCreator ? <FragmentCreator docid={chosenDocId} html={chosenFrag}></FragmentCreator> : <></>}
+            
         </div>
         </>
     )
