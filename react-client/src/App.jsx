@@ -7,7 +7,8 @@ import DocumentViewer from './views/DocumentViewer';
 import Home from './views/Home';
 import Sidebar from './components/Sidebar';
 import VirtualFloor from './views/VirtualFloor';
-import FragmentExtractor from './views/FragmentExtractor';
+import FragmentExtractorTextual from './views/FragmentExtractorTextual';
+import FragmentExtractorQuery from './views/FragmentExtractorQuery';
 
 function App() {
 
@@ -43,7 +44,8 @@ function App() {
           <Routes>
             <Route path='/' Component={Home}></Route>
             <Route path='/doc-viewer' Component={DocumentViewer}></Route>
-            <Route path='/frag-extract' Component={FragmentExtractor}></Route>
+            <Route path='/frag-extract-textual' Component={FragmentExtractorTextual}></Route>
+            <Route path='/frag-extract-query' Component={FragmentExtractorQuery}></Route>
             <Route path='/virtual-floor' Component={VirtualFloor}></Route>
           </Routes>
           </div>

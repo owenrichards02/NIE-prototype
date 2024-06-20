@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { document_find, fragment_add_html } from "../api/react_api";
 import DOMPurify from "dompurify";
-import { Input } from "@material-tailwind/react";
+import { Input, Option, Select } from "@material-tailwind/react";
 
 function FragmentCreator({docid, html}){
 
@@ -33,7 +33,9 @@ function FragmentCreator({docid, html}){
                 <div className="w-72">
                 <h2 className='mb-4 text-xl font-extrabold leading-none tracking-tight text-gray-900 md:text-xl lg:text-xl dark:text-white'>Create new fragment</h2>
                 <Input type="text" onChange={handleNameChange} label="Fragment Name" className="!border !border-gray-300 bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10" /> <br></br>
-                <Input label="Placeholder for tags" disabled className="!border !border-gray-300 bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10" />
+                <Select label="Select Tags">
+                    <Option>Test</Option>
+                </Select>
                 </div>
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleSubmit}>Create</button>
             </div>
