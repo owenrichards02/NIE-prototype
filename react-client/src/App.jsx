@@ -7,6 +7,7 @@ import DocumentViewer from './views/DocumentViewer';
 import Home from './views/Home';
 import Sidebar from './components/Sidebar';
 import VirtualFloor from './views/VirtualFloor';
+import FragmentExtractor from './views/FragmentExtractor';
 
 function App() {
 
@@ -41,8 +42,9 @@ function App() {
           <div>
           <Routes>
             <Route path='/' Component={Home}></Route>
-            <Route path='/docviewer' Component={DocumentViewer}></Route>
-            <Route path='/virtualfloor' Component={VirtualFloor}></Route>
+            <Route path='/doc-viewer' Component={DocumentViewer}></Route>
+            <Route path='/frag-extract' Component={FragmentExtractor}></Route>
+            <Route path='/virtual-floor' Component={VirtualFloor}></Route>
           </Routes>
           </div>
       </BrowserRouter>

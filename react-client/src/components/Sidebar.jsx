@@ -12,6 +12,9 @@ import {
     HomeIcon,
     DocumentIcon,
     SquaresPlusIcon,
+    ArrowUpOnSquareStackIcon,
+    PuzzlePieceIcon,
+    RectangleGroupIcon,
   } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -38,16 +41,23 @@ function Sidebar() {
             Home
           </ListItem>
 
-          <ListItem onClick={() => nav("docviewer")}>
+          <ListItem onClick={() => nav("doc-viewer")}>
             <ListItemPrefix>
               <DocumentIcon className="h-5 w-5" />
             </ListItemPrefix>
             Document Viewer
           </ListItem>
 
-          <ListItem onClick={() => nav("virtualfloor")}>
+          <ListItem onClick={() => nav("frag-extract")}>
             <ListItemPrefix>
               <SquaresPlusIcon className="h-5 w-5" />
+            </ListItemPrefix>
+            Fragment Extractor
+          </ListItem>
+
+          <ListItem onClick={() => nav("virtual-floor")}>
+            <ListItemPrefix>
+              <RectangleGroupIcon className="h-5 w-5" />
             </ListItemPrefix>
             Virtual Floor
           </ListItem>
