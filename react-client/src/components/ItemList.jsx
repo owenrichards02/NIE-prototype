@@ -31,7 +31,7 @@ const ItemList = forwardRef(({itemList, setItemList, onDoubleClick, name}, ref) 
                         <li className={selectedIndex === index ? 'list-group-item active' : 'list-group-item'} 
                             onClick={() => {setSelectedIndex(index)}} 
                             onDoubleClick={() => {onDoubleClick(item._id)}}
-                            key={item._id.toString()}>
+                            key={item._id.toString() + '_' + index.toString()}>
                             <b>{item.name}</b> <br/>
                             <small><b>ID: </b> {item._id.toString()}</small> <br/>
                             {'type' in item ? <small><b>Type: </b>{item.type}</small>: <></>}

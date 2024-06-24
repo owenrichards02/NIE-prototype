@@ -1,23 +1,32 @@
 import React, { forwardRef, useState } from 'react';
-import { document_add_html } from '../api/react_api';
+import { document_add_html, document_find } from '../api/react_api';
 import { ObjectId } from 'bson';
+import { useAtom, useSetAtom } from 'jotai';
+import { documents } from '../state';
 
 const FileUploader = ({itemList, setItemList}) => {
 
     const [file, setFile] = useState(null)
+
+    const setDocuments = useSetAtom(documents)
 
     async function onUpload(){
         const fr = new FileReader()
         fr.readAsText(file)
 
         fr.onload = async function (event) {
-            const id = await document_add_html(event.target.result, file.name, "html")
+            const type = "html" //change!!!!!!!!
+            const id = await document_add_html(event.target.result, file.name, type)
             console.log(id.toString())
             const newItem = {
                 _id: id,
-                name: file.name
+                name: file.name,
+                type: type
             }
             setItemList([...itemList, newItem])
+
+            const doc = await document_find(id)
+            setDocuments((documents) => [...documents, doc])
         }
 
     }

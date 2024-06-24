@@ -9,8 +9,31 @@ import Sidebar from './components/Sidebar';
 import VirtualFloor from './views/VirtualFloor';
 import FragmentExtractorTextual from './views/FragmentExtractorTextual';
 import FragmentExtractorQuery from './views/FragmentExtractorQuery';
+import { documents } from './state';
+import { useAtom } from 'jotai';
+import { documents_findAll } from './api/react_api';
+import { useEffect } from 'react';
+
 
 function App() {
+
+  const [documentList, setDocumentList] = useAtom(documents)
+
+  
+  useEffect(() => {
+    async function loadAllDocs(){
+    const docList = await documents_findAll()
+
+    let newlist = []
+    for (const doc of docList){
+        newlist.push(doc)
+    }
+    setDocumentList([...documentList, ...newlist])
+    }
+
+    loadAllDocs()
+
+}, [])
 
 
   /* useEffect(() => {

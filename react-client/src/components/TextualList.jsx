@@ -1,15 +1,9 @@
-import { forwardRef, useEffect, useImperativeHandle, useState } from "react"
+import { useState } from "react"
 
 
 const TextualList = ({itemList, onDoubleClick}) => {
 
     const [selectedIndex, setSelectedIndex] = useState(-1)
-
-    /* useEffect(() => {
-        setItemList([...itemList, "item1", "item2", "item3"])
-    }, []) */
-
-    //console.log(itemList)
 
     return(
         <>
@@ -21,7 +15,7 @@ const TextualList = ({itemList, onDoubleClick}) => {
                         <li className={selectedIndex === index ? 'list-group-item active' : 'list-group-item'} 
                             onClick={() => {setSelectedIndex(index)}} 
                             onDoubleClick={() => {onDoubleClick(item)}}
-                            key={item}>
+                            key={item + '_' + index}>
                             {item}
                         </li>
                     ))}

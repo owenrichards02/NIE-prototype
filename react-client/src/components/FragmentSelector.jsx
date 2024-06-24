@@ -2,10 +2,14 @@ import { useState, useEffect, useRef } from 'react'
 
 import { fragments_findAll } from "../api/react_api"
 import ItemList from "./ItemList"
+import { fragments } from '../state'
+import { useAtom } from 'jotai'
 
-function FragmentSelector({spawnFragment, fragmentList, setFragmentList}){
+function FragmentSelector({spawnFragment}){
 
     const fragListRef = useRef()
+
+    const [fragmentList, setFragmentList] = useAtom(fragments)
 
     useEffect(() => {
         async function loadAllFrags(){

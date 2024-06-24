@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import FloorCanvas from '../components/FloorCanvas'
 import FragmentSelector from '../components/FragmentSelector'
+import { useAtom } from 'jotai'
+import { fragments } from '../state'
 
 function VirtualFloor(){
     //canvas on the left
@@ -9,7 +11,7 @@ function VirtualFloor(){
         //annotation creation
         //save & load canvas
     const [fragmentInUseList, setFragmentInUseList] = useState([]) 
-    const [fragmentList, setFragmentList] = useState([]) 
+    const [fragmentList, setFragmentList] = useAtom(fragments) 
 
     function spawnFragment(fragid){
         for (const frag of fragmentList){
