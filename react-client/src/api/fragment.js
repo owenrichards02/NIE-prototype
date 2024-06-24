@@ -1,6 +1,21 @@
 import { load } from "cheerio";
 
 
+export async function query_jq(html, jqString){
+    const $ = load(html, null, true)
+    const outer = $(jqString)
+
+    let matches = []
+    outer.each((index, element) => {
+        var $this = $(element);
+        matches.push($.html($this))
+    })
+
+    return matches
+}
+
+
+
 export function extractAllTextualFragments(html){
     const $ = load(html, null, true)
 

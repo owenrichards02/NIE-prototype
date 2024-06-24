@@ -11,12 +11,12 @@ function FragmentExtractorQuery(){
     const [documentList, setDocumentList] = useAtom(documents)
 
     const [textFragsList, setTextFragsList] = useState([])
-    const [chosenDocId, setChosenDocID] = useState([])
+    const [chosenDocIds, setChosenDocIDs] = useState([])
     const [chosenFrag, setChosenFrag] = useState("None Loaded") 
     const [showFragCreator, setShowFragCreator] = useState(false)
 
     function docChosen(docid){
-        setChosenDocID(docid)
+        setChosenDocIDs([...chosenDocIds, docid])
     }
 
     return(
@@ -25,7 +25,6 @@ function FragmentExtractorQuery(){
             <div className='component-block'>
                 <ItemList itemList={documentList}  setItemList={setDocumentList} onDoubleClick={docChosen} ref={feRef} name="Select document"></ItemList>     
             </div>
-            {showFragCreator ? <FragmentCreator docid={chosenDocId} html={chosenFrag}></FragmentCreator> : <></>}
             
         </div>
         </>
