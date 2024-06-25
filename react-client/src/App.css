@@ -86,8 +86,14 @@
   display:flex; 
   flex-direction:column;
   width: 100%;
-  height: 1000px;
-  gap: 25px;
+  gap: 50px;
+}
+
+.component-block-vert-xsmall{
+  display:flex; 
+  flex-direction:column;
+  width: 100%;
+  gap: 10px;
 }
 
 .document-select-multiple{
@@ -161,4 +167,19 @@
   position: fixed;
   left: 2000px;
   top: 20px;
+}
+
+.query-options{
+  position: fixed;
+  left: 400px;
+  top: 700px;
+}
+
+
+.component-block-query{
+  display:flex; 
+  flex-direction:rowl;
+  width: 100%;
+  gap: 100px;
+  white-space: nowrap;
 }
