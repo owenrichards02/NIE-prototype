@@ -20,11 +20,15 @@ function FragmentCreator({docid, html}){
             //need system for tags
             const id = await fragment_add_html(html, docid, newFragName, doc.type, null, [])
             console.log(id)
+
+            //NEED TO UPDATE FRAGMENTS ATOM
         }
 
         hSubmit()
         
     };
+
+
 
     return(
         <>
