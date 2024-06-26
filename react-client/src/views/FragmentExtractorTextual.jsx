@@ -28,11 +28,20 @@ function FragmentExtractorTextual(){
         const html = document.html
         const textFrags = await extractAllTextualFragments(html)
 
-        setTextFragsList(textFrags)
+        let textFragsObjs = []
+        for (const tf of textFrags){
+            const obj = {
+                docid: o_id,
+                html: tf
+            }
+            textFragsObjs.push(obj)
+        }
+
+        setTextFragsList(textFragsObjs)
     }
 
-    async function chooseTextSection(text){
-        setChosenFrag(text)
+    async function chooseTextSection(frag){
+        setChosenFrag(frag)
         setShowFragCreator(true)
     }
 
@@ -43,7 +52,7 @@ function FragmentExtractorTextual(){
                 <ItemList itemList={documentList}  setItemList={setDocumentList} onDoubleClick={changeHTMLView} ref={feRef} name="Select document"></ItemList>
                 <TextualList itemList={textFragsList} setItemList={setTextFragsList} onDoubleClick={chooseTextSection}></TextualList>        
             </div>
-            {showFragCreator ? <FragmentCreator docid={chosenDocId} html={chosenFrag}></FragmentCreator> : <></>}
+            {showFragCreator ? <FragmentCreator frag={chosenFrag}></FragmentCreator> : <></>}
             
         </div>
         </>

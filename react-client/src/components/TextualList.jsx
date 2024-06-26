@@ -7,7 +7,7 @@ const TextualList = ({itemList, onDoubleClick}) => {
 
     return(
         <>
-            <div className='bottom-three'>
+            <div className='bottom-one'>
             <h2 className='mb-4 text-xl font-extrabold leading-none tracking-tight text-gray-900 md:text-xl lg:text-xl dark:text-white'>Choose textual section</h2>
             {itemList.length > 0 ? 
                 <ul className="list-group">
@@ -15,8 +15,8 @@ const TextualList = ({itemList, onDoubleClick}) => {
                         <li className={selectedIndex === index ? 'list-group-item active' : 'list-group-item'} 
                             onClick={() => {setSelectedIndex(index)}} 
                             onDoubleClick={() => {onDoubleClick(item)}}
-                            key={item + '_' + index}>
-                            {item}
+                            key={item.html + '_' + index}>
+                            {item.html}
                         </li>
                     ))}
                 </ul>

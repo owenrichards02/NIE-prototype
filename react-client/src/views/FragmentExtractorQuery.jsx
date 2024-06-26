@@ -6,6 +6,7 @@ import { documents } from "../state"
 import { useRef, useState } from "react"
 import SelectMutlipleDocs from "../components/SelectMultipleDocs"
 import QueryOptions from "../components/QueryOptions"
+import { Card, CardBody, CardHeader } from "@material-tailwind/react"
 
 function FragmentExtractorQuery(){
     const feRef = useRef()
@@ -14,12 +15,30 @@ function FragmentExtractorQuery(){
 
     const [selectedList, setSelectedList] = useState([])
 
+    const [searchResults, setSearchResults] = useState([])
+    const [chosenFrag, setChosenFrag] = useState("")
+
+    const [rightSideHidden, setRightSideHidden] = useState(false)
+
+
+    const newFragChosen = (frag) => {
+        setChosenFrag(frag)
+        console.log(frag)
+    }
+
+    const addAll = () =>{
+
+    }
+
     return(
         <>
+        
         <div className="component-block-vert">
             <div className="component-block">
+                
+                
                 <div className='component-block-vert-small'>
-                    <SelectMutlipleDocs selectedList={selectedList} setSelectedList={setSelectedList}></SelectMutlipleDocs>
+                    <SelectMutlipleDocs selectedList={selectedList} setSelectedList={setSelectedList} setRightSideHidden={setRightSideHidden}></SelectMutlipleDocs>
                 </div>
 
                 <div className="selected-view">
@@ -31,16 +50,40 @@ function FragmentExtractorQuery(){
                         </li>
                     ))}
                 </div>
+               
+                
             </div>
-
-
-            <div className="component-block">
-            <QueryOptions></QueryOptions>
-            </div>
+            {selectedList.length > 0 ?  <div className="component-block-vert-small">
+            <QueryOptions selectedDocs={selectedList} setSearchResults={setSearchResults} setRightSideHidden={setRightSideHidden}></QueryOptions>
+            </div> : <></>}
+           
 
 
 
         </div>
+        {searchResults.length > 0 && !rightSideHidden ? <div className="results-and-create">
+        <div className="bottom-onefive">
+        <Card>
+        <CardBody>
+        <TextualList itemList={searchResults} onDoubleClick={newFragChosen}></TextualList>
+        
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={addAll}>Add all</button> 
+      
+        </CardBody>
+        </Card>
+        </div>
+        {chosenFrag != "" ?
+        <Card>
+        <CardBody>
+        <FragmentCreator frag={chosenFrag} ></FragmentCreator>
+        </CardBody>
+        </Card> : <></> }
+        {
+        //Need to figure out how to include the docid
+        }
+        
+        </div> : <></>}
+        
        
         </>
     )

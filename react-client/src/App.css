@@ -48,6 +48,13 @@
 .bottom-three {
      margin-bottom: 3cm;
 }
+.bottom-one {
+  margin-bottom: 1cm;
+}
+
+.bottom-onefive {
+  margin-bottom: 1.5cm;
+}
 
 .top-space {
   margin-top: 2cm;
@@ -70,7 +77,15 @@
   display:flex; 
   flex-direction:rowl;
   width: 100%;
-  height: 1000px;
+  height: 600px;
+  gap: 100px;
+}
+
+.component-block-short{
+  display:flex; 
+  flex-direction:rowl;
+  width: 100%;
+  height: 440px;
   gap: 100px;
 }
 
@@ -109,20 +124,34 @@
   gap: 8px;
   text-align: left;
   width: 350px;
-  max-height: 500px;
+  max-height: 425px;
 }
 
 .selected-view{
   display:flex; 
   flex-direction:column;
   width: 400px;
+  height: 500px;
   gap: 10px;
 
   position: fixed;
   top: 40px;
-  left: 800px;
+  left: 700px;
 }
 
+
+.results-and-create{
+  position: fixed;
+  top: 40px;
+  left: 1100px;
+  width: 700px;
+}
+
+.add-all-button{
+  position: fixed;
+  top: 200px;
+  left: 1550px;
+}
 
 
 
@@ -137,6 +166,9 @@
 .list-group{
   overflow-y: auto;
   max-height: 400px;
+}
+
+.list-group-lol{
   width: 450px;
 }
 
@@ -165,14 +197,15 @@
 
 .pick-frags{
   position: fixed;
-  left: 2000px;
+  left: 1850px;
   top: 20px;
 }
 
 .query-options{
   position: fixed;
   left: 400px;
-  top: 700px;
+  top: 550px;
+  width: 650px;
 }
 
 
@@ -182,4 +215,5 @@
   width: 100%;
   gap: 100px;
   white-space: nowrap;
+  margin-bottom: 20px;
 }
