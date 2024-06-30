@@ -1,12 +1,14 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useState, useSyncExternalStore } from 'react';
 import { document_add_html, document_find } from '../api/react_api';
 import { ObjectId } from 'bson';
 import { useAtom, useSetAtom } from 'jotai';
 import { documents } from '../state';
+import { Input, Option, Select } from '@material-tailwind/react';
 
 const FileUploader = ({itemList, setItemList}) => {
 
     const [file, setFile] = useState(null)
+    const [type, setType] = useState("")
 
     const setDocuments = useSetAtom(documents)
 
@@ -15,7 +17,6 @@ const FileUploader = ({itemList, setItemList}) => {
         fr.readAsText(file)
 
         fr.onload = async function (event) {
-            const type = "html" //change!!!!!!!!
             const id = await document_add_html(event.target.result, file.name, type)
             console.log(id.toString())
             const newItem = {
@@ -35,8 +36,16 @@ const FileUploader = ({itemList, setItemList}) => {
         <>
             <div className='file-uploader'>
                 <h2 className='mb-4 text-xl font-extrabold leading-none tracking-tight text-gray-900 md:text-xl lg:text-xl dark:text-white'>Upload HTML Documents</h2>
-                <input type="file" accept=".html" onChange={(e) => {setFile(e.target.files[0])}}/> 
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={onUpload}>Upload</button>
+                <Input size="lg" className="" type="file" accept=".html" onChange={(e) => {setFile(e.target.files[0])}}/> 
+                <div className='component-block-xshort'>
+                    <Select size="lg" label="Select Type" value={type}
+                        onChange={(val) => setType(val)}>
+                        <Option value="html">html</Option>
+                        <Option value="image">image</Option>
+                    </Select>
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={onUpload}>Upload</button>
+                </div>
+               
             </div>
         </>
 

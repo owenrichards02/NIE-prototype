@@ -46,6 +46,8 @@ function DocumentViewer(){
 
     return (
         <>
+
+        <div className='docviewer'>
           
           {/*<button onClick={() => {docListRef.current.addItem("Hello")}}></button> */}
           <div className='component-block'> 
@@ -56,6 +58,8 @@ function DocumentViewer(){
             </div>
             
             <HTMLViewer html={current_html}></HTMLViewer>        
+          </div>
+
           </div>
           
         </>

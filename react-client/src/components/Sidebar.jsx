@@ -100,6 +100,12 @@ function Sidebar() {
                 </ListItemPrefix>
                 Query Specific Elements
               </ListItem>
+              <ListItem onClick={() => nav("frag-image")}>
+                <ListItemPrefix>
+                  <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                </ListItemPrefix>
+                Create Image Fragment
+              </ListItem>
             </List>
           </AccordionBody>
         </Accordion>

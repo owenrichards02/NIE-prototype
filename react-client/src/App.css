@@ -89,6 +89,14 @@
   gap: 100px;
 }
 
+.component-block-xshort{
+  display:flex; 
+  flex-direction:rowl;
+  width: 100%;
+  height: 100px;
+  gap: 100px;
+}
+
 .component-block-vert{
   display:flex; 
   flex-direction:column;
@@ -216,4 +224,16 @@
   gap: 100px;
   white-space: nowrap;
   margin-bottom: 20px;
+}
+
+.file-uploader{
+  display: flex;
+  flex-direction:column;
+  gap: 20px;
+}
+
+.docviewer{
+  position: fixed;
+  top: 100px;
+  left: 500px;
 }

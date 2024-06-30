@@ -13,6 +13,7 @@ import { documents } from './state';
 import { useAtom } from 'jotai';
 import { documents_findAll } from './api/react_api';
 import { useEffect } from 'react';
+import FragmentImage from './views/FragmentImage';
 
 
 function App() {
@@ -69,6 +70,7 @@ function App() {
             <Route path='/doc-viewer' Component={DocumentViewer}></Route>
             <Route path='/frag-extract-textual' Component={FragmentExtractorTextual}></Route>
             <Route path='/frag-extract-query' Component={FragmentExtractorQuery}></Route>
+            <Route path='/frag-image' Component={FragmentImage}></Route>
             <Route path='/virtual-floor' Component={VirtualFloor}></Route>
           </Routes>
           </div>
