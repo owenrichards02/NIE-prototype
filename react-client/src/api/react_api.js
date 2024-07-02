@@ -81,17 +81,10 @@ export async function document_add_html(html, filepath, type, tags=[]) {
  */
 export async function fragment_add_html(html, docid, fragName="testFragment", type, coords = null, tags=[]) {
 
-    //image embed removed, to avoid data duplication
-    //source can be retrieved from the original docid.
-    let altHtml = html
-    if (type=="image"){
-        altHtml = null
-    }
-
     const newfrag = {
         name: fragName,
         docid: docid,
-        html: altHtml,
+        html: html,
         data: null,
         type: type,
         coords: coords,

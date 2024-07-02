@@ -237,3 +237,24 @@
   top: 100px;
   left: 500px;
 }
+
+.topleft{
+  position: fixed;
+  top: 100px;
+  left: 500px;
+}
+
+.cropper{
+  position: fixed;
+  top: 100px;
+  left: 850px;
+  max-width: 600px;
+  max-height: 800px;
+}
+.imgpreview{
+  position: fixed;
+  top: 100px;
+  left: 1575px;
+  max-width: 600px;
+  max-height: 800px;
+}
