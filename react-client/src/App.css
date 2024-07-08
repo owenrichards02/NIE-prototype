@@ -258,3 +258,9 @@
   max-width: 600px;
   max-height: 800px;
 }
+
+.reset-button{
+  position: fixed;
+  top: 1215px;
+  left: 1550px;
+}

@@ -8,8 +8,10 @@ import { FabricJSCanvas, useFabricJSEditor } from 'fabricjs-react'
 import parse from 'html-react-parser';
 import * as htmlToImage from 'html-to-image';
 import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image'
+import { Button, Card, CardBody, CardHeader } from '@material-tailwind/react'
 
 const f2c_atom = atomWithStorage('frag2canvas2', [])
+
 
 function VirtualFloor(){
 
@@ -23,7 +25,7 @@ function VirtualFloor(){
         //save & load canvas
     
     const [fragmentList, setFragmentList] = useAtom(fragments) 
-    const [frag2LocationList, setfrag2LocationList] = useAtom(f2c_atom) //objects {frag: frag, canvasObj: canvasObj}
+    const [frag2LocationList, setfrag2LocationList] = useAtom(f2c_atom) //objects {frag, canvasObj, locationObj, uuid}
     
     const [loaded, setLoaded] = useState(false)
     const [isReady, setisReady] = useState(false)
@@ -31,11 +33,11 @@ function VirtualFloor(){
     const { editor, onReady } = useFabricJSEditor()
 
     useEffect(() => {
-        //setfrag2LocationList(RESET) //delete to enable storage
-        editor?.canvas.on('object:modified', modifiedHandler)
+        
+        editor?.canvas.on('object:modified', objModifiedHandler)
         editor?.canvas.setWidth(x_canvasSize)
         editor?.canvas.setHeight(y_canvasSize) 
-    }, );
+    }, [editor]);
 
     useEffect(() => {
         if(fragmentList.length > 0 && frag2LocationList.length > 0){
@@ -46,6 +48,8 @@ function VirtualFloor(){
 
     useEffect(() => {
         if(isReady && loaded == false){
+            console.log("Load ready: " + frag2LocationList)
+            console.log(frag2LocationList)
             setLoaded(true)
             load()
         }else{      
@@ -53,23 +57,41 @@ function VirtualFloor(){
         }
     }, [isReady])
 
+    function doReset(){
+        console.log("resetting virtual floor")
+        editor.canvas.clear()
+        editor.canvas.setWidth(x_canvasSize)
+        editor.canvas.setHeight(y_canvasSize) 
+        setfrag2LocationList(RESET)
+         //delete to enable storage
+    }
+
     function load(){
         
         console.log("loading from storage, " + frag2LocationList.length)
-        const toLoad = []
+        console.log(frag2LocationList)
+        let toLoad = []
+        let uuidsLoaded = []
         for (const f2cObj of frag2LocationList){
-            toLoad.push(f2cObj)
+            if (uuidsLoaded.includes(f2cObj.uuid)){
+                console.log("dupe ignored")
+            }else{
+                toLoad.push(f2cObj)
+                uuidsLoaded.push(f2cObj.uuid)
+            }
         }
 
         for(const f2co of toLoad){
             spawnFromLoad(f2co)
         }
+        
     }
 
     function spawnFromLoad(frag2Location){
+        console.log("spawnFromLoad called")
         const frag = frag2Location.frag
         const locObj = frag2Location.locationObj
-        const uuid = crypto.randomUUID()
+        const uuid = frag2Location.uuid
 
             //if image!
             if (frag.type == "image"){
@@ -90,15 +112,22 @@ function VirtualFloor(){
             }
 
         function doSpawnLoad(oImg, frag, locObj, uuid){
-            console.log("adding from load")
+            //console.log("adding from load")
             
             oImg.scaleToHeight(locObj.height)
             oImg.scaleToWidth(locObj.width)
+
             const i = frag2LocationList.indexOf(frag2Location)
-            const newList = [
-                ...frag2LocationList.slice(0, i),
-                ...frag2LocationList.slice(i + 1)
-            ]
+            let newList
+            if (i == 0){
+                newList = frag2LocationList.slice(1)
+            }else{
+                newList = [
+                    ...frag2LocationList.slice(0, i),
+                    ...frag2LocationList.slice(i + 1)
+                ]
+            }
+
             setfrag2LocationList(newList)
            
             oImg.left = locObj.posx
@@ -111,6 +140,19 @@ function VirtualFloor(){
                 uuid: uuid
             }
             setfrag2LocationList([...frag2LocationList, frag2LocationObj])
+
+            let toLoad = []
+            let uuidsLoaded = []
+            for (const f2cObj of frag2LocationList){
+                if (uuidsLoaded.includes(f2cObj.uuid)){
+                    console.log("dupe ignored")
+                }else{
+                    toLoad.push(f2cObj)
+                    uuidsLoaded.push(f2cObj.uuid)
+                }
+            }
+
+            setfrag2LocationList([...toLoad])
             
             editor?.canvas.add(oImg);
         }
@@ -119,12 +161,14 @@ function VirtualFloor(){
     }
 
     function spawnAtPosition(fragid, posx, posy){
-        console.log("fragmentList: " + fragmentList.length)
+        console.log("spawnAtPosition called")
+        //console.log("fragmentList: " + fragmentList.length)
         for (const frag of fragmentList){
             if (frag._id == fragid){
                 const uuid = crypto.randomUUID()
-                console.log("VF: adding fragment id: " + frag._id.toString())   
-                console.log(frag2LocationList) 
+                console.log("uuid generated for canvas object instance")
+                //console.log("VF: adding fragment id: " + frag._id.toString())   
+                //console.log(frag2LocationList) 
 
                 //if image!
                 if (frag.type == "image"){
@@ -165,8 +209,9 @@ function VirtualFloor(){
                 canvasObj: oImg,
                 uuid: uuid
             }
+            console.log("beforeAdd  : " + frag2LocationList.length)
             setfrag2LocationList([...frag2LocationList, frag2LocationObj])
-            console.log(frag2LocationList)
+            console.log("afterAdd   : " + frag2LocationList.length)
             
             editor?.canvas.add(oImg);
             console.log("adding to canvas")
@@ -174,49 +219,60 @@ function VirtualFloor(){
     }
 
     function spawnFragment(fragid){
+        console.log("adding new fragment to canvas")
         if(frag2LocationList.length == 0){
             setLoaded(true) //avoids reload  
         }
         spawnAtPosition(fragid, 10, 10)
     }
 
-    const modifiedHandler = function (event){
+    function objModifiedHandler(event){
         console.log("Entered Handler: " + frag2LocationList)
-        for (const frag2obj of frag2LocationList){
-            if(frag2obj.uuid == event.target.id){
-                console.log("MATCH: " + frag2obj.uuid + " _:_ " + event.target.id)
-                
+        const modifiedCanvasObj = event.target
+        for (const f2loc of frag2LocationList){
+            if (f2loc.uuid == modifiedCanvasObj.id){
+                console.log("match")
 
-                const i = frag2LocationList.indexOf(frag2obj)
+                const i = frag2LocationList.indexOf(f2loc)
                 let newList
-                if(frag2LocationList.length == 1){
-                    newList = []
+                if (i == 0){
+                    newList = frag2LocationList.slice(1)
                 }else{
                     newList = [
                         ...frag2LocationList.slice(0, i),
                         ...frag2LocationList.slice(i + 1)
                     ]
-                }   
-                console.log("TEMP newlist: " + newList)
-                
-                console.log("found object to modify: " + frag2obj.frag._id)
-                frag2obj.locationObj.posx = event.target.left
-                frag2obj.locationObj.posy = event.target.top
-                frag2obj.locationObj.height = event.target.getScaledHeight()
-                frag2obj.locationObj.width = event.target.getScaledWidth()
-                
-                setfrag2LocationList([...newList, frag2obj])
+                }
+
+                const newLocObj = {
+                    height: modifiedCanvasObj.getScaledHeight(),
+                    width: modifiedCanvasObj.getScaledWidth(),
+                    posx: modifiedCanvasObj.left,
+                    posy: modifiedCanvasObj.top
+                }
+                const newObj = {
+                    frag: f2loc.frag,
+                    canvasObj: f2loc.canvasObj,
+                    locationObj: newLocObj,
+                    uuid: f2loc.uuid
+                }
+
+                setfrag2LocationList([...newList, newObj])
+                console.log(frag2LocationList)
             }
-            
         }
+
+
+        
     }
 
     return(
         <>
         <div id="hi" className='component-block'>
-            <div className='component-block-vert'>
+            <div className='component-block-vert-xsmall'>
                 <h1 className='vf-title'>Virtual Floor</h1>
                 <FabricJSCanvas className="floorcanvas" onReady={onReady} style={{width : x_canvasSize.toString() + "px", height : y_canvasSize.toString() + "px"}} />
+                <button className='reset-button' onClick={doReset}>Reset Canvas</button>
             </div>
             <div className='component-block-vert'>
                 <FragmentSelector fragmentList={fragmentList} setFragmentList={setFragmentList} spawnFragment={spawnFragment}></FragmentSelector>
