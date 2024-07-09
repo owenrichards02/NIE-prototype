@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import FragmentSelector from '../components/FragmentSelector'
 import { useAtom, atom } from 'jotai'
 import { RESET, atomWithStorage } from 'jotai/utils'
@@ -26,6 +26,8 @@ function VirtualFloor(){
     
     const [fragmentList, setFragmentList] = useAtom(fragments) 
     const [frag2LocationList, setfrag2LocationList] = useAtom(f2c_atom) //objects {frag, canvasObj, locationObj, uuid}
+    const f2lRef = useRef()
+    f2lRef.current = frag2LocationList
     
     const [loaded, setLoaded] = useState(false)
     const [isReady, setisReady] = useState(false)
@@ -209,9 +211,15 @@ function VirtualFloor(){
                 canvasObj: oImg,
                 uuid: uuid
             }
-            console.log("beforeAdd  : " + frag2LocationList.length)
-            setfrag2LocationList([...frag2LocationList, frag2LocationObj])
-            console.log("afterAdd   : " + frag2LocationList.length)
+
+            let newlist = []
+            for (const o of frag2LocationList){
+                newlist.push(o)
+            }
+            newlist.push(frag2LocationObj)
+            
+            setfrag2LocationList(newlist)
+            console.log(frag2LocationList)
             
             editor?.canvas.add(oImg);
             console.log("adding to canvas")
@@ -227,20 +235,23 @@ function VirtualFloor(){
     }
 
     function objModifiedHandler(event){
-        console.log("Entered Handler: " + frag2LocationList)
+        const list2use = f2lRef.current
+        console.log("Entered Handler: " + list2use)
+        let found = false
         const modifiedCanvasObj = event.target
-        for (const f2loc of frag2LocationList){
+        for (const f2loc of list2use){
             if (f2loc.uuid == modifiedCanvasObj.id){
                 console.log("match")
+                found = true
 
-                const i = frag2LocationList.indexOf(f2loc)
+                const i = list2use.indexOf(f2loc)
                 let newList
                 if (i == 0){
-                    newList = frag2LocationList.slice(1)
+                    newList = list2use.slice(1)
                 }else{
                     newList = [
-                        ...frag2LocationList.slice(0, i),
-                        ...frag2LocationList.slice(i + 1)
+                        ...list2use.slice(0, i),
+                        ...list2use.slice(i + 1)
                     ]
                 }
 
@@ -258,11 +269,9 @@ function VirtualFloor(){
                 }
 
                 setfrag2LocationList([...newList, newObj])
-                console.log(frag2LocationList)
+                console.log(list2use)
             }
         }
-
-
         
     }
 

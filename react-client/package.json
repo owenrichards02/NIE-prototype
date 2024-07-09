@@ -27,6 +27,7 @@
     "html-to-image": "^1.11.11",
     "html2canvas": "^1.4.1",
     "jotai": "^2.8.3",
+    "jotai-devtools": "^0.10.0",
     "jsdom": "^24.1.0",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",

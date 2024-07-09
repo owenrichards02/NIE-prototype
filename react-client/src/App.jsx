@@ -15,6 +15,9 @@ import { documents_findAll } from './api/react_api';
 import { useEffect } from 'react';
 import FragmentImage from './views/FragmentImage';
 
+import { DevTools } from 'jotai-devtools';
+import 'jotai-devtools/styles.css';
+
 
 function App() {
 
@@ -59,6 +62,7 @@ function App() {
 
   return (
     <>
+      <DevTools />
       <div className='component-block'>
       <BrowserRouter>
         <div className='side-panel'>
@@ -77,6 +81,7 @@ function App() {
       </BrowserRouter>
           
       </div>
+      
     </>
   )
 }
