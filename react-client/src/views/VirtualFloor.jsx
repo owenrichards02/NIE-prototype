@@ -50,6 +50,18 @@ function VirtualFloor(){
                 $(".deleteBtn").remove();
             }
         });
+
+        editor?.canvas.on('mouse:down',function(e){
+            if(!editor?.canvas.getActiveObject())
+            {
+                $(".deleteBtn").remove();
+            }
+        });
+
+        editor?.canvas.on('object:moving',function(e){
+                $(".deleteBtn").remove();
+        });
+    
     }, [editor]);
 
     useEffect(() => {
