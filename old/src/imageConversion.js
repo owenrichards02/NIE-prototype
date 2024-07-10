@@ -11,6 +11,16 @@ export function imageToHTML(filepath){
     return htmlString
 }
 
+export function imageToHTML_srcOnly(filepath){
+    const img64 = readFileSync(filepath, {encoding: 'base64'});
+
+    const extension = filepath.split('.')[-1]
+
+    let htmlString = 'data:image/' + extension + ';base64,' + img64
+
+    return htmlString
+}
+
 function testMain(){
 
     const html = imageToHTML("./resources/test_img.jpg")

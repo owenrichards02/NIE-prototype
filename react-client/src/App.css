@@ -189,10 +189,11 @@
 }
 
 .floorcanvas {
-  border:3px solid#101115;
+  border:2px solid#0d0e11;
   position: fixed;
   left: 400px;
   top: 100px;
+  box-shadow: 5px 5px #c7c9e7;
 }
 
 .vf-title{

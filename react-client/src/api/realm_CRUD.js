@@ -3,8 +3,8 @@ import * as Realm from 'realm-web'
 const app_id = import.meta.env.VITE_REALM_APP_KEY
 const dbName = 'nie'
 
-const email = "or1g20@soton.ac.uk"
-const passWd = "realmpass" 
+const email = import.meta.env.VITE_REALM_EMAIL
+const passWd = import.meta.env.VITE_REALM_PASS
 
 async function setUp(){
     const app = new Realm.App({id: app_id})

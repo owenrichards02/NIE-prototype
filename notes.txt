@@ -1,2 +1,0 @@
-env variables must be prefixed with VITE_ to work.
-They are queried with 'import.meta.env.VITE_keyname'

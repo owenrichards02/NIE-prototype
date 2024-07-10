@@ -1,8 +1,11 @@
-# React + Vite
+The app is created using Vite + React. The dev build can be run with npm run dev, allowing you to connect to the client using localhost in the browser.
+You will need to create a .env file with the following keys, for the NIE mongoDB cluster:
+    VITE_REALM_APP_KEY='xxxxxxxxx'
+    VITE_REALM_EMAIL='xxxxxxxx'
+    VITE_REALM_PASS='xxxxxxxx'
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+env variables must be prefixed with VITE_ to work.
+They are queried with 'import.meta.env.VITE_keyname'
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Fragments in the canvas are currently created by rendering HTML in an svg format. They currently do not scale properly within the fragment bounds, or implement any css styling within the html.
+More info on how this can be done: https://ronvalstar.nl/render-html-to-an-image
