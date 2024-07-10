@@ -115,6 +115,11 @@ function VirtualFloor(){
 
         function doSpawnLoad(oImg, frag, locObj, uuid){
             //console.log("adding from load")
+
+            oImg.controls = {
+                ...fabric.Image.prototype.controls,
+                mtr: new fabric.Control({ visible: false })
+            }
             
             oImg.scaleToHeight(locObj.height)
             oImg.scaleToWidth(locObj.width)
@@ -193,6 +198,11 @@ function VirtualFloor(){
         }
 
         function doSpawn(oImg, frag, uuid){
+
+            oImg.controls = {
+                ...fabric.Image.prototype.controls,
+                mtr: new fabric.Control({ visible: false })
+            }
             
             oImg.getScaledHeight() >= oImg.getScaledWidth() ? oImg.scaleToHeight(200) : oImg.scaleToWidth(200)
            
