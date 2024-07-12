@@ -9,6 +9,7 @@ import parse from 'html-react-parser';
 import * as htmlToImage from 'html-to-image';
 import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image'
 import { Button, Card, CardBody, CardHeader } from '@material-tailwind/react'
+import AnnotationCreator from '../components/AnnotationCreator'
 
 const f2c_atom = atomWithStorage('frag2canvas2', [])
 
@@ -32,7 +33,9 @@ function VirtualFloor(){
 
     const [loaded, setLoaded] = useState(false)
     const [isReady, setisReady] = useState(false)
-    const [selectedFragments, setSelectedFragments] = useState([])
+    const [selectedObjects, setSelectedObjects] = useState([])
+    const selObjRef = useRef()
+    selObjRef.current = selectedObjects
     let isMultiSelect = false
 
     const { editor, onReady } = useFabricJSEditor()
@@ -46,6 +49,7 @@ function VirtualFloor(){
         editor?.canvas.on('object:modified', objModifiedHandler)
         editor?.canvas.on('selection:created', objSelectedHandler)
         editor?.canvas.on('selection:updated', objSelectUpdatedHandler)
+        editor?.canvas.on('selection:cleared', objSelectClearedHandler)
         editor?.canvas.setWidth(x_canvasSize)
         editor?.canvas.setHeight(y_canvasSize) 
        
@@ -367,11 +371,12 @@ function VirtualFloor(){
         }else{
             isMultiSelect = true
         }
-        
+
+        setSelectedObjects(event.selected)
+        console.log(selObjRef.current)
     }
 
     function objSelectUpdatedHandler(event){
-        const list2use = f2lRef.current
         console.log("object select UPDATED handler entered")
 
         $(".deleteBtn").remove();
@@ -380,8 +385,32 @@ function VirtualFloor(){
             isMultiSelect = true
         }else{
             isMultiSelect = false
-            addDeleteBtn(event.selected[0].left, event.selected[0].top);
+            if(event.selected.length > 0){
+                addDeleteBtn(event.selected[0].left, event.selected[0].top);
+            }
         }
+
+        const current = selObjRef.current
+
+        for (const selectedCanvasObj of event.selected){
+            current.push(selectedCanvasObj)
+        }
+
+        for (const selectedCanvasObj of event.deselected){
+            const i = current.indexOf(selectedCanvasObj)
+            if (i == -1){
+                //idk
+            }else{
+                current.splice(i, 1)
+            }
+
+            setSelectedObjects(current)
+        }
+
+    }
+
+    function objSelectClearedHandler(event){
+        setSelectedObjects([])
     }
 
     return(
@@ -392,8 +421,9 @@ function VirtualFloor(){
                 <FabricJSCanvas className="floorcanvas" onReady={onReady} style={{width : x_canvasSize.toString() + "px", height : y_canvasSize.toString() + "px"}} />
                 <button className='reset-button' onClick={doReset}>Reset Canvas</button>
             </div>
-            <div className='component-block-vert'>
+            <div className='component-block-vert-small'>
                 <FragmentSelector fragmentList={fragmentList} setFragmentList={setFragmentList} spawnFragment={spawnFragment}></FragmentSelector>
+                <AnnotationCreator selObjRef={selObjRef} f2lRef={f2lRef} ></AnnotationCreator>
             </div>
 
         </div>

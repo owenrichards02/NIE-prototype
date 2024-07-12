@@ -210,6 +210,12 @@
   top: 20px;
 }
 
+.annotation-creator{
+  position: fixed;
+  left: 1850px;
+  top: 600px;
+}
+
 .query-options{
   position: fixed;
   left: 400px;
