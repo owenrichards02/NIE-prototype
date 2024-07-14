@@ -11,7 +11,8 @@ import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image'
 import { Button, Card, CardBody, CardHeader } from '@material-tailwind/react'
 import AnnotationCreator from '../components/AnnotationCreator'
 
-const f2c_atom = atomWithStorage('frag2canvas2', [])
+const f2c_atom = atomWithStorage('frag2canvas', [])
+const a2c_atom = atomWithStorage('annot2canvas', [])
 
 
 function VirtualFloor(){
@@ -27,7 +28,10 @@ function VirtualFloor(){
     
     const [fragmentList, setFragmentList] = useAtom(fragments) 
     const [frag2LocationList, setfrag2LocationList] = useAtom(f2c_atom) //objects {frag, canvasObj, locationObj, uuid}
+    const [annot2LocationList, setannot2LocationList] = useAtom(a2c_atom)
+    const a2lRef = useRef()
     const f2lRef = useRef()
+    a2lRef.current = annot2LocationList
     f2lRef.current = frag2LocationList
 
 
@@ -390,13 +394,15 @@ function VirtualFloor(){
             }
         }
 
-        const current = selObjRef.current
 
-        for (const selectedCanvasObj of event.selected){
-            current.push(selectedCanvasObj)
+        const current = []
+        for (const c of selObjRef.current){
+            if (!event.deselected.includes(c)){
+                current.push(c)
+            }
         }
 
-        for (const selectedCanvasObj of event.deselected){
+       /*  for (const selectedCanvasObj of event.deselected){
             const i = current.indexOf(selectedCanvasObj)
             if (i == -1){
                 //idk
@@ -404,14 +410,32 @@ function VirtualFloor(){
                 current.splice(i, 1)
             }
 
-            setSelectedObjects(current)
+        } */
+
+        for (const selectedCanvasObj of event.selected){
+            current.push(selectedCanvasObj)
         }
+
+        setSelectedObjects(current)
 
     }
 
     function objSelectClearedHandler(event){
         setSelectedObjects([])
     }
+
+
+    function onAnnotCreated(annotText, selObjList){
+        //need to create canvas object for annotation
+
+        var text = editor.canvas.add(new fabric.Text(annotText, { 
+            fill: 'black',
+            fontFamily: "Arial",
+            fontSize: 28,
+            fontStyle: "italic"
+        }));
+    }
+
 
     return(
         <>
@@ -423,7 +447,7 @@ function VirtualFloor(){
             </div>
             <div className='component-block-vert-small'>
                 <FragmentSelector fragmentList={fragmentList} setFragmentList={setFragmentList} spawnFragment={spawnFragment}></FragmentSelector>
-                <AnnotationCreator selObjRef={selObjRef} f2lRef={f2lRef} ></AnnotationCreator>
+                <AnnotationCreator selObjRef={selObjRef} f2lRef={f2lRef} onAnnotCreated={onAnnotCreated}></AnnotationCreator>
             </div>
 
         </div>

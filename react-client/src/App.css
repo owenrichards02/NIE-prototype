@@ -147,6 +147,14 @@
   left: 700px;
 }
 
+.selected-view-vf{
+  display:flex; 
+  flex-direction:column;
+  width: 550px;
+  height: 175px;
+  overflow-y:auto;
+  text-align: left;
+}
 
 .results-and-create{
   position: fixed;
@@ -214,6 +222,13 @@
   position: fixed;
   left: 1850px;
   top: 600px;
+  width: 600px;
+  height: 600px;
+}
+
+.frags-for-annot{
+  display:inline;
+  margin: 0 5px
 }
 
 .query-options{
