@@ -89,6 +89,14 @@
   gap: 100px;
 }
 
+.component-block-annot{
+  display:flex; 
+  flex-direction:rowl;
+  width: 100%;
+  height: px;
+  gap: 25px;
+}
+
 .component-block-xshort{
   display:flex; 
   flex-direction:rowl;
@@ -221,7 +229,7 @@
 .annotation-creator{
   position: fixed;
   left: 1850px;
-  top: 600px;
+  top: 550px;
   width: 600px;
   height: 600px;
 }

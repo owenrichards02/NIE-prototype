@@ -425,15 +425,22 @@ function VirtualFloor(){
     }
 
 
-    function onAnnotCreated(annotText, selObjList){
+    function onAnnotCreated(annotText, selObjList, color){
         //need to create canvas object for annotation
 
-        var text = editor.canvas.add(new fabric.Text(annotText, { 
+        var text = editor.canvas.add(new fabric.Textbox(annotText, { 
             fill: 'black',
             fontFamily: "Arial",
             fontSize: 28,
-            fontStyle: "italic"
+            fontStyle: "italic",
+            backgroundColor: color
+
         }));
+
+        text.controls = {
+            ...fabric.Image.prototype.controls,
+            mtr: new fabric.Control({ visible: false })
+        }
     }
 
 

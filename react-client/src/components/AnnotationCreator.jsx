@@ -1,12 +1,13 @@
 import { Button, Card, CardBody, CardHeader, Input, Textarea } from "@material-tailwind/react"
 import { useEffect, useRef, useState } from "react"
+import { HexColorPicker } from "react-colorful";
 
 function AnnotationCreator({selObjRef, f2lRef, onAnnotCreated}){
 
 
 const [fragNamesList, setFragNamesList] = useState([])
-
 const [text, setText] = useState("")
+const [color, setColor] = useState("#aabbcc");
 
 useEffect(() => {
     console.log("updating selected list in annot creator")
@@ -26,7 +27,9 @@ useEffect(() => {
 function createAnnotation(){
     console.log("ANNOTATION: " + text)
 
-    onAnnotCreated(text, selObjRef.current)
+    //need to save annotation 
+    
+    onAnnotCreated(text, selObjRef.current, color)
 }
 
 const changeText = (event) =>{
@@ -52,8 +55,11 @@ return(
             ))}
         </div>
         <br></br>
-        <b>Write an annotation</b>
+        <b>Create an annotation</b>
+        <div className="component-block-annot">
         <Textarea rows="5" onChange={changeText} label="Annotation Text" className="!border !border-gray-300 bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"></Textarea>
+        <HexColorPicker color={color} onChange={setColor} />
+        </div>
         <Button onClick={createAnnotation}>Create Annotation</Button>
     </div>
     </CardBody>
