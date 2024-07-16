@@ -36,7 +36,9 @@ function VirtualFloor(){
 
 
     const [loaded, setLoaded] = useState(false)
+    const [annotsLoaded, setAnnotsLoaded] = useState(false)
     const [isReady, setisReady] = useState(false)
+    const [isAnnotsReady, setisAnnotsReady] = useState(false)
     const [selectedObjects, setSelectedObjects] = useState([])
     const selObjRef = useRef()
     selObjRef.current = selectedObjects
@@ -60,7 +62,7 @@ function VirtualFloor(){
         $(document).on('click',".deleteBtn",function(){
             if(editor?.canvas.getActiveObject())
             {
-                removeFromf2l(editor.canvas.getActiveObject())
+                removeFromStorage(editor.canvas.getActiveObject())
                 editor.canvas.remove(editor.canvas.getActiveObject());
                 $(".deleteBtn").remove();
             }
@@ -92,6 +94,13 @@ function VirtualFloor(){
     }, [fragmentList])
 
     useEffect(() => {
+        if(annot2LocationList.length > 0 && editor?.canvas){
+            setisAnnotsReady(true)
+        }
+        
+    }, [annot2LocationList, editor])
+
+    useEffect(() => {
         if(isReady && loaded == false){
             console.log("Load ready: " + frag2LocationList)
             console.log(frag2LocationList)
@@ -102,34 +111,145 @@ function VirtualFloor(){
         }
     }, [isReady])
 
+    useEffect(() => {
+        if(isAnnotsReady && annotsLoaded == false){
+            console.log("Annots load ready: " + annot2LocationList)
+            console.log(annot2LocationList)
+            setAnnotsLoaded(true)
+            loadAnnots()
+        }else{      
+            console.log("annots storage not yet loaded")
+        }
+    }, [isAnnotsReady])
+
+
     function doReset(){
         console.log("resetting virtual floor")
         editor.canvas.clear()
         editor.canvas.setWidth(x_canvasSize)
         editor.canvas.setHeight(y_canvasSize) 
         setfrag2LocationList(RESET)
+        setannot2LocationList(RESET)
          //delete to enable storage
     }
 
     function load(){
         
-        console.log("loading from storage, " + frag2LocationList.length)
-        console.log(frag2LocationList)
         let toLoad = []
         let uuidsLoaded = []
-        for (const f2cObj of frag2LocationList){
-            if (uuidsLoaded.includes(f2cObj.uuid)){
+        for (const f2lObj of frag2LocationList){
+            if (uuidsLoaded.includes(f2lObj.uuid)){
                 console.log("dupe ignored")
             }else{
-                toLoad.push(f2cObj)
-                uuidsLoaded.push(f2cObj.uuid)
+                toLoad.push(f2lObj)
+                uuidsLoaded.push(f2lObj.uuid)
             }
         }
 
         for(const f2co of toLoad){
             spawnFromLoad(f2co)
         }
+        console.log("finished frag load")
         
+    }
+
+    function loadAnnots(){
+
+        let toLoad = []
+        let uuidsLoaded = []
+        for (const a2lObj of annot2LocationList){
+            if (uuidsLoaded.includes(a2lObj.uuid)){
+                console.log("dupe ignored")
+            }else{
+                toLoad.push(a2lObj)
+                uuidsLoaded.push(a2lObj.uuid)
+            }
+        }
+
+        for(const a2c of toLoad){
+            spawnAnnotFromLoad(a2c)
+        }
+        console.log("finished annots load")
+        
+    }
+
+    function spawnAnnotFromLoad(annot2location){
+        console.log("spawnAnnotFromLoad called")
+        const locObj = annot2location.locationObj
+        const uuid = annot2location.uuid
+        console.log(annot2location)
+
+        var annot = new fabric.Textbox(annot2location.text, { 
+            fill: 'black',
+            fontFamily: "Arial",
+            fontSize: 28,
+            fontStyle: "italic",
+            backgroundColor: annot2location.color,
+            id: uuid
+        });
+
+        doSpawnLoadAnnot(annot, annot2location, locObj, uuid)
+
+        function doSpawnLoadAnnot(annot, a2l, locObj, uuid){
+            console.log("adding annot from load")
+
+            annot.scaleToWidth(locObj.width)
+            annot.scaleToHeight(locObj.height)
+            annot.left = locObj.posx
+            annot.top = locObj.posy
+            var canObj = editor?.canvas.add(annot);
+
+            
+                  
+
+            annot.controls = {
+                ...fabric.Textbox.prototype.controls,
+                mtr: new fabric.Control({ visible: false }),
+                mt: new fabric.Control({ visible: false }),
+                mb: new fabric.Control({ visible: false }),
+                ml: new fabric.Control({ visible: false }),
+                mr: new fabric.Control({ visible: false }),
+                
+            }
+            
+           
+
+            const i = annot2LocationList.indexOf(a2l)
+            let newList
+            if (i == 0){
+                newList = annot2LocationList.slice(1)
+            }else{
+                newList = [
+                    ...annot2LocationList.slice(0, i),
+                    ...annot2LocationList.slice(i + 1)
+                ]
+            }
+           
+            
+
+            const a2lObj = {
+                locationObj: locObj,
+                canvasObj: annot,
+                uuid: uuid,
+                fragids: a2l.fragids,
+                text: a2l.text,
+                color: a2l.color
+            }
+            setannot2LocationList([...newList, a2lObj])
+
+            let toLoad = []
+            let uuidsLoaded = []
+            for (const a2lObj of annot2LocationList){
+                if (uuidsLoaded.includes(a2lObj.uuid)){
+                    console.log("dupe ignored")
+                }else{
+                    toLoad.push(a2lObj)
+                    uuidsLoaded.push(a2lObj.uuid)
+                }
+            }
+
+            setannot2LocationList([...toLoad])
+        }
     }
 
     function spawnFromLoad(frag2Location){
@@ -138,30 +258,34 @@ function VirtualFloor(){
         const locObj = frag2Location.locationObj
         const uuid = frag2Location.uuid
 
-            //if image!
-            if (frag.type == "image"){
-                fabric.Image.fromURL(frag.html.split('\"')[1], function (oImg) {
-                    doSpawnLoad(oImg, frag, locObj, uuid)
-                }, {id: uuid});
-            }else{
+        //if image!
+        if (frag.type == "image"){
+            fabric.Image.fromURL(frag.html.split('\"')[1], function (oImg) {
+                doSpawnLoad(oImg, frag, locObj, uuid)
+            }, {id: uuid});
+        }else{
 
-                const doc = new DOMParser().parseFromString(frag.html, 'text/html');
-                const xhtml = new XMLSerializer().serializeToString(doc);
-                let svg = '<svg xmlns="http://www.w3.org/2000/svg" display="block"><foreignObject width="200" height="200"><div xmlns="http://www.w3.org/1999/xhtml">'
-                svg += xhtml
-                svg += '</div></foreignObject></svg>'
-            
-                fabric.Image.fromURL('data:image/svg+xml,' + encodeURIComponent(svg), function (oImg) {
-                    doSpawnLoad(oImg, frag, locObj, uuid)
-                }, {id: uuid});
-            }
+            const doc = new DOMParser().parseFromString(frag.html, 'text/html');
+            const xhtml = new XMLSerializer().serializeToString(doc);
+            let svg = '<svg xmlns="http://www.w3.org/2000/svg" display="block"><foreignObject width="200" height="200"><div xmlns="http://www.w3.org/1999/xhtml">'
+            svg += xhtml
+            svg += '</div></foreignObject></svg>'
+        
+            fabric.Image.fromURL('data:image/svg+xml,' + encodeURIComponent(svg), function (oImg) {
+                doSpawnLoad(oImg, frag, locObj, uuid)
+            }, {id: uuid});
+        }
 
         function doSpawnLoad(oImg, frag, locObj, uuid){
             //console.log("adding from load")
 
             oImg.controls = {
                 ...fabric.Image.prototype.controls,
-                mtr: new fabric.Control({ visible: false })
+                mtr: new fabric.Control({ visible: false }),
+                mt: new fabric.Control({ visible: false }),
+                mb: new fabric.Control({ visible: false }),
+                ml: new fabric.Control({ visible: false }),
+                mr: new fabric.Control({ visible: false }),
             }
             
             oImg.scaleToHeight(locObj.height)
@@ -244,7 +368,11 @@ function VirtualFloor(){
 
             oImg.controls = {
                 ...fabric.Image.prototype.controls,
-                mtr: new fabric.Control({ visible: false })
+                mtr: new fabric.Control({ visible: false }),
+                mt: new fabric.Control({ visible: false }),
+                mb: new fabric.Control({ visible: false }),
+                ml: new fabric.Control({ visible: false }),
+                mr: new fabric.Control({ visible: false }),
             }
             
             oImg.getScaledHeight() >= oImg.getScaledWidth() ? oImg.scaleToHeight(200) : oImg.scaleToWidth(200)
@@ -288,7 +416,7 @@ function VirtualFloor(){
     }
 
     function objModifiedHandler(event){
-        const list2use = f2lRef.current
+        let list2use = f2lRef.current
         console.log("object modified handler entered")
         let found = false
         const modifiedCanvasObj = event.target
@@ -325,6 +453,44 @@ function VirtualFloor(){
             }
         }
 
+        if (!found){
+            list2use = a2lRef.current
+            for (const a2loc of list2use){
+                if (a2loc.uuid == modifiedCanvasObj.id){
+                    found = true
+    
+                    const i = list2use.indexOf(a2loc)
+                    let newList
+                    if (i == 0){
+                        newList = list2use.slice(1)
+                    }else{
+                        newList = [
+                            ...list2use.slice(0, i),
+                            ...list2use.slice(i + 1)
+                        ]
+                    }
+    
+                    const newLocObj = {
+                        height: modifiedCanvasObj.getScaledHeight(),
+                        width: modifiedCanvasObj.getScaledWidth(),
+                        posx: modifiedCanvasObj.left,
+                        posy: modifiedCanvasObj.top
+                    }
+                    const newObj = {
+                        fragids: a2loc.fragids,
+                        canvasObj: a2loc.canvasObj,
+                        locationObj: newLocObj,
+                        uuid: a2loc.uuid,
+                        color: a2loc.color,
+                        text: a2loc.text
+                    }
+    
+                    setannot2LocationList([...newList, newObj])
+                    console.log(list2use)
+                }
+            }
+        }
+
         if (!isMultiSelect) {
             //move the delete button
             addDeleteBtn(event.target.left, event.target.top);
@@ -342,26 +508,52 @@ function VirtualFloor(){
         $(".canvas-container").append(deleteBtn);
     }
 
-    function removeFromf2l(canvasObj){
+    function removeFromStorage(canvasObj){
         console.log(canvasObj)
-        const list2use = f2lRef.current
-        for (const f2loc of list2use){
+        let found = false
+
+        const fList = f2lRef.current
+        for (const f2loc of fList){
             if (f2loc.uuid == canvasObj.id){
-                const i = list2use.indexOf(f2loc)
+                const i = fList.indexOf(f2loc)
                 let newList
                 if (i == 0){
-                    newList = list2use.slice(1)
+                    newList = fList.slice(1)
                 }else{
                     newList = [
-                        ...list2use.slice(0, i),
-                        ...list2use.slice(i + 1)
+                        ...fList.slice(0, i),
+                        ...fList.slice(i + 1)
                     ]
                 }
 
                 setfrag2LocationList(newList)
-                console.log(list2use)
+                console.log(fList)
+
+                found = true
             }
         }
+
+        if(!found){
+            const aList = a2lRef.current
+            for (const f2loc of aList){
+                if (f2loc.uuid == canvasObj.id){
+                    const i = aList.indexOf(f2loc)
+                    let newList
+                    if (i == 0){
+                        newList = aList.slice(1)
+                    }else{
+                        newList = [
+                            ...aList.slice(0, i),
+                            ...aList.slice(i + 1)
+                        ]
+                    }
+
+                    setannot2LocationList(newList)
+                    console.log(aList)
+                }
+            }
+        }
+        
     }
 
     function objSelectedHandler(event){
@@ -377,6 +569,7 @@ function VirtualFloor(){
         }
 
         setSelectedObjects(event.selected)
+        console.log(event)
         console.log(selObjRef.current)
     }
 
@@ -426,21 +619,77 @@ function VirtualFloor(){
 
 
     function onAnnotCreated(annotText, selObjList, color){
+        if(annot2LocationList.length == 0){
+            setAnnotsLoaded(true)
+        }
         //need to create canvas object for annotation
+        const uuid = crypto.randomUUID()
+        console.log("uuid generated for new annotation")
 
-        var text = editor.canvas.add(new fabric.Textbox(annotText, { 
+        var annot = new fabric.Textbox(annotText, { 
             fill: 'black',
             fontFamily: "Arial",
             fontSize: 28,
             fontStyle: "italic",
-            backgroundColor: color
+            backgroundColor: color,
+            id: uuid
+        });
 
-        }));
+        let x = selObjList[0].oCoords.mt.x
+        let y = selObjList[0].oCoords.mt.y
+        console.log(x + "," + y)
 
-        text.controls = {
-            ...fabric.Image.prototype.controls,
-            mtr: new fabric.Control({ visible: false })
+        doAnnotSpawn(annot, uuid, selObjList, x, y, annotText, color) //CHANGE FOR SPAWNING NEAR THE SELECTION
+        
+    }
+
+    function doAnnotSpawn(annot, uuid, selObjList, posx, posy, annotText, color){
+        annot.left = posx
+        annot.top = posy
+
+        annot.getScaledHeight() >= annot.getScaledWidth() ? annot.scaleToHeight(200) : annot.scaleToWidth(200)
+        
+        var cObj = editor.canvas.add(annot)
+
+        annot.controls = {
+            ...fabric.Textbox.prototype.controls,
+            mtr: new fabric.Control({ visible: false }),
+            mt: new fabric.Control({ visible: false }),
+            mb: new fabric.Control({ visible: false }),
+            ml: new fabric.Control({ visible: false }),
+            mr: new fabric.Control({ visible: false }),
         }
+
+        const locObj = {
+            height: annot.getScaledHeight(),
+            width: annot.getScaledWidth(),
+            posx: annot.left,
+            posy: annot.top
+        }
+
+        let fidList = []
+        for (const selObj of selObjList){
+            const thisId = selObj.id
+
+            for (const f2l of f2lRef.current){
+                if(f2l.uuid == thisId){
+                    fidList.push(f2l.frag._id)
+                }
+            }
+        }
+
+        const a2lObj = {
+            canvasObj: annot,
+            locationObj: locObj,
+            uuid: uuid,
+            fragids: fidList,
+            text: annotText,
+            color: color
+        }
+
+        setannot2LocationList([...annot2LocationList, a2lObj])
+        console.log(a2lRef.current)
+        console.log(annot2LocationList)
     }
 
 
