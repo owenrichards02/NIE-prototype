@@ -17,7 +17,7 @@ const a2c_atom = atomWithStorage('annot2canvas', [])
 
 function VirtualFloor(){
 
-    const x_canvasSize = 1300
+    const x_canvasSize = 1350
     const y_canvasSize = 1100
 
     //canvas on the left
@@ -416,12 +416,27 @@ function VirtualFloor(){
     }
 
     function objModifiedHandler(event){
+        console.log(event)
+        if (!isMultiSelect) {
+            //move the delete butto
+            updateSingleLocation(event.target, event)
+            addDeleteBtn(event.target.left, event.target.top);
+        }else{
+            let list = event.target._objects
+            console.log("updating the location of " + list.length + " objects")
+            updateMultipleLocations(event, list)
+        }
+        
+        
+    }
+    
+    function updateSingleLocation(object, event, orig=null){
         let list2use = f2lRef.current
         console.log("object modified handler entered")
         let found = false
-        const modifiedCanvasObj = event.target
+        
         for (const f2loc of list2use){
-            if (f2loc.uuid == modifiedCanvasObj.id){
+            if (f2loc.uuid == object.id){
                 found = true
 
                 const i = list2use.indexOf(f2loc)
@@ -435,12 +450,20 @@ function VirtualFloor(){
                     ]
                 }
 
-                const newLocObj = {
-                    height: modifiedCanvasObj.getScaledHeight(),
-                    width: modifiedCanvasObj.getScaledWidth(),
-                    posx: modifiedCanvasObj.left,
-                    posy: modifiedCanvasObj.top
+                let newLocObj = {
+                    height: object.getScaledHeight(),
+                    width: object.getScaledWidth(),
+                    posx: object.left,
+                    posy: object.top
                 }
+
+                if (orig){
+                    let offsetx = event.target.left - orig.left 
+                    let offsety = event.target.top - orig.top
+                    newLocObj.posx = f2loc.locationObj.posx + offsetx
+                    newLocObj.posy = f2loc.locationObj.posy + offsety
+                }
+
                 const newObj = {
                     frag: f2loc.frag,
                     canvasObj: f2loc.canvasObj,
@@ -449,14 +472,14 @@ function VirtualFloor(){
                 }
 
                 setfrag2LocationList([...newList, newObj])
-                console.log(list2use)
+                
             }
         }
 
         if (!found){
             list2use = a2lRef.current
             for (const a2loc of list2use){
-                if (a2loc.uuid == modifiedCanvasObj.id){
+                if (a2loc.uuid == object.id){
                     found = true
     
                     const i = list2use.indexOf(a2loc)
@@ -470,12 +493,21 @@ function VirtualFloor(){
                         ]
                     }
     
-                    const newLocObj = {
-                        height: modifiedCanvasObj.getScaledHeight(),
-                        width: modifiedCanvasObj.getScaledWidth(),
-                        posx: modifiedCanvasObj.left,
-                        posy: modifiedCanvasObj.top
+                    let newLocObj = {
+                        height: object.getScaledHeight(),
+                        width: object.getScaledWidth(),
+                        posx: object.left,
+                        posy: object.top
                     }
+
+                    if (orig){
+                        let offsetx = event.target.left - orig.left 
+                        let offsety =  event.target.top - orig.top
+                        newLocObj.posx = a2loc.locationObj.posx + offsetx
+                        newLocObj.posy = a2loc.locationObj.posy + offsety
+                        console.log(offsetx + "," + offsety)
+                    }
+
                     const newObj = {
                         fragids: a2loc.fragids,
                         canvasObj: a2loc.canvasObj,
@@ -486,17 +518,17 @@ function VirtualFloor(){
                     }
     
                     setannot2LocationList([...newList, newObj])
-                    console.log(list2use)
+                    
                 }
             }
         }
+    }
 
-        if (!isMultiSelect) {
-            //move the delete button
-            addDeleteBtn(event.target.left, event.target.top);
+    function updateMultipleLocations(event, objectList){
+        for (const object of objectList){
+            updateSingleLocation(object, event, event.transform.original)
+            console.log(object)
         }
-        
-        
     }
 
     function addDeleteBtn(x, y){
@@ -569,8 +601,6 @@ function VirtualFloor(){
         }
 
         setSelectedObjects(event.selected)
-        console.log(event)
-        console.log(selObjRef.current)
     }
 
     function objSelectUpdatedHandler(event){
