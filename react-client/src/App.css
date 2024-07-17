@@ -61,9 +61,9 @@
 }
 
 .html-window {
-  flex: grow 1;
-  width: 100%;
   margin-left: 3cm;
+  position: fixed;
+  left: 1050px;
 }
 
 .html-content-view {
@@ -252,6 +252,15 @@
   flex-direction:rowl;
   width: 100%;
   gap: 100px;
+  white-space: nowrap;
+  margin-bottom: 20px;
+}
+
+.component-block-switch{
+  display:flex; 
+  flex-direction:rowl;
+  width: 100%;
+  gap: 30px;
   white-space: nowrap;
   margin-bottom: 20px;
 }
