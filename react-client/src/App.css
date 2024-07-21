@@ -159,7 +159,7 @@
   display:flex; 
   flex-direction:column;
   width: 550px;
-  height: 175px;
+  height: 125px;
   overflow-y:auto;
   text-align: left;
 }
@@ -229,7 +229,7 @@
 .annotation-creator{
   position: fixed;
   left: 1850px;
-  top: 550px;
+  top: 625px;
   width: 600px;
   height: 600px;
 }
@@ -344,5 +344,5 @@
 }
 
 .fragment-selector{
-  max-height: 505px
+  max-height: 585px
 }

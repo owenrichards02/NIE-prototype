@@ -51,7 +51,7 @@ function VirtualFloor(){
 
     //canvas event setup
     useEffect(() => {
-        
+        //setfrag2LocationList(RESET)
         editor?.canvas.on('object:modified', objModifiedHandler)
         editor?.canvas.on('selection:created', objSelectedHandler)
         editor?.canvas.on('selection:updated', objSelectUpdatedHandler)
@@ -393,14 +393,9 @@ function VirtualFloor(){
                 uuid: uuid
             }
 
-            let newlist = []
-            for (const o of frag2LocationList){
-                newlist.push(o)
-            }
-            newlist.push(frag2LocationObj)
+            setfrag2LocationList((currentList) => [...currentList, frag2LocationObj])
             
-            setfrag2LocationList(newlist)
-            console.log(frag2LocationList)
+            console.log(f2lRef.current)
             
             editor?.canvas.add(oImg);
             console.log("adding to canvas")
@@ -412,7 +407,19 @@ function VirtualFloor(){
         if(frag2LocationList.length == 0){
             setLoaded(true) //avoids reload  
         }
-        spawnAtPosition(fragid, 10, 10)
+        const offsetx = Math.floor(Math.random() * 40) 
+        const offsety = Math.floor(Math.random() * 40) 
+        spawnAtPosition(fragid, 10 + offsetx, 10 + offsety)
+    }
+
+    function bulkSpawn(fragidList){
+        if(frag2LocationList.length == 0){
+            setLoaded(true) //avoids reload  
+        }
+        for (const fid of fragidList){
+            spawnFragment(fid)
+        }
+
     }
 
     function objModifiedHandler(event){
@@ -733,7 +740,7 @@ function VirtualFloor(){
                 <button className='reset-button' onClick={doReset}>Reset Canvas</button>
             </div>
             <div className='component-block-vert-small'>
-                <FragmentSelector fragmentList={fragmentList} setFragmentList={setFragmentList} spawnFragment={spawnFragment} f2lRef={f2lRef}></FragmentSelector>
+                <FragmentSelector fragmentList={fragmentList} setFragmentList={setFragmentList} spawnFragment={spawnFragment} f2lRef={f2lRef} bulkSpawn={bulkSpawn}></FragmentSelector>
                 <AnnotationCreator selObjRef={selObjRef} f2lRef={f2lRef} onAnnotCreated={onAnnotCreated}></AnnotationCreator>
             </div>
 

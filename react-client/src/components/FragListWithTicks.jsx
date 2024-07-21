@@ -33,7 +33,6 @@ const FragListWithTicks = forwardRef(({itemList, setItemList, onDoubleClick, nam
 
     return(
         <>
-            <div className='bottom-three'>
             <h2 className='mb-4 text-xl font-extrabold leading-none tracking-tight text-gray-900 md:text-xl lg:text-xl dark:text-white'>{name}</h2>
             {itemList.length > 0 ? 
                 <ul className="list-group">
@@ -57,7 +56,6 @@ const FragListWithTicks = forwardRef(({itemList, setItemList, onDoubleClick, nam
                     
                 </ul>
             : <i>No items in the list</i>}
-            </div>
         
         </>
 
