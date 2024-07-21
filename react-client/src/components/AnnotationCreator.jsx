@@ -41,7 +41,7 @@ return(
     <>
     {fragNamesList.length > 0 ? 
     <div className="annotation-creator">
-    <Card className="mt-0 w-600">
+    <Card className="mt-0 w-600 text-black">
     <CardBody>
         <h2 className='mb-4 text-xl font-extrabold leading-none tracking-tight text-gray-900 md:text-xl lg:text-xl dark:text-white'>Annotation Creator</h2>
         

@@ -63,7 +63,7 @@ function FragmentExtractorQuery(){
         </div>
         {searchResults.length > 0 && !rightSideHidden ? <div className="results-and-create">
         <div className="bottom-onefive">
-        <Card>
+        <Card className="text-black">
         <CardBody>
         <TextualList itemList={searchResults} onDoubleClick={newFragChosen}></TextualList>
         
@@ -73,7 +73,7 @@ function FragmentExtractorQuery(){
         </Card>
         </div>
         {chosenFrag != "" ?
-        <Card>
+        <Card className="text-black">
         <CardBody>
         <FragmentCreator frag={chosenFrag} ></FragmentCreator>
         </CardBody>

@@ -52,14 +52,14 @@ function FragmentExtractorTextual(){
             <div className="selector-textual-position">
                 <div className='component-block'>
                     <div className="doc-selector-width">
-                        <Card className="doc-selector-card">
+                        <Card className="doc-selector-card mt-6 w-200 text-black">
                         <CardBody>
                         <ItemList itemList={documentList}  setItemList={setDocumentList} onDoubleClick={changeHTMLView} ref={feRef} name="Select document"></ItemList>
                         </CardBody>
                         </Card>
                     </div>
                     <div className="textual-selector-width">
-                        <Card className="textual-selector-card">
+                        <Card className="textual-selector-card mt-6 w-200 text-black">
                         <CardBody>
                         <TextualList itemList={textFragsList} setItemList={setTextFragsList} onDoubleClick={chooseTextSection}></TextualList>  
                         </CardBody>
@@ -70,7 +70,7 @@ function FragmentExtractorTextual(){
             </div>
             <div className="frag-creator-location-textual">
             {showFragCreator ?
-            <Card className="frag-creator-card-textual">
+            <Card className="frag-creator-card-textual mt-6 w-200 text-black">
             <CardBody>
              <FragmentCreator frag={chosenFrag}></FragmentCreator> 
             </CardBody>

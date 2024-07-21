@@ -81,7 +81,7 @@ function Sidebar() {
               <ListItemPrefix>
                 <SquaresPlusIcon className="h-5 w-5" />
               </ListItemPrefix>
-              <Typography color="blue-gray" className="mr-auto font-normal">
+              <Typography color="blue-gray" className="mr-auto">
                 Fragment Extractors
               </Typography>
             </AccordionHeader>

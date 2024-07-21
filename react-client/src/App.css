@@ -301,7 +301,7 @@
 .reset-button{
   position: fixed;
   top: 1215px;
-  left: 1550px;
+  left: 1595px;
 }
 
 .selector-textual-position{
@@ -341,4 +341,8 @@
   left: 650px;
   min-width: 1200px;
   width: 1200px;
+}
+
+.fragment-selector{
+  max-height: 505px
 }

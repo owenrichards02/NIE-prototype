@@ -733,7 +733,7 @@ function VirtualFloor(){
                 <button className='reset-button' onClick={doReset}>Reset Canvas</button>
             </div>
             <div className='component-block-vert-small'>
-                <FragmentSelector fragmentList={fragmentList} setFragmentList={setFragmentList} spawnFragment={spawnFragment}></FragmentSelector>
+                <FragmentSelector fragmentList={fragmentList} setFragmentList={setFragmentList} spawnFragment={spawnFragment} f2lRef={f2lRef}></FragmentSelector>
                 <AnnotationCreator selObjRef={selObjRef} f2lRef={f2lRef} onAnnotCreated={onAnnotCreated}></AnnotationCreator>
             </div>
 

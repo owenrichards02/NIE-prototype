@@ -4,8 +4,10 @@ import { fragments_findAll } from "../api/react_api"
 import ItemList from "./ItemList"
 import { fragments } from '../state'
 import { useAtom } from 'jotai'
+import { Card, CardBody } from '@material-tailwind/react'
+import FragListWithTicks from './FragListWithTicks'
 
-function FragmentSelector({spawnFragment}){
+function FragmentSelector({spawnFragment, f2lRef}){
 
     const fragListRef = useRef()
 
@@ -26,10 +28,17 @@ function FragmentSelector({spawnFragment}){
 
     }, [])
 
+    const onDoubleClick = (event) => {
+        spawnFragment(event)
+    }
+
     return (
         <>
         <div className='pick-frags'>
-        <ItemList itemList={fragmentList}  setItemList={setFragmentList} onDoubleClick={spawnFragment} ref={fragListRef} name="Available Fragments"></ItemList>
+        <Card className="fragment-selector mt-0 w-600 text-black"><CardBody>
+        <FragListWithTicks itemList={fragmentList}  setItemList={setFragmentList} onDoubleClick={onDoubleClick} ref={fragListRef} f2lRef={f2lRef} name="Available Fragments"></FragListWithTicks>
+        </CardBody>
+        </Card>
         </div>
         </>
     )

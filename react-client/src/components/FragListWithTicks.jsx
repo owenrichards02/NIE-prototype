@@ -1,7 +1,8 @@
+import { CheckCircleIcon } from "@heroicons/react/24/solid"
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react"
 
 
-const ItemList = forwardRef(({itemList, setItemList, onDoubleClick, name}, ref) => {
+const FragListWithTicks = forwardRef(({itemList, setItemList, onDoubleClick, name, f2lRef}, ref) => {
 
     useImperativeHandle(ref, () =>{
         return{
@@ -21,6 +22,15 @@ const ItemList = forwardRef(({itemList, setItemList, onDoubleClick, name}, ref) 
 
     //console.log(itemList)
 
+    function isAdded(id){
+        for (const f2l of f2lRef.current){
+            if(f2l.frag._id == id){
+                return true
+            }
+        }
+        return false
+    }
+
     return(
         <>
             <div className='bottom-three'>
@@ -28,17 +38,23 @@ const ItemList = forwardRef(({itemList, setItemList, onDoubleClick, name}, ref) 
             {itemList.length > 0 ? 
                 <ul className="list-group">
                     {itemList.map((item, index) => (
+                        
                         <li className={selectedIndex === index ? 'list-group-item active' : 'list-group-item'} 
                             onClick={() => {setSelectedIndex(index)}} 
                             onDoubleClick={() => {onDoubleClick(item._id)}}
                             key={item._id.toString() + '_' + index.toString()}>
-                            <div className="text-left">
-                                <b>{item.name}</b> <br/>
-                                <small><b>ID: </b> {item._id.toString()}</small> <br/>
-                                {'type' in item ? <small><b>Type: </b>{item.type}</small>: <></>}
+                            <div className="component-block-annot">
+                                <div className="w-100 text-left">
+                                    <b>{item.name}</b> <br/>
+                                    <small><b>ID: </b> {item._id.toString()}</small> <br/>
+                                    {'type' in item ? <small><b>Type: </b>{item.type}</small>: <></>}
+                                </div>
+                                {isAdded(item._id) ? <CheckCircleIcon className="w-6 fill-green-500"></CheckCircleIcon> : <></>}
                             </div>
                         </li>
+                      
                     ))}
+                    
                 </ul>
             : <i>No items in the list</i>}
             </div>
@@ -48,4 +64,4 @@ const ItemList = forwardRef(({itemList, setItemList, onDoubleClick, name}, ref) 
     )
 })
 
-export default ItemList
+export default FragListWithTicks
