@@ -438,7 +438,7 @@ function VirtualFloor(){
         for (const f2loc of list2use){
             if (f2loc.uuid == object.id){
                 found = true
-
+                console.log("moving fragment")
                 const i = list2use.indexOf(f2loc)
                 let newList
                 if (i == 0){
@@ -480,6 +480,7 @@ function VirtualFloor(){
             list2use = a2lRef.current
             for (const a2loc of list2use){
                 if (a2loc.uuid == object.id){
+                    console.log("moving annotation")
                     found = true
     
                     const i = list2use.indexOf(a2loc)

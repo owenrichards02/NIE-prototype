@@ -303,3 +303,42 @@
   top: 1215px;
   left: 1550px;
 }
+
+.selector-textual-position{
+  position: fixed;
+  top: 50px;
+  left: 500px
+}
+
+.doc-selector-width{
+  width: 500px;
+  min-width: 500px;
+}
+.doc-selector-card{
+  width: 550px;
+  height: 500px;
+}
+
+.textual-selector-width{
+  width: 800px;
+  max-width: 800px;
+  min-width: 800px;
+}
+.textual-selector-card{
+  width: 850px;
+  height: 500px;
+}
+
+.frag-creator-location-textual{
+  position: fixed;
+  top: 700px;
+  left: 500px
+}
+
+.frag-creator-card-textual{
+  position: fixed;
+  top: 650px;
+  left: 650px;
+  min-width: 1200px;
+  width: 1200px;
+}

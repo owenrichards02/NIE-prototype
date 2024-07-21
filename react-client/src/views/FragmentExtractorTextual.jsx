@@ -8,6 +8,7 @@ import TextualList from "../components/TextualList";
 import FragmentCreator from "../components/FragmentCreator";
 import { useAtom } from "jotai";
 import { documents } from "../state";
+import { Card, CardBody, Input } from "@material-tailwind/react";
 
 function FragmentExtractorTextual(){
 
@@ -48,11 +49,34 @@ function FragmentExtractorTextual(){
     return (
         <>
         <div className="component-block-vert">
-            <div className='component-block'>
-                <ItemList itemList={documentList}  setItemList={setDocumentList} onDoubleClick={changeHTMLView} ref={feRef} name="Select document"></ItemList>
-                <TextualList itemList={textFragsList} setItemList={setTextFragsList} onDoubleClick={chooseTextSection}></TextualList>        
+            <div className="selector-textual-position">
+                <div className='component-block'>
+                    <div className="doc-selector-width">
+                        <Card className="doc-selector-card">
+                        <CardBody>
+                        <ItemList itemList={documentList}  setItemList={setDocumentList} onDoubleClick={changeHTMLView} ref={feRef} name="Select document"></ItemList>
+                        </CardBody>
+                        </Card>
+                    </div>
+                    <div className="textual-selector-width">
+                        <Card className="textual-selector-card">
+                        <CardBody>
+                        <TextualList itemList={textFragsList} setItemList={setTextFragsList} onDoubleClick={chooseTextSection}></TextualList>  
+                        </CardBody>
+                        </Card>
+                    </div>
+                    
+                </div>
             </div>
-            {showFragCreator ? <FragmentCreator frag={chosenFrag}></FragmentCreator> : <></>}
+            <div className="frag-creator-location-textual">
+            {showFragCreator ?
+            <Card className="frag-creator-card-textual">
+            <CardBody>
+             <FragmentCreator frag={chosenFrag}></FragmentCreator> 
+            </CardBody>
+            </Card>
+            : <></>}
+            </div>
             
         </div>
         </>
