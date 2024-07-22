@@ -34,6 +34,7 @@ function FragmentSelector({spawnFragment, f2lRef, bulkSpawn}){
 
     }, [])
 
+    //finds all documents that have a fragment, and adds them to the dropdown
     useEffect(() => {
         let docsWithFragsBuilder = []
         let foundIDList = []
@@ -56,7 +57,7 @@ function FragmentSelector({spawnFragment, f2lRef, bulkSpawn}){
 
     const addAll = (event) => {
         const idList = []
-        for(const frag of fragmentList){
+        for(const frag of subsetList){
             idList.push(frag._id)
         }
         bulkSpawn(idList)
