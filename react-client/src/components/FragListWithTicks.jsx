@@ -33,9 +33,9 @@ const FragListWithTicks = forwardRef(({itemList, setItemList, onDoubleClick, nam
 
     return(
         <>
-            <h2 className='mb-4 text-xl font-extrabold leading-none tracking-tight text-gray-900 md:text-xl lg:text-xl dark:text-white'>{name}</h2>
+            {name != "" ? <h2 className='mb-4 text-xl font-extrabold leading-none tracking-tight text-gray-900 md:text-xl lg:text-xl dark:text-white'>{name}</h2> : <></>}
             {itemList.length > 0 ? 
-                <ul className="list-group">
+                <ul className="list-group text-sm h-72 shadow-lg">
                     {itemList.map((item, index) => (
                         
                         <li className={selectedIndex === index ? 'list-group-item active' : 'list-group-item'} 

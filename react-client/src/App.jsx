@@ -17,6 +17,7 @@ import FragmentImage from './views/FragmentImage';
 
 import { DevTools } from 'jotai-devtools';
 import 'jotai-devtools/styles.css';
+import MyFragments from './views/MyFragments';
 
 
 function App() {
@@ -72,6 +73,7 @@ function App() {
           <Routes>
             <Route path='/' Component={Home}></Route>
             <Route path='/doc-viewer' Component={DocumentViewer}></Route>
+            <Route path='/my-frags' Component={MyFragments}></Route>
             <Route path='/frag-extract-textual' Component={FragmentExtractorTextual}></Route>
             <Route path='/frag-extract-query' Component={FragmentExtractorQuery}></Route>
             <Route path='/frag-image' Component={FragmentImage}></Route>

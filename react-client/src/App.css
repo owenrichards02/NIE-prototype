@@ -127,6 +127,13 @@
   gap: 10px;
 }
 
+.component-block-vert-xsmall2{
+  display:flex; 
+  flex-direction:column;
+  width: 100%;
+  gap: 15px;
+}
+
 .document-select-multiple{
   position: fixed;
   top: 40px;
@@ -345,4 +352,9 @@
 
 .fragment-selector{
   max-height: 585px
+}
+
+.fragment-selector-list{
+  max-height: 200px;
+  height: 200px
 }

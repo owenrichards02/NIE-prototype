@@ -59,12 +59,14 @@ function Sidebar() {
             Document Viewer
           </ListItem>
 
-          {/* <ListItem onClick={() => nav("frag-extract")}>
+          <ListItem onClick={() => nav("my-frags")}>
             <ListItemPrefix>
-              <SquaresPlusIcon className="h-5 w-5" />
+              <PuzzlePieceIcon className="h-5 w-5" />
             </ListItemPrefix>
-            Fragment Extractor
-          </ListItem> */}
+            My Fragments
+          </ListItem>
+
+
 
           {/* FRAGMENT EXTRACTORS */}
           <Accordion
