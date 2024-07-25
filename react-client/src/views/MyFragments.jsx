@@ -82,7 +82,7 @@ function MyFragments(){
 
     </div>
 
-    <FragmentGrid subsetList={subsetList} setSubsetList={setSubsetList}></FragmentGrid>
+    <FragmentGrid subsetList={subsetList} selectedFragment={selectedFragment} setSelectedFragment={setSelectedFragment}></FragmentGrid>
 
     
     </>

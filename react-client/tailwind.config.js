@@ -9,7 +9,14 @@ export default withMT( {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    colors:{
+      'amethyst': '#9a61bd'
+    },
+    extend: {
+      scale:{
+        '103': '1.03'
+      }
+    },
   },
   plugins: [],
 })
