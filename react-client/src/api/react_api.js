@@ -84,7 +84,7 @@ export async function fragment_add_html(html, docid, fragName="testFragment", ty
     const newfrag = {
         name: fragName,
         docid: docid,
-        html: html,
+        html: html  ,
         data: null,
         type: type,
         coords: coords,
