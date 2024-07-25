@@ -358,3 +358,15 @@
   max-height: 200px;
   height: 200px
 }
+
+.title-location-myfrag{
+  position: fixed;
+  top: 50px;
+  left: 975px;
+}
+
+.fragment-grid-location{
+  position: fixed;
+  top: 125px;
+  left: 450px;
+}
