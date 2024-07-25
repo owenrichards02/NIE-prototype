@@ -382,3 +382,9 @@
   top: 200px;
   left: 450px;
 }
+
+.fragment-editor-location{
+  position: fixed;
+  left: 1850px;
+  top: 100px;
+}

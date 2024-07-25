@@ -4,6 +4,7 @@ import FragmentGrid from "../components/FragmentGrid"
 import { useEffect, useState } from "react"
 import { fragments_findAll } from "../api/react_api"
 import { Option, Select } from '@material-tailwind/react';
+import FragmentEditorPanel from "../components/FragmentEditorPanel"
 
 function MyFragments(){
 
@@ -84,6 +85,8 @@ function MyFragments(){
 
     <FragmentGrid subsetList={subsetList} selectedFragment={selectedFragment} setSelectedFragment={setSelectedFragment}></FragmentGrid>
 
+    {selectedFragment != null ? <FragmentEditorPanel selectedFragment={selectedFragment}></FragmentEditorPanel> : <></>}
+    
     
     </>
     )
