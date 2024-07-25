@@ -10,7 +10,7 @@ function FragmentGridIcon({fragment, selectedFragment, setSelectedFragment}){
     return(
         <>
         <div className='z-10 transition duration-300 ease-in-out hover:scale-103 p-1' onClick={selectFragment}>
-        {selectedFragment == fragment ? <div className='outline outline-amethyst'>
+        {selectedFragment == fragment ? <div className='outline-dotted outline-amethyst rounded'>
         <Card className="h-60 w-full max-w-full rounded-lg object-cover object-center pb-3">
             <CardBody className="overflow-hidden">
             <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(fragment.html) }} /> 

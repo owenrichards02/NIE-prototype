@@ -10,7 +10,7 @@ export default withMT( {
   ],
   theme: {
     colors:{
-      'amethyst': '#9a61bd'
+      'amethyst': '#8400ff'
     },
     extend: {
       scale:{
