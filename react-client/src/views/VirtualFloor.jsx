@@ -17,8 +17,8 @@ const a2c_atom = atomWithStorage('annot2canvas', [])
 
 function VirtualFloor(){
 
-    const x_canvasSize = 1350
-    const y_canvasSize = 1100
+    const x_canvasSize = 1550
+    const y_canvasSize = 1250
 
     //canvas on the left
     //toolbar on the right
@@ -735,7 +735,7 @@ function VirtualFloor(){
         <>
         <div id="hi" className='component-block'>
             <div className='component-block-vert-xsmall'>
-                <h1 className='vf-title'>Virtual Floor</h1>
+                
                 <FabricJSCanvas className="floorcanvas" onReady={onReady} style={{width : x_canvasSize.toString() + "px", height : y_canvasSize.toString() + "px"}} />
                 <button className='reset-button' onClick={doReset}>Reset Canvas</button>
             </div>

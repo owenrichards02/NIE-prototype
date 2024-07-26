@@ -16,7 +16,7 @@ function FragmentEditorPanel({selectedFragment}){
             </div>
 
             <h2 className="mb-4 pt-8 text-xl font-bold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-2xl dark:text-white">Editor goes here</h2>
-
+            <h2 className="mb-4 pt-8 text-xl font-bold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-2xl dark:text-white">Annotations</h2>
             <h2 className="mb-4 pt-12 text-xl font-bold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-2xl dark:text-white">Rendered Preview</h2>
             <div className="html-content-view" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedFragment.html) }} /> 
         </CardBody>

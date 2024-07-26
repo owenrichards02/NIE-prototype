@@ -221,7 +221,7 @@
   border:2px solid#0d0e11;
   position: fixed;
   left: 400px;
-  top: 100px;
+  top: 25px;
   box-shadow: 5px 5px #c7c9e7;
 }
 
@@ -235,15 +235,15 @@
 
 .pick-frags{
   position: fixed;
-  left: 1850px;
+  left: 1975px;
   top: 20px;
 }
 
 .annotation-creator{
   position: fixed;
-  left: 1850px;
+  left: 1975px;
   top: 625px;
-  width: 600px;
+  width: 575px;
   height: 600px;
 }
 
@@ -313,8 +313,8 @@
 
 .reset-button{
   position: fixed;
-  top: 1215px;
-  left: 1595px;
+  top: 1290px;
+  left: 1795px;
 }
 
 .selector-textual-position{
