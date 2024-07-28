@@ -80,6 +80,12 @@
   height: 600px;
   gap: 100px;
 }
+.component-block-dia{
+  display:flex; 
+  flex-direction:rowl;
+  width: 100%;
+  gap: 100px;
+}
 
 .component-block-short{
   display:flex; 
@@ -385,6 +391,6 @@
 
 .fragment-editor-location{
   position: fixed;
-  left: 1850px;
-  top: 100px;
+  left: 1800px;
+  top: 50px;
 }
