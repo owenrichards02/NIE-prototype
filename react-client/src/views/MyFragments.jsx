@@ -70,7 +70,7 @@ function MyFragments(){
     <>
     <h1 className="title-location-myfrag mb-4 text-xl font-bold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-3xl dark:text-white">My Fragments</h1>
     <div className="fragment-filter-location w-72 text-black pb-4 z-50">
-        <Select size="md" label="Specify a document" 
+        <Select size="md" label="Specify a document" className="bg-white"
             onChange={(val) => {
                 filterFrags(val)
                 setDocIDStr(val)

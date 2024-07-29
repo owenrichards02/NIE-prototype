@@ -58,6 +58,7 @@ function VirtualFloor(){
         editor?.canvas.on('selection:cleared', objSelectClearedHandler)
         editor?.canvas.setWidth(x_canvasSize)
         editor?.canvas.setHeight(y_canvasSize) 
+        editor?.canvas.setBackgroundColor("#ffffff")
        
         $(document).on('click',".deleteBtn",function(){
             if(editor?.canvas.getActiveObject())

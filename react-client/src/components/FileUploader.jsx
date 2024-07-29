@@ -3,7 +3,7 @@ import { document_add_html, document_find } from '../api/react_api';
 import { ObjectId } from 'bson';
 import { useAtom, useSetAtom } from 'jotai';
 import { documents } from '../state';
-import { Input, Option, Select } from '@material-tailwind/react';
+import { Card, CardBody, Input, Option, Select } from '@material-tailwind/react';
 
 const FileUploader = ({itemList, setItemList}) => {
 
@@ -34,8 +34,11 @@ const FileUploader = ({itemList, setItemList}) => {
 
     return(
         <>
-            <div className='file-uploader'>
+            <Card className='w-[560px]'>
+                <CardBody>
+                <div className='file-uploader'>
                 <h2 className='mb-4 text-xl font-extrabold leading-none tracking-tight text-gray-900 md:text-xl lg:text-xl dark:text-white'>Upload HTML Documents</h2>
+
                 <Input size="lg" className="" type="file" accept=".html" onChange={(e) => {setFile(e.target.files[0])}}/> 
                 <div className='component-block-xshort'>
                     <Select size="lg" label="Select Type" value={type}
@@ -47,6 +50,9 @@ const FileUploader = ({itemList, setItemList}) => {
                 </div>
                
             </div>
+                </CardBody>
+            </Card>
+            
         </>
 
     )

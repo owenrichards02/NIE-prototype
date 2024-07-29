@@ -18,6 +18,7 @@ import FragmentImage from './views/FragmentImage';
 import { DevTools } from 'jotai-devtools';
 import 'jotai-devtools/styles.css';
 import MyFragments from './views/MyFragments';
+import { Helmet } from 'react-helmet';
 
 
 function App() {
@@ -79,26 +80,29 @@ function App() {
 
   return (
     <>
-      <DevTools />
-      <div className='component-block'>
-      <BrowserRouter>
-        <div className='side-panel'>
-          <Sidebar></Sidebar>
-        </div>
-          <div>
-          <Routes>
-            <Route path='/' Component={Home}></Route>
-            <Route path='/doc-viewer' Component={DocumentViewer}></Route>
-            <Route path='/my-frags' Component={MyFragments}></Route>
-            <Route path='/frag-extract-textual' Component={FragmentExtractorTextual}></Route>
-            <Route path='/frag-extract-query' Component={FragmentExtractorQuery}></Route>
-            <Route path='/frag-image' Component={FragmentImage}></Route>
-            <Route path='/virtual-floor' Component={VirtualFloor}></Route>
-          </Routes>
+      <div className='whole-application'>
+        <DevTools />
+        <div className='component-block'>
+        <BrowserRouter>
+          <div className='side-panel'>
+            <Sidebar></Sidebar>
           </div>
-      </BrowserRouter>
-          
+            <div>
+            <Routes>
+              <Route path='/' Component={Home}></Route>
+              <Route path='/doc-viewer' Component={DocumentViewer}></Route>
+              <Route path='/my-frags' Component={MyFragments}></Route>
+              <Route path='/frag-extract-textual' Component={FragmentExtractorTextual}></Route>
+              <Route path='/frag-extract-query' Component={FragmentExtractorQuery}></Route>
+              <Route path='/frag-image' Component={FragmentImage}></Route>
+              <Route path='/virtual-floor' Component={VirtualFloor}></Route>
+            </Routes>
+            </div>
+        </BrowserRouter>
+            
+        </div>
       </div>
+      
       
     </>
   )

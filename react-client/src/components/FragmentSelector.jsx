@@ -90,7 +90,8 @@ function FragmentSelector({spawnFragment, f2lRef, bulkSpawn}){
             setDocIDStr(val)
         }} value={docIDStr}>
         <Option value={""} key={"any"} className='text-left'>
-        <Typography color="black">*ALL DOCUMENTS* </Typography></Option>
+            <Typography color="black">*ALL DOCUMENTS* </Typography>
+            </Option>
         {docsWithFrags.map((item, index) => (
             <Option value={item._id.toString()} key={item.name + index} className='text-left' >
                 <Typography color="black">
