@@ -25,7 +25,7 @@ function DocumentViewer(){
         for (const doc of docList){
             newlist.push(doc)
         }
-        setDocumentList([...documentList, ...newlist])
+        setDocumentList(newlist)
         }
 
         loadAllDocs()
@@ -52,12 +52,13 @@ function DocumentViewer(){
           {/*<button onClick={() => {docListRef.current.addItem("Hello")}}></button> */}
           <div className='component-block'> 
     
-            <div className='component-block-vert'>
+            <div className='component-block-vert '>
             <ItemList itemList={documentList}  setItemList={setDocumentList} onDoubleClick={changeHTMLView} ref={docListRef} name="List of Documents"></ItemList>
             <FileUploader itemList={documentList} setItemList={setDocumentList}></FileUploader>
             </div>
             
-            <HTMLViewer html={current_html}></HTMLViewer>        
+            <HTMLViewer html={current_html}></HTMLViewer>     
+               
           </div>
 
           </div>

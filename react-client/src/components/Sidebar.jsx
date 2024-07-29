@@ -62,14 +62,18 @@ function Sidebar() {
             <ListItemPrefix>
               <DocumentIcon className="h-6 w-6" />
             </ListItemPrefix>
+            <Typography color="black" className="mr-auto">
             <h2 className="block antialiased tracking-normal text-xl">Document Viewer</h2>
+            </Typography>
           </ListItem>
 
           <ListItem onClick={() => nav("my-frags")}>
             <ListItemPrefix>
               <PuzzlePieceIcon className="h-6 w-6" />
             </ListItemPrefix>
+            <Typography color="black" className="mr-auto">
             <h2 className="block antialiased tracking-normal text-xl">My Fragments</h2>
+            </Typography>
           </ListItem>
 
 
@@ -89,7 +93,7 @@ function Sidebar() {
               <ListItemPrefix>
                 <SquaresPlusIcon className="h-6 w-6" />
               </ListItemPrefix>
-              <Typography color="blue-gray" className="mr-auto">
+              <Typography color="black" className="mr-auto">
               <h2 className="block antialiased tracking-normal text-xl">Fragment Extractors</h2>
               </Typography>
             </AccordionHeader>
@@ -123,7 +127,9 @@ function Sidebar() {
               <RectangleGroupIcon className="h-6 w-6" />
             </ListItemPrefix>
             <div className="component-block-vert-xsmall">
+            <Typography color="black" className="mr-auto">
             <h2 className="block antialiased tracking-normal text-xl">Virtual Floor</h2> 
+            </Typography>
             </div>
           </ListItem>
 
@@ -135,7 +141,9 @@ function Sidebar() {
             <ListItemPrefix>
               <PlusIcon className="h-6 w-6" />
             </ListItemPrefix>
+            <Typography color="black" className="mr-auto">
             <h2 className="block antialiased tracking-normal text-xl">Open New Workspace</h2>
+            </Typography>
         </ListItem>
 
         <Dialog open={openDia} handler={handleOpenDia} size="sm">
@@ -147,7 +155,9 @@ function Sidebar() {
             <Card className="w-60 h-40 bg-gray-100 hover:bg-gray-200" onClick={handleOpenDia}>
               <CardBody>
                 <div className="component-block-vert-small">
+                <Typography color="black">
                 <h2 className="block antialiased tracking-normal text-2xl font-bold text-center ">Virtual Floor</h2>
+                </Typography>
                 <RectangleGroupIcon className="h-16 w-16 relative left-16 bottom-8"></RectangleGroupIcon>
                 </div>
               </CardBody>
@@ -155,7 +165,9 @@ function Sidebar() {
             <Card className="w-60 h-40 bg-gray-100 hover:bg-gray-200" onClick={handleOpenDia}>
               <CardBody>
                 <div className="component-block-vert-small">
+                <Typography color="black">
                 <h2 className="block antialiased tracking-normal text-2xl font-bold text-center ">Document View</h2>
+                </Typography>
                 <DocumentDuplicateIcon className="h-16 w-16 relative left-16 bottom-8"></DocumentDuplicateIcon>
                 </div>
               </CardBody>
@@ -170,7 +182,7 @@ function Sidebar() {
               variant="text"
               color="red"
               onClick={handleOpenDia}
-              className="mr-1"
+              className="mr-1 text-lg"
             >
               <span>Cancel</span>
             </Button>

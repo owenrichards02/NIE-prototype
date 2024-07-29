@@ -4,7 +4,7 @@ import { fragments_findAll } from "../api/react_api"
 import ItemList from "./ItemList"
 import { fragments, documents } from '../state'
 import { useAtom } from 'jotai'
-import { Button, Card, CardBody, Option, Select } from '@material-tailwind/react'
+import { Button, Card, CardBody, Option, Select, Typography } from '@material-tailwind/react'
 import FragListWithTicks from './FragListWithTicks'
 
 function FragmentSelector({spawnFragment, f2lRef, bulkSpawn}){
@@ -84,14 +84,19 @@ function FragmentSelector({spawnFragment, f2lRef, bulkSpawn}){
         <Card className="fragment-selector mt-0 w-600 text-black"><CardBody>
         <div className='component-block-vert-xsmall2'>
         <h2 className='mb-4 text-xl font-extrabold leading-none tracking-tight text-gray-900 md:text-xl lg:text-xl dark:text-white'>Double click on a fragment to add it to the floor</h2>
-        <Select size="md" label="Specify a document" 
+        <Select size="md" label="Specify a document"
         onChange={(val) => {
             filterFrags(val)
             setDocIDStr(val)
         }} value={docIDStr}>
-        <Option value={""} key={"any"} className='text-left'>*ALL DOCUMENTS*</Option>
+        <Option value={""} key={"any"} className='text-left'>
+        <Typography color="black">*ALL DOCUMENTS* </Typography></Option>
         {docsWithFrags.map((item, index) => (
-            <Option value={item._id.toString()} key={item.name + index} className='text-left' >{item.name + " - " + item._id.toString()}</Option>
+            <Option value={item._id.toString()} key={item.name + index} className='text-left' >
+                <Typography color="black">
+                    {item.name + " - " + item._id.toString()}
+                </Typography>
+            </Option>
         ))}
         </Select>
         <FragListWithTicks itemList={subsetList}  setItemList={setFragmentList} onDoubleClick={onDoubleClick} ref={fragListRef} f2lRef={f2lRef} name="" ></FragListWithTicks>

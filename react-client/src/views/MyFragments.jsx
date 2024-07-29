@@ -3,7 +3,7 @@ import { documents, fragments } from "../state"
 import FragmentGrid from "../components/FragmentGrid"
 import { useEffect, useState } from "react"
 import { fragments_findAll } from "../api/react_api"
-import { Option, Select } from '@material-tailwind/react';
+import { Option, Select, Typography } from '@material-tailwind/react';
 import FragmentEditorPanel from "../components/FragmentEditorPanel"
 
 function MyFragments(){
@@ -75,9 +75,16 @@ function MyFragments(){
                 filterFrags(val)
                 setDocIDStr(val)
             }} value={docIDStr}>
-            <Option value={""} key={"any"} className='text-left'>*ALL DOCUMENTS*</Option>
+            <Option value={""} key={"any"} className='text-left'>
+            <Typography color="black">*ALL DOCUMENTS*</Typography>
+                
+            </Option>
             {docsWithFrags.map((item, index) => (
-                <Option value={item._id.toString()} key={item.name + index} className='text-left' >{item.name + " - " + item._id.toString()}</Option>
+                <Option value={item._id.toString()} key={item.name + index} className='text-left' >
+                    <Typography color="black">
+                        {item.name + " - " + item._id.toString()}
+                    </Typography>
+                </Option>
             ))}
         </Select>
 

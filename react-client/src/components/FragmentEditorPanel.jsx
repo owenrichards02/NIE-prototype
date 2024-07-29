@@ -37,14 +37,16 @@ function FragmentEditorPanel({selectedFragment}){
 
             <h2 className="mb-4 pt-8 text-xl font-bold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-2xl dark:text-white">Annotations</h2>
             <div className="h-40 overflow-y-auto overflow-x-hidden">
-                {matchingAnnotsList.map((item, index) => (
-                    <>
-                    <div className="relative left-4 h-11" key={index}>
-                        <div className='annot-box shadow-lg' style={{backgroundColor: item.color}} ></div>
-                        <p className="font-semibold text-black text-left pl-10 pt-1">{item.content}</p>
-                    </div>
-                    </>
-                ))}
+                {matchingAnnotsList.length > 0 ? 
+                    matchingAnnotsList.map((item, index) => (
+                        <>
+                        <div className="relative left-4 h-11" key={index}>
+                            <div className='annot-box shadow-lg' style={{backgroundColor: item.color}} ></div>
+                            <p className="font-semibold text-black text-left pl-10 pt-1">{item.content}</p>
+                        </div>
+                        </>
+                    ))
+                : <i>No annotations found</i>}
 
             </div>
             
