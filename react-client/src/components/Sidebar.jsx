@@ -53,6 +53,7 @@ function Sidebar() {
 
     
     return (
+      <>
       <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-3 shadow-xl shadow-blue-gray-600 text-black">
         <h1 className="block antialiased tracking-normal text-4xl pb-4">Neighbourhood Insight Engine</h1> <br/>
         <h2 className="block antialiased tracking-normal text-2xl font-semibold pb-0 text-left pl-2">Tools</h2>
@@ -123,7 +124,6 @@ function Sidebar() {
             </ListItemPrefix>
             <div className="component-block-vert-xsmall">
             <h2 className="block antialiased tracking-normal text-xl">Virtual Floor</h2> 
-            <i>Will remove later</i>
             </div>
           </ListItem>
 
@@ -179,6 +179,7 @@ function Sidebar() {
 
         </List>
       </Card>
+      </>
     );
 }
 

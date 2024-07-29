@@ -130,5 +130,13 @@ export async function realm_getAllFragments(){
     return matches
 }
 
+export async function realm_getAllAnnotations(){
+    const [app, user, mongoCli] = await setUp()
+    const fragCollection = mongoCli.db(dbName).collection("annotations")
+
+    const matches = await fragCollection.find({})
+    return matches
+}
+
 //export {realm_addNewItem}
 

@@ -394,3 +394,11 @@
   left: 1800px;
   top: 50px;
 }
+
+.annot-box {
+  float: left;
+  height: 35px;
+  width: 30px;
+  margin-bottom: 15px;
+  clear: both;
+}

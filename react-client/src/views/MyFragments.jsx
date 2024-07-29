@@ -23,8 +23,8 @@ function MyFragments(){
         for (const doc of fragList){
             newlist.push(doc)
         }
-        setSubsetList([...fragmentList, ...newlist])
-        setFragmentList([...fragmentList, ...newlist])
+        setSubsetList(newlist)
+        setFragmentList(newlist)
 
         }
 

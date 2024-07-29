@@ -1,7 +1,7 @@
 import { HTMLByAttribute, HTMLByAttributeValue, HTMLByTag, HTMLByTagValueContains } from './fragment.js';
 import { Binary, ObjectId } from 'bson';
 
-import { realm_addNewItem, realm_deleteDocument, realm_deleteFragment, realm_getAllAnnotations_fromSpecificFragment, realm_getAllDocuments, realm_getAllFragments, realm_getAllFragments_fromSpecificDoc, realm_getItem, realm_searchByTagList_AND, realm_searchByTagList_OR, realm_tagItem } from './realm_CRUD.js';
+import { realm_addNewItem, realm_deleteDocument, realm_deleteFragment, realm_getAllAnnotations, realm_getAllAnnotations_fromSpecificFragment, realm_getAllDocuments, realm_getAllFragments, realm_getAllFragments_fromSpecificDoc, realm_getItem, realm_searchByTagList_AND, realm_searchByTagList_OR, realm_tagItem } from './realm_CRUD.js';
 
 
 
@@ -389,10 +389,11 @@ export async function annotation_searchByTagList_AND(tagList){
  * @param {string} [annotationName="New annotation"]
  * @return {ObjectId} insertedID 
  */
-export async function annotation_create(htmlContent, fragmentIDList, tags=[], annotationName="New annotation"){
+export async function annotation_create(htmlContent, fragmentIDList, color, tags=[], annotationName="New annotation"){
     const newAnnot = {
         name: annotationName,
         content: htmlContent,
+        color: color,
         linkedFragments: fragmentIDList,
         tags: tags,
     }
@@ -520,6 +521,11 @@ export async function transcript_DialogueFromASpecificSpeaker(doc_id, speakerNam
 
 export async function documents_findAll(){
     const docs = await realm_getAllDocuments()
+    return docs
+}
+
+export async function annotations_findAll(){
+    const docs = await realm_getAllAnnotations()
     return docs
 }
 

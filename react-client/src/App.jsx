@@ -9,9 +9,9 @@ import Sidebar from './components/Sidebar';
 import VirtualFloor from './views/VirtualFloor';
 import FragmentExtractorTextual from './views/FragmentExtractorTextual';
 import FragmentExtractorQuery from './views/FragmentExtractorQuery';
-import { documents } from './state';
+import { annotations, documents } from './state';
 import { useAtom } from 'jotai';
-import { documents_findAll } from './api/react_api';
+import { annotations_findAll, documents_findAll } from './api/react_api';
 import { useEffect } from 'react';
 import FragmentImage from './views/FragmentImage';
 
@@ -23,6 +23,7 @@ import MyFragments from './views/MyFragments';
 function App() {
 
   const [documentList, setDocumentList] = useAtom(documents)
+  const [annotationList, setAnnotationList] = useAtom(annotations)
 
   
   useEffect(() => {
@@ -33,12 +34,27 @@ function App() {
     for (const doc of docList){
         newlist.push(doc)
     }
-    setDocumentList([...documentList, ...newlist])
+    setDocumentList(newlist)
     }
 
     loadAllDocs()
 
 }, [])
+
+    useEffect(() => {
+      async function loadAllAnnots(){
+      const annotList = await annotations_findAll()
+
+      let newlist = []
+      for (const annot of annotList){
+          newlist.push(annot)
+      }
+      setAnnotationList(newlist)
+      }
+
+      loadAllAnnots()
+
+    }, [])
 
 
   /* useEffect(() => {
