@@ -152,7 +152,7 @@ function Sidebar() {
             </DialogHeader>
           <DialogBody>
           <div className="component-block-dia relative left-20">
-            <Card className="w-60 h-40 bg-gray-100 hover:bg-gray-200" onClick={handleOpenDia}>
+            <Card className="w-60 h-40 bg-[#f7f3ff] hover:bg-[#e0d5f7]" onClick={handleOpenDia}>
               <CardBody>
                 <div className="component-block-vert-small">
                 <Typography color="black">
@@ -162,7 +162,7 @@ function Sidebar() {
                 </div>
               </CardBody>
             </Card>
-            <Card className="w-60 h-40 bg-gray-100 hover:bg-gray-200" onClick={handleOpenDia}>
+            <Card className="w-60 h-40 bg-[#f7f3ff] hover:bg-[#e0d5f7]" onClick={handleOpenDia}>
               <CardBody>
                 <div className="component-block-vert-small">
                 <Typography color="black">

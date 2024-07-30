@@ -12,8 +12,11 @@ function FragmentEditorPanel({selectedFragment}){
     useEffect(() => {
         let newList = []
         for (const annot of annotationList){
-            if(annot.linkedFragments.includes(selectedFragment._id.toString())){
-                newList.push(annot)
+            console.log(annot.linkedFragments + " - " + selectedFragment._id)
+            for (const lf of annot.linkedFragments){
+                if(lf.toString() == selectedFragment._id.toString()){
+                    newList.push(annot)
+                }
             }
         }
         setMatchingAnnotsList(newList)

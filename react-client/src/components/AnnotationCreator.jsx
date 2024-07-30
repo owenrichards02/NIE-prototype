@@ -1,11 +1,14 @@
 import { Button, Card, CardBody, CardHeader, Input, Textarea } from "@material-tailwind/react"
 import { useEffect, useRef, useState } from "react"
 import { HexColorPicker } from "react-colorful";
-import { annotation_create } from "../api/react_api";
+import { annotation_create, annotation_find, annotations_findAll } from "../api/react_api";
+import { ObjectId } from 'bson';
+import { useAtom } from "jotai";
+import { annotations } from "../state";
 
 function AnnotationCreator({selObjRef, f2lRef, onAnnotCreated}){
 
-
+const [annotationList, setAnnotationList] = useAtom(annotations)
 const [fragNamesList, setFragNamesList] = useState([])
 const [text, setText] = useState("")
 const [color, setColor] = useState("#aabbcc");
@@ -15,13 +18,14 @@ fIdRef.current = fragIdsList
 
 useEffect(() => {
     console.log("updating selected list in annot creator")
+    console.log(selObjRef.current)
     let names = []
     let ids = []
     for (const selObj of selObjRef.current){
         for (const f2l of f2lRef.current){
             if (f2l.uuid == selObj.id){
                 names.push(f2l.frag.name)
-                ids.push(f2l.frag._id)
+                ids.push(new ObjectId(f2l.frag._id))
             }
         }
     }
@@ -31,13 +35,23 @@ useEffect(() => {
 
 }, [selObjRef.current])
 
-function createAnnotation(){
+async function createAnnotation(){
     console.log("ANNOTATION: " + text)
 
     //need to save annotation 
+    let id = await annotation_create(text, fIdRef.current, color, [], "new annotation")
     
-    onAnnotCreated(text, selObjRef.current, color)
-    annotation_create(text, fIdRef.current, color, [], "new annotation")
+    let newAnnot = {
+        _id: id,
+        name: "new annotation",
+        content: text,
+        color: color,
+        linkedFragments: fIdRef.current,
+        tags: []
+    }
+    setAnnotationList((annotations) => [...annotations, newAnnot])
+    
+    onAnnotCreated(text, selObjRef.current, color, id)
 }
 
 const changeText = (event) =>{
