@@ -5,7 +5,7 @@ export const documents = atom([])
 export const fragments = atom([])
 export const annotations = atom([])
 
-export const openTabs_atom = atom([])
+export const openTabs_atom = atomWithStorage('opentabs',[])
 export const currentTab_atom = atom({})
 export const vfTabReady_atom = atom(false)
 
