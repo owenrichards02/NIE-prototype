@@ -147,6 +147,7 @@ function VirtualFloor({tab_index}){
     }, [thisa2cRef.current, editor])
 
     useEffect(() => {
+        console.log(f2c)
         if(isReady && loaded == false){
             console.log("Load ready: " + thisf2cRef.current)
             console.log(thisf2cRef.current)
@@ -449,6 +450,7 @@ function VirtualFloor({tab_index}){
             
             editor?.canvas.add(oImg);
             console.log("adding to canvas")
+            console.log(f2c)
         }
     }
 

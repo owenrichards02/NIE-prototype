@@ -1,8 +1,9 @@
 import { ArrowLeftCircleIcon, ArrowLeftEndOnRectangleIcon, ArrowLeftIcon } from "@heroicons/react/24/solid"
 import { useAtom } from "jotai"
 import { useEffect, useRef, useState } from "react"
-import { a2c_atom, currentTab_atom, f2c_atom, openTabs_atom, vfTabReady_atom } from "../state"
+import { a2c_atom, currentTab_atom, f2c_atom, openTabs_atom, openTabsCount_atom, vfTabReady_atom } from "../state"
 import VirtualFloor from "./VirtualFloor"
+import { RESET } from "jotai/utils"
 
 function Home(){
 
@@ -16,7 +17,7 @@ function Home(){
     const [f2c, setf2c] = useAtom(f2c_atom)
     const [a2c, seta2c] = useAtom(a2c_atom)
 
-    const [currentTabCount, setCurrentTabCount] = useState(0)
+    const [currentTabCount, setCurrentTabCount] = useAtom(openTabsCount_atom)
 
 
     let f2cRef = useRef()

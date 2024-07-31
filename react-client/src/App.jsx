@@ -26,6 +26,7 @@ function App() {
   const [documentList, setDocumentList] = useAtom(documents)
   const [annotationList, setAnnotationList] = useAtom(annotations)
 
+
   
   useEffect(() => {
     async function loadAllDocs(){

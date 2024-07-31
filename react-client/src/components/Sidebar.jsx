@@ -61,12 +61,12 @@ function Sidebar() {
 
 
     const newFloorCreated = () =>{
+      setVfTabReady(false)
       const { hash, pathname, search } = location
       if(pathname != "/"){
         navigate("/")
       }
       handleOpenDia()
-      setVfTabReady(false)
       const uuid = crypto.randomUUID()
       const newFloor = {
         type: "floor",
@@ -81,12 +81,18 @@ function Sidebar() {
 
     const existingTabSwitchedTo = (index) => {
       const { hash, pathname, search } = location
-      if(pathname != "/"){
-        navigate("/")
+      if(currentTab.index != index || pathname != "/"){
+        setVfTabReady(false)
+
+        
+        if(pathname != "/"){
+          navigate("/")
+        }
+
+        console.log("switching to tab " + index)
+        setCurrentTab(tabsRef.current[index])
       }
-      setVfTabReady(false)
-      console.log("switching to tab " + index)
-      setCurrentTab(tabsRef.current[index])
+      
     }
     
     return (
@@ -167,7 +173,7 @@ function Sidebar() {
 
         {/* EACH TAB ICON */}
         {tabs.map((item, _) => (
-            <ListItem onClick={() => existingTabSwitchedTo(item.index)} className="outline" key={item.key}>
+            <ListItem onClick={() => existingTabSwitchedTo(item.index)} className={item.index == currentTab.index && location.pathname == "/" ? "outline-blue-200 bg-blue-50 !shadow-slate-500" : "outline"} key={item.key}>
               <ListItemPrefix>
                 {item.type == "floor" ? 
                 <RectangleGroupIcon className="h-6 w-6" /> : <DocumentDuplicateIcon className="h-6 w-6"></DocumentDuplicateIcon>}
