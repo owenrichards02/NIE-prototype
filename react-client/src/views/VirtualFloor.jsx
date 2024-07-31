@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import FragmentSelector from '../components/FragmentSelector'
 import { useAtom, atom } from 'jotai'
 import { RESET, atomWithStorage } from 'jotai/utils'
-import { annotations, fragments } from '../state'
+import { a2c_atom, annotations, f2c_atom, fragments } from '../state'
 
 import { FabricJSCanvas, useFabricJSEditor } from 'fabricjs-react'
 import parse from 'html-react-parser';
@@ -12,11 +12,47 @@ import { Button, Card, CardBody, CardHeader } from '@material-tailwind/react'
 import AnnotationCreator from '../components/AnnotationCreator'
 import { realm_deleteAnnotation } from '../api/realm_CRUD'
 
-const f2c_atom = atomWithStorage('frag2canvas', [])
-const a2c_atom = atomWithStorage('annot2canvas', [])
+function VirtualFloor({tab_index}){
 
+    const [f2c, setf2c] = useAtom(f2c_atom)
+    const [a2c, seta2c] = useAtom(a2c_atom)
 
-function VirtualFloor(){
+    const f2cRef = useRef()
+    const a2cRef = useRef()
+
+    f2cRef.current = f2c
+    a2cRef.current = a2c
+
+    const thisf2cRef = useRef()
+    const thisa2cRef = useRef()
+
+    thisf2cRef.current = f2c[tab_index]
+    thisa2cRef.current = a2c[tab_index]
+
+    function seta2c_ForThisTab(newValue){
+        //use tab_index
+        let newList = [] 
+        for (const tab of a2cRef.current){
+            newList.push(tab)
+        }
+        newList[tab_index] = newValue
+        seta2c(newList)
+        thisa2cRef.current = a2c[tab_index]
+        
+    }
+
+    function setf2c_ForThisTab(newValue){
+        //use tab_index
+        let newList = [] 
+        for (const tab of f2cRef.current){
+            newList.push(tab)
+        }
+        newList[tab_index] = newValue
+        setf2c(newList)
+        thisf2cRef.current = f2c[tab_index]
+        console.log(thisa2cRef.current)
+    }
+
 
     const x_canvasSize = 1550
     const y_canvasSize = 1250
@@ -29,14 +65,14 @@ function VirtualFloor(){
     
     const [fragmentList, setFragmentList] = useAtom(fragments) 
     const [annotationList, setAnnotationList] = useAtom(annotations) 
-    const [frag2LocationList, setfrag2LocationList] = useAtom(f2c_atom) //objects {frag, canvasObj, locationObj, uuid}
-    const [annot2LocationList, setannot2LocationList] = useAtom(a2c_atom)
+/*     const [frag2LocationList, setfrag2LocationList] = useAtom(f2c_atom) //objects {frag, canvasObj, locationObj, uuid}
+    const [annot2LocationList, setannot2LocationList] = useAtom(a2c_atom) */
     const annotsRef = useRef()
-    const a2lRef = useRef()
-    const f2lRef = useRef()
+    /* const a2lRef = useRef()
+    const f2lRef = useRef() */
     annotsRef.current = annotationList
-    a2lRef.current = annot2LocationList
-    f2lRef.current = frag2LocationList
+    /* a2lRef.current = annot2LocationList
+    f2lRef.current = frag2LocationList */
 
 
     const [loaded, setLoaded] = useState(false)
@@ -92,34 +128,40 @@ function VirtualFloor(){
     }, [editor]);
 
     useEffect(() => {
-        if(fragmentList.length > 0 && frag2LocationList.length > 0){
-            setisReady(true)
+        if(thisa2cRef.current != null){
+            if(fragmentList.length > 0 && thisf2cRef.current.length > 0){
+                setisReady(true)
+            }
         }
+        
         
     }, [fragmentList])
 
     useEffect(() => {
-        if(annot2LocationList.length > 0 && editor?.canvas){
-            setisAnnotsReady(true)
-        }
+        if(thisa2cRef.current != null){
+            if(thisa2cRef.current.length > 0 && editor?.canvas){
+                setisAnnotsReady(true)
+            }
+        }  
         
-    }, [annot2LocationList, editor])
+    }, [thisa2cRef.current, editor])
 
     useEffect(() => {
         if(isReady && loaded == false){
-            console.log("Load ready: " + frag2LocationList)
-            console.log(frag2LocationList)
+            console.log("Load ready: " + thisf2cRef.current)
+            console.log(thisf2cRef.current)
             setLoaded(true)
             load()
         }else{      
             console.log("storage not yet loaded")
+            console.log(thisf2cRef.current)
         }
     }, [isReady])
 
     useEffect(() => {
         if(isAnnotsReady && annotsLoaded == false){
-            console.log("Annots load ready: " + annot2LocationList)
-            console.log(annot2LocationList)
+            console.log("Annots load ready: " + thisa2cRef.current)
+            console.log(thisa2cRef.current)
             setAnnotsLoaded(true)
             loadAnnots()
         }else{      
@@ -133,8 +175,9 @@ function VirtualFloor(){
         editor.canvas.clear()
         editor.canvas.setWidth(x_canvasSize)
         editor.canvas.setHeight(y_canvasSize) 
-        setfrag2LocationList(RESET)
-        setannot2LocationList(RESET)
+        editor?.canvas.setBackgroundColor("#ffffff")
+        setf2c_ForThisTab([])
+        seta2c_ForThisTab([])
          //delete to enable storage
     }
 
@@ -142,7 +185,7 @@ function VirtualFloor(){
         
         let toLoad = []
         let uuidsLoaded = []
-        for (const f2lObj of frag2LocationList){
+        for (const f2lObj of thisf2cRef.current){
             if (uuidsLoaded.includes(f2lObj.uuid)){
                 console.log("dupe ignored")
             }else{
@@ -162,7 +205,7 @@ function VirtualFloor(){
 
         let toLoad = []
         let uuidsLoaded = []
-        for (const a2lObj of annot2LocationList){
+        for (const a2lObj of thisa2cRef.current){
             if (uuidsLoaded.includes(a2lObj.uuid)){
                 console.log("dupe ignored")
             }else{
@@ -219,14 +262,14 @@ function VirtualFloor(){
             
            
 
-            const i = annot2LocationList.indexOf(a2l)
+            const i = thisa2cRef.current.indexOf(a2l)
             let newList
             if (i == 0){
-                newList = annot2LocationList.slice(1)
+                newList = thisa2cRef.current.slice(1)
             }else{
                 newList = [
-                    ...annot2LocationList.slice(0, i),
-                    ...annot2LocationList.slice(i + 1)
+                    ...thisa2cRef.current.slice(0, i),
+                    ...thisa2cRef.current.slice(i + 1)
                 ]
             }
            
@@ -241,11 +284,11 @@ function VirtualFloor(){
                 text: a2l.text,
                 color: a2l.color
             }
-            setannot2LocationList([...newList, a2lObj])
+            seta2c_ForThisTab([...newList, a2lObj])
 
             let toLoad = []
             let uuidsLoaded = []
-            for (const a2lObj of annot2LocationList){
+            for (const a2lObj of thisa2cRef.current){
                 if (uuidsLoaded.includes(a2lObj.uuid)){
                     console.log("dupe ignored")
                 }else{
@@ -254,7 +297,7 @@ function VirtualFloor(){
                 }
             }
 
-            setannot2LocationList([...toLoad])
+            seta2c_ForThisTab([...toLoad])
         }
     }
 
@@ -297,18 +340,18 @@ function VirtualFloor(){
             oImg.scaleToHeight(locObj.height)
             oImg.scaleToWidth(locObj.width)
 
-            const i = frag2LocationList.indexOf(frag2Location)
+            const i = thisf2cRef.current.indexOf(frag2Location)
             let newList
             if (i == 0){
-                newList = frag2LocationList.slice(1)
+                newList = thisf2cRef.current.slice(1)
             }else{
                 newList = [
-                    ...frag2LocationList.slice(0, i),
-                    ...frag2LocationList.slice(i + 1)
+                    ...thisf2cRef.current.slice(0, i),
+                    ...thisf2cRef.current.slice(i + 1)
                 ]
             }
 
-            setfrag2LocationList(newList)
+            setf2c_ForThisTab(newList)
            
             oImg.left = locObj.posx
             oImg.top = locObj.posy
@@ -319,11 +362,11 @@ function VirtualFloor(){
                 canvasObj: oImg,
                 uuid: uuid
             }
-            setfrag2LocationList([...frag2LocationList, frag2LocationObj])
+            setf2c_ForThisTab([...thisf2cRef.current, frag2LocationObj])
 
             let toLoad = []
             let uuidsLoaded = []
-            for (const f2cObj of frag2LocationList){
+            for (const f2cObj of thisf2cRef.current){
                 if (uuidsLoaded.includes(f2cObj.uuid)){
                     console.log("dupe ignored")
                 }else{
@@ -332,7 +375,7 @@ function VirtualFloor(){
                 }
             }
 
-            setfrag2LocationList([...toLoad])
+            setf2c_ForThisTab([...toLoad])
             
             editor?.canvas.add(oImg);
         }
@@ -348,7 +391,7 @@ function VirtualFloor(){
                 const uuid = crypto.randomUUID()
                 console.log("uuid generated for canvas object instance")
                 //console.log("VF: adding fragment id: " + frag._id.toString())   
-                //console.log(frag2LocationList) 
+                //console.log(f2cRef) 
 
                 //if image!
                 if (frag.type == "image"){
@@ -399,9 +442,10 @@ function VirtualFloor(){
                 uuid: uuid
             }
 
-            setfrag2LocationList((currentList) => [...currentList, frag2LocationObj])
+
+            setf2c_ForThisTab([...thisf2cRef.current, frag2LocationObj])
             
-            console.log(f2lRef.current)
+            console.log(thisf2cRef.current)
             
             editor?.canvas.add(oImg);
             console.log("adding to canvas")
@@ -410,16 +454,17 @@ function VirtualFloor(){
 
     function spawnFragment(fragid){
         console.log("adding new fragment to canvas")
-        if(frag2LocationList.length == 0){
+        if(thisf2cRef.current.length == 0){
             setLoaded(true) //avoids reload  
         }
         const offsetx = Math.floor(Math.random() * 40) 
         const offsety = Math.floor(Math.random() * 40) 
         spawnAtPosition(fragid, 10 + offsetx, 10 + offsety)
+        console.log(thisf2cRef.current)
     }
 
     function bulkSpawn(fragidList){
-        if(frag2LocationList.length == 0){
+        if(thisf2cRef.current.length == 0){
             setLoaded(true) //avoids reload  
         }
         for (const fid of fragidList){
@@ -444,7 +489,7 @@ function VirtualFloor(){
     }
     
     function updateSingleLocation(object, event, orig=null){
-        let list2use = f2lRef.current
+        let list2use = thisf2cRef.current
         console.log("object modified handler entered")
         let found = false
         
@@ -484,13 +529,13 @@ function VirtualFloor(){
                     uuid: f2loc.uuid
                 }
 
-                setfrag2LocationList([...newList, newObj])
+                setf2c_ForThisTab([...newList, newObj])
                 
             }
         }
 
         if (!found){
-            list2use = a2lRef.current
+            list2use = thisa2cRef.current
             for (const a2loc of list2use){
                 if (a2loc.uuid == object.id){
                     console.log("moving annotation")
@@ -532,7 +577,7 @@ function VirtualFloor(){
                         text: a2loc.text
                     }
     
-                    setannot2LocationList([...newList, newObj])
+                    seta2c_ForThisTab([...newList, newObj])
                     
                 }
             }
@@ -559,7 +604,7 @@ function VirtualFloor(){
         console.log(canvasObj)
         let found = false
 
-        const fList = f2lRef.current
+        const fList = thisf2cRef.current
         for (const f2loc of fList){
             if (f2loc.uuid == canvasObj.id){
                 const i = fList.indexOf(f2loc)
@@ -573,7 +618,7 @@ function VirtualFloor(){
                     ]
                 }
 
-                setfrag2LocationList(newList)
+                setf2c_ForThisTab(newList)
                 console.log(fList)
 
                 found = true
@@ -581,7 +626,7 @@ function VirtualFloor(){
         }
 
         if(!found){
-            const aList = a2lRef.current
+            const aList = thisa2cRef.current
             for (const a2loc of aList){
                 if (a2loc.uuid == canvasObj.id){
                     console.log(a2loc)
@@ -596,7 +641,7 @@ function VirtualFloor(){
                         ]
                     }
 
-                    setannot2LocationList(newA2L_list)
+                    seta2c_ForThisTab(newA2L_list)
 
                     //remove from annotations collection
                     let newAnnotList = []
@@ -626,7 +671,7 @@ function VirtualFloor(){
     }
 
     function objSelectedHandler(event){
-        const list2use = f2lRef.current
+        const list2use = thisf2cRef.current
         console.log("object selected handler entered")
 
         $(".deleteBtn").remove();
@@ -686,7 +731,7 @@ function VirtualFloor(){
 
 
     function onAnnotCreated(annotText, selObjList, color, realm_id){
-        if(annot2LocationList.length == 0){
+        if(thisa2cRef.current.length == 0){
             setAnnotsLoaded(true)
         }
         //need to create canvas object for annotation
@@ -738,7 +783,7 @@ function VirtualFloor(){
         for (const selObj of selObjList){
             const thisId = selObj.id
 
-            for (const f2l of f2lRef.current){
+            for (const f2l of thisf2cRef.current){
                 if(f2l.uuid == thisId){
                     fidList.push(f2l.frag._id)
                 }
@@ -755,9 +800,9 @@ function VirtualFloor(){
             color: color
         }
 
-        setannot2LocationList([...annot2LocationList, a2lObj])
-        console.log(a2lRef.current)
-        console.log(annot2LocationList)
+        seta2c_ForThisTab([...thisa2cRef.current, a2lObj])
+        console.log(thisa2cRef.current)
+        console.log(thisa2cRef.current)
     }
 
 
@@ -770,8 +815,10 @@ function VirtualFloor(){
                 <button className='reset-button' onClick={doReset}>Reset Canvas</button>
             </div>
             <div className='component-block-vert-small'>
-                <FragmentSelector fragmentList={fragmentList} setFragmentList={setFragmentList} spawnFragment={spawnFragment} f2lRef={f2lRef} bulkSpawn={bulkSpawn}></FragmentSelector>
-                <AnnotationCreator selObjRef={selObjRef} f2lRef={f2lRef} onAnnotCreated={onAnnotCreated}></AnnotationCreator>
+                {thisf2cRef.current != null ? 
+                <FragmentSelector fragmentList={fragmentList} setFragmentList={setFragmentList} spawnFragment={spawnFragment} f2lRef={thisf2cRef} bulkSpawn={bulkSpawn}></FragmentSelector>
+                : <></>}
+                <AnnotationCreator selObjRef={selObjRef} f2lRef={thisf2cRef} onAnnotCreated={onAnnotCreated}></AnnotationCreator>
             </div>
 
         </div>

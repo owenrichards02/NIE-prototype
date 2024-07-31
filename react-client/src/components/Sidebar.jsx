@@ -30,13 +30,16 @@ import {
     PlusIcon,
     DocumentDuplicateIcon,
   } from "@heroicons/react/24/solid";
-import { useNavigate } from "react-router-dom";
-import React, { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { useAtom } from "jotai";
+import { currentTab_atom, openTabs_atom, vfTabReady_atom } from "../state";
    
 function Sidebar() {
 
-
     const navigate = useNavigate()
+
+    const location = useLocation()
     
     const nav = (route) => {
         navigate("/" + route)
@@ -45,12 +48,46 @@ function Sidebar() {
 
     const [openDia, setOpenDia] = React.useState(false);
     const [openAccordion, setOpenAccordion] = React.useState(false);
-
  
     const handleOpenDia = () => setOpenDia(!openDia);
 
     const handleOpenAccordion = (value) => setOpenAccordion(openAccordion === value ? 0 : value);
 
+    const [tabs, setTabs] = useAtom(openTabs_atom)
+    const tabsRef = useRef()
+    tabsRef.current = tabs
+    const [currentTab, setCurrentTab] = useAtom(currentTab_atom)
+    const [vfTabReady, setVfTabReady] = useAtom(vfTabReady_atom)
+
+
+    const newFloorCreated = () =>{
+      const { hash, pathname, search } = location
+      if(pathname != "/"){
+        navigate("/")
+      }
+      handleOpenDia()
+      setVfTabReady(false)
+      const uuid = crypto.randomUUID()
+      const newFloor = {
+        type: "floor",
+        key: uuid,
+        index: tabs.length,
+        name: "Virtual Floor " + tabs.length
+      }
+      setTabs((tabs) => [...tabs, newFloor])
+      console.log("switching to tab " + tabs.length)
+      setCurrentTab(newFloor)
+    }
+
+    const existingTabSwitchedTo = (index) => {
+      const { hash, pathname, search } = location
+      if(pathname != "/"){
+        navigate("/")
+      }
+      setVfTabReady(false)
+      console.log("switching to tab " + index)
+      setCurrentTab(tabsRef.current[index])
+    }
     
     return (
       <>
@@ -122,22 +159,29 @@ function Sidebar() {
           </AccordionBody>
         </Accordion>
 
-          <ListItem onClick={() => nav("virtual-floor")}>
-            <ListItemPrefix>
-              <RectangleGroupIcon className="h-6 w-6" />
-            </ListItemPrefix>
-            <div className="component-block-vert-xsmall">
-            <Typography color="black" className="mr-auto">
-            <h2 className="block antialiased tracking-normal text-xl">Virtual Floor</h2> 
-            </Typography>
-            </div>
-          </ListItem>
-
         </List>
 
         <h2 className="block antialiased tracking-normal text-2xl font-semibold pt-10 pb-3 text-left pl-2">Workspaces</h2>
-        <List>
-        <ListItem onClick={handleOpenDia} className="outline-dotted">
+        <List className="gap-4">
+
+
+        {/* EACH TAB ICON */}
+        {tabs.map((item, _) => (
+            <ListItem onClick={() => existingTabSwitchedTo(item.index)} className="outline" key={item.key}>
+              <ListItemPrefix>
+                {item.type == "floor" ? 
+                <RectangleGroupIcon className="h-6 w-6" /> : <DocumentDuplicateIcon className="h-6 w-6"></DocumentDuplicateIcon>}
+              </ListItemPrefix>
+              <Typography color="black" className="mr-auto">
+              <h2 className="block antialiased tracking-normal text-xl">{item.name}</h2>
+              </Typography>
+            </ListItem>
+        ))}
+
+
+
+
+        <ListItem onClick={handleOpenDia} className="outline-dotted" key={"newWorkspace"}>
             <ListItemPrefix>
               <PlusIcon className="h-6 w-6" />
             </ListItemPrefix>
@@ -151,24 +195,43 @@ function Sidebar() {
             <h1 className="text-3xl">What would you like to open?</h1>
             </DialogHeader>
           <DialogBody>
-          <div className="component-block-dia relative left-20">
-            <Card className="w-60 h-40 bg-[#f7f3ff] hover:bg-[#e0d5f7]" onClick={handleOpenDia}>
+          <div className="component-block-dia relative left-14 !gap-32">
+            <div className="component-block-vert-xsmall3 !gap-8">
+
+              <Card className="w-60 h-40 bg-[#cdb1fa] hover:bg-[#bf96ff]" onClick={newFloorCreated}>
+                <CardBody>
+                    <div className="component-block-vert-small">
+                    <Typography color="white">
+                    <h2 className="block antialiased tracking-normal text-2xl font-extrabold text-center ">New Virtual Floor</h2>
+                    </Typography>
+                    <div className="component-block-annot">
+                    <PlusIcon className="h-12 w-12 relative pt-4 left-8 bottom-8 fill-white"></PlusIcon>
+                    <RectangleGroupIcon className="h-16 w-16 relative left-0 bottom-8 fill-white"></RectangleGroupIcon>
+                    </div>
+                    </div>
+                  
+                </CardBody>
+              </Card>
+
+              <Card className="w-62 h-36 bg-[#a8d5ff] hover:bg-[#94c8f7]" onClick={handleOpenDia}>
+                <CardBody>
+                    <div className="component-block-vert-small">
+                    <Typography color="black">
+                    <h2 className="block antialiased tracking-normal text-xl font-bold text-center ">Load Existing Floor</h2>
+                    </Typography>
+                    <RectangleGroupIcon className="h-14 w-14 relative left-16 bottom-8 "></RectangleGroupIcon>
+                    </div>
+                  
+                </CardBody>
+              </Card>
+            </div>
+            <Card className="w-60 h-76 bg-[#cdb1fa] hover:bg-[#bf96ff]" onClick={handleOpenDia}>
               <CardBody>
-                <div className="component-block-vert-small">
-                <Typography color="black">
-                <h2 className="block antialiased tracking-normal text-2xl font-bold text-center ">Virtual Floor</h2>
-                </Typography>
-                <RectangleGroupIcon className="h-16 w-16 relative left-16 bottom-8"></RectangleGroupIcon>
-                </div>
-              </CardBody>
-            </Card>
-            <Card className="w-60 h-40 bg-[#f7f3ff] hover:bg-[#e0d5f7]" onClick={handleOpenDia}>
-              <CardBody>
-                <div className="component-block-vert-small">
-                <Typography color="black">
+                <div className="component-block-vert-small relative top-16">
+                <Typography color="white">
                 <h2 className="block antialiased tracking-normal text-2xl font-bold text-center ">Document View</h2>
                 </Typography>
-                <DocumentDuplicateIcon className="h-16 w-16 relative left-16 bottom-8"></DocumentDuplicateIcon>
+                <DocumentDuplicateIcon className="h-16 w-16 relative left-16 bottom-8 fill-white"></DocumentDuplicateIcon>
                 </div>
               </CardBody>
             </Card>
