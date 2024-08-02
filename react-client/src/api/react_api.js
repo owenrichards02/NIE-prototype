@@ -1,7 +1,7 @@
 import { HTMLByAttribute, HTMLByAttributeValue, HTMLByTag, HTMLByTagValueContains } from './fragment.js';
 import { Binary, ObjectId } from 'bson';
 
-import { realm_addNewItem, realm_deleteDocument, realm_deleteFragment, realm_getAllAnnotations, realm_getAllAnnotations_fromSpecificFragment, realm_getAllDocuments, realm_getAllFragments, realm_getAllFragments_fromSpecificDoc, realm_getItem, realm_searchByTagList_AND, realm_searchByTagList_OR, realm_tagItem } from './realm_CRUD.js';
+import { realm_addNewItem, realm_deleteDocument, realm_deleteFragment, realm_getAllAnnotations, realm_getAllAnnotations_fromSpecificFragment, realm_getAllDocuments, realm_getAllFloors, realm_getAllFragments, realm_getAllFragments_fromSpecificDoc, realm_getItem, realm_searchByTagList_AND, realm_searchByTagList_OR, realm_tagItem } from './realm_CRUD.js';
 
 
 
@@ -519,6 +519,20 @@ export async function transcript_DialogueFromASpecificSpeaker(doc_id, speakerNam
 }
 
 
+
+export async function floor_save(floor_object, name){
+    let realmObj = {
+        floor: floor_object,
+        name: name
+    }
+    const id = await realm_addNewItem('virtualFloors', realmObj)
+
+    return id
+}
+
+
+
+
 export async function documents_findAll(){
     const docs = await realm_getAllDocuments()
     return docs
@@ -531,5 +545,10 @@ export async function annotations_findAll(){
 
 export async function fragments_findAll(){
     const docs = await realm_getAllFragments()
+    return docs
+}
+
+export async function floors_findAll(){
+    const docs = await realm_getAllFloors()
     return docs
 }

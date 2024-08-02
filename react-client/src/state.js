@@ -4,6 +4,7 @@ import { atomWithStorage } from "jotai/utils";
 export const documents = atom([])
 export const fragments = atom([])
 export const annotations = atom([])
+export const virtualFloors = atom([])
 
 export const openTabs_atom = atomWithStorage('opentabs',[])
 export const openTabsCount_atom = atomWithStorage('opentabsCount', 0)

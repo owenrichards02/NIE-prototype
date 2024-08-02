@@ -26,9 +26,9 @@ async function loginEmailPassword(app, email, password) {
 
 export async function realm_addNewItem(collectionName, item){
     const [app, user, mongoCli] = await setUp()
-    const fragCollection = mongoCli.db(dbName).collection(collectionName)
+    const this_collection = mongoCli.db(dbName).collection(collectionName)
 
-    const result = await fragCollection.insertOne(item)
+    const result = await this_collection.insertOne(item)
     return result.insertedId
 }
 
@@ -137,6 +137,15 @@ export async function realm_getAllAnnotations(){
     const matches = await fragCollection.find({})
     return matches
 }
+
+export async function realm_getAllFloors(){
+    const [app, user, mongoCli] = await setUp()
+    const fragCollection = mongoCli.db(dbName).collection("virtualFloors")
+
+    const matches = await fragCollection.find({})
+    return matches
+}
+
 
 //export {realm_addNewItem}
 

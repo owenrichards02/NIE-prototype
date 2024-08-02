@@ -33,7 +33,8 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
 import { useAtom } from "jotai";
-import { currentTab_atom, openTabs_atom, vfTabReady_atom } from "../state";
+import { currentTab_atom, openTabs_atom, vfTabReady_atom, virtualFloors } from "../state";
+import ItemList from "./ItemList";
    
 function Sidebar() {
 
@@ -46,10 +47,49 @@ function Sidebar() {
         console.log("moving to: /" + route)
     }
 
-    const [openDia, setOpenDia] = React.useState(false);
+
+    const [openLoad, setOpenLoad] = React.useState(false);
+    const [openNewWorkspace, setOpenNewWorkspace] = React.useState(false);
     const [openAccordion, setOpenAccordion] = React.useState(false);
+
+    const [virtualFloorList, setVirtualFloorList] = useAtom(virtualFloors)
+
+    function chooseFloor(floor_id){
+      setVfTabReady(false)
+      
+      let thisvf
+      for (const vf of virtualFloorList){
+        if(vf._id.toString() == floor_id.toString()){
+          thisvf = vf
+        }
+      }
+    
+
+      const { hash, pathname, search } = location
+      if(pathname != "/"){
+        navigate("/")
+      }
+      const uuid = crypto.randomUUID()
+      const newTab = {
+        type: "floor",
+        key: uuid,
+        index: tabs.length,
+        existing: true,
+        name: thisvf.name,
+        vf_id: thisvf._id
+      }
+      setTabs((tabs) => [...tabs, newTab])
+      console.log("switching to tab " + tabs.length)
+      setCurrentTab(newTab)
+      //MAKE NEW TAB WITH EXISTING FLOOR!
+
+      handleLoadDialog()
+    }
  
-    const handleOpenDia = () => setOpenDia(!openDia);
+    const handleLoadDialog = () => {
+      setOpenLoad(!openLoad)
+    }
+    const handleNewWorkspaceDialog = () => setOpenNewWorkspace(!openNewWorkspace);
 
     const handleOpenAccordion = (value) => setOpenAccordion(openAccordion === value ? 0 : value);
 
@@ -66,17 +106,19 @@ function Sidebar() {
       if(pathname != "/"){
         navigate("/")
       }
-      handleOpenDia()
+      handleNewWorkspaceDialog()
       const uuid = crypto.randomUUID()
-      const newFloor = {
+      const newTab = {
         type: "floor",
         key: uuid,
+        existing: false,
         index: tabs.length,
-        name: "Virtual Floor " + tabs.length
+        name: "Virtual Floor " + tabs.length,
+        vf_id: null
       }
-      setTabs((tabs) => [...tabs, newFloor])
+      setTabs((tabs) => [...tabs, newTab])
       console.log("switching to tab " + tabs.length)
-      setCurrentTab(newFloor)
+      setCurrentTab(newTab)
     }
 
     const existingTabSwitchedTo = (index) => {
@@ -187,7 +229,7 @@ function Sidebar() {
 
 
 
-        <ListItem onClick={handleOpenDia} className="outline-dotted" key={"newWorkspace"}>
+        <ListItem onClick={handleNewWorkspaceDialog} className="outline-dotted" key={"newWorkspace"}>
             <ListItemPrefix>
               <PlusIcon className="h-6 w-6" />
             </ListItemPrefix>
@@ -196,7 +238,7 @@ function Sidebar() {
             </Typography>
         </ListItem>
 
-        <Dialog open={openDia} handler={handleOpenDia} size="sm">
+        <Dialog open={openNewWorkspace} handler={handleNewWorkspaceDialog} size="sm">
           <DialogHeader>
             <h1 className="text-3xl">What would you like to open?</h1>
             </DialogHeader>
@@ -219,7 +261,7 @@ function Sidebar() {
                 </CardBody>
               </Card>
 
-              <Card className="w-62 h-36 bg-[#a8d5ff] hover:bg-[#94c8f7]" onClick={handleOpenDia}>
+              <Card className="w-62 h-36 bg-[#a8d5ff] hover:bg-[#94c8f7]" onClick={handleLoadDialog}>
                 <CardBody>
                     <div className="component-block-vert-small">
                     <Typography color="black">
@@ -231,7 +273,7 @@ function Sidebar() {
                 </CardBody>
               </Card>
             </div>
-            <Card className="w-60 h-76 bg-[#cdb1fa] hover:bg-[#bf96ff]" onClick={handleOpenDia}>
+            <Card className="w-60 h-76 bg-[#cdb1fa] hover:bg-[#bf96ff]" onClick={handleNewWorkspaceDialog}>
               <CardBody>
                 <div className="component-block-vert-small relative top-16">
                 <Typography color="white">
@@ -250,13 +292,40 @@ function Sidebar() {
             <Button
               variant="text"
               color="red"
-              onClick={handleOpenDia}
+              onClick={handleNewWorkspaceDialog}
               className="mr-1 text-lg"
             >
               <span>Cancel</span>
             </Button>
           </DialogFooter>
         </Dialog>
+
+
+        <Dialog open={openLoad} handler={handleLoadDialog} size="sm" className="!text-black">
+          <DialogHeader>
+            <h1 className="text-3xl">Which Virtual Floor would you like to load?</h1>
+            </DialogHeader>
+          <DialogBody className="!text-black">
+          <ItemList itemList={virtualFloorList} setItemList={setVirtualFloorList} onDoubleClick={chooseFloor} name={"Available Virtual Floors"}></ItemList>
+
+          
+
+          </DialogBody>
+          <DialogFooter>
+            <Button
+              variant="text"
+              color="red"
+              onClick={handleLoadDialog}
+              className="mr-1 text-lg"
+            >
+              <span>Cancel</span>
+            </Button>
+          </DialogFooter>
+        </Dialog>
+
+
+
+
 
         </List>
       </Card>

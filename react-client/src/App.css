@@ -320,7 +320,13 @@
 .reset-button{
   position: fixed;
   top: 1290px;
-  left: 1795px;
+  left: 400px;
+}
+
+.save-button{
+  position: fixed;
+  top: 1290px;
+  left: 1810px;
 }
 
 .selector-textual-position{

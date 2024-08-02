@@ -8,11 +8,19 @@ import { FabricJSCanvas, useFabricJSEditor } from 'fabricjs-react'
 import parse from 'html-react-parser';
 import * as htmlToImage from 'html-to-image';
 import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image'
-import { Button, Card, CardBody, CardHeader } from '@material-tailwind/react'
+import { Button, Card, CardBody, CardHeader, Dialog, DialogBody, DialogFooter, DialogHeader, Input, Typography } from '@material-tailwind/react'
 import AnnotationCreator from '../components/AnnotationCreator'
 import { realm_deleteAnnotation } from '../api/realm_CRUD'
+import { floor_save } from '../api/react_api'
 
-function VirtualFloor({tab_index}){
+function VirtualFloor({tab_index, changeTabName}){
+
+    //for the save dialog
+    const [openDia, setOpenDia] = useState(false);
+    const handleOpenDia = () => setOpenDia(!openDia);
+    const [saveName, setSaveName] = useState("")
+
+
 
     const [f2c, setf2c] = useAtom(f2c_atom)
     const [a2c, seta2c] = useAtom(a2c_atom)
@@ -23,6 +31,8 @@ function VirtualFloor({tab_index}){
     f2cRef.current = f2c
     a2cRef.current = a2c
 
+
+    //USE THESE!
     const thisf2cRef = useRef()
     const thisa2cRef = useRef()
 
@@ -170,7 +180,6 @@ function VirtualFloor({tab_index}){
         }
     }, [isAnnotsReady])
 
-
     function doReset(){
         console.log("resetting virtual floor")
         editor.canvas.clear()
@@ -180,6 +189,24 @@ function VirtualFloor({tab_index}){
         setf2c_ForThisTab([])
         seta2c_ForThisTab([])
          //delete to enable storage
+    }
+
+    async function openSaveDialog(){
+        handleOpenDia()
+        console.log("saving current canvas, index: " + tab_index) 
+    }
+
+    async function handleSaveConfirmed(){
+        changeTabName(saveName)
+        console.log(saveName)
+        let floorObj = {
+            f2c: thisf2cRef.current,
+            a2c: thisa2cRef.current
+        }
+
+        let id = await floor_save(floorObj, saveName)
+
+        handleOpenDia()
     }
 
     function load(){
@@ -814,7 +841,8 @@ function VirtualFloor({tab_index}){
             <div className='component-block-vert-xsmall'>
                 
                 <FabricJSCanvas className="floorcanvas" onReady={onReady} style={{width : x_canvasSize.toString() + "px", height : y_canvasSize.toString() + "px"}} />
-                <button className='reset-button' onClick={doReset}>Reset Canvas</button>
+                <button className='reset-button hover:bg-red-100 shadow-xl shadow-gray-400 outline outline-1 text-red-500' onClick={doReset}>Reset Canvas</button>
+                <button className='save-button hover:bg-green-100 shadow-xl shadow-gray-400 outline outline-1 text-green-500' onClick={openSaveDialog}>Save Canvas</button>
             </div>
             <div className='component-block-vert-small'>
                 {thisf2cRef.current != null ? 
@@ -824,6 +852,59 @@ function VirtualFloor({tab_index}){
             </div>
 
         </div>
+
+
+
+
+
+        {/* Save Floor Dialog */}
+        <Dialog open={openDia} handler={handleOpenDia} size="sm" className='!text-black'>
+          <DialogHeader>
+            <h1 className="text-3xl">Name the new Virtual Floor</h1>
+            </DialogHeader>
+          <DialogBody>
+          
+            <Input label='Virtual Floor Name' size='lg' color="indigo" className='!text-2xl !h-12' onChange={(event) => setSaveName(event.target.value)}/>
+                    <Typography
+                variant="small"
+                color="gray"
+                className="mt-4 flex items-center gap-1 font-normal"
+            >
+                <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="-mt-px h-4 w-4"
+                >
+                <path
+                    fillRule="evenodd"
+                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                    clipRule="evenodd"
+                />
+                </svg>
+                This will re-name your current tab
+            </Typography>
+
+          </DialogBody>
+          <DialogFooter className='gap-[69%]'>
+          <Button
+              variant="text"
+              color="red"
+              onClick={handleOpenDia}
+              className="mr-1 text-lg"
+            >
+              <span>Cancel</span>
+            </Button>
+            <Button
+              variant="text"
+              color="green"
+              onClick={handleSaveConfirmed}
+              className="mr-1 text-lg"
+            >
+              <span>Save</span>
+            </Button>
+          </DialogFooter>
+        </Dialog>
         </>
     )
 
