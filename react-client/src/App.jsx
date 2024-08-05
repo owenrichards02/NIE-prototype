@@ -51,6 +51,7 @@ function App() {
 
   return (
     <>
+      <DevTools/>
       <div className='whole-application'>
         <div className='component-block'>
         <BrowserRouter>

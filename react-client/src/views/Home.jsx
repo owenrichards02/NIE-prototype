@@ -1,7 +1,7 @@
 import { ArrowLeftCircleIcon, ArrowLeftEndOnRectangleIcon, ArrowLeftIcon } from "@heroicons/react/24/solid"
 import { useAtom } from "jotai"
 import { useEffect, useRef, useState } from "react"
-import { a2c_atom, currentTab_atom, f2c_atom, openTabs_atom, openTabsCount_atom, vfTabReady_atom, virtualFloors } from "../state"
+import { a2c_atom, currentTab_atom, f2c_atom, openTabs_atom, openTabsCount_atom, recentlyDeletedIndex_atom, vfTabReady_atom, virtualFloors } from "../state"
 import VirtualFloor from "./VirtualFloor"
 import { RESET } from "jotai/utils"
 
@@ -10,16 +10,19 @@ function Home(){
     const [tabs, setTabs] = useAtom(openTabs_atom)
     const tabsRef = useRef()
     tabsRef.current = tabs
+    
     const [currentTab, setCurrentTab] = useAtom(currentTab_atom)
-    const thisTabRef = useRef()
-    thisTabRef.current = currentTab
+    const currentTabRef = useRef()
+    currentTabRef.current = currentTab
 
     const [f2c, setf2c] = useAtom(f2c_atom)
     const [a2c, seta2c] = useAtom(a2c_atom)
 
     const [currentTabCount, setCurrentTabCount] = useAtom(openTabsCount_atom)
     const [virtualFloorList, setVirtualFloorList] = useAtom(virtualFloors)
-
+    const [recentlyDeletedIndex, setRecentlyDeletedIndex] = useAtom(recentlyDeletedIndex_atom)
+    const recentlyDeletedRef = useRef()
+    recentlyDeletedRef.current = recentlyDeletedIndex
 
 
     let f2cRef = useRef()
@@ -49,19 +52,19 @@ function Home(){
         /* setTabs(RESET)
         setCurrentTabCount(RESET) */
         
-        if (thisTabRef.current != {}){
-            if(thisTabRef.current.type == "floor"){
+        if (currentTabRef.current != {}){
+            if(currentTabRef.current.type == "floor"){
                 if (tabsRef.current.length > currentTabCount){
                     //new tab
-                    if(thisTabRef.current.existing == true){
+                    if(currentTabRef.current.existing == true){
                         //load from atom
                         let newfObj = f2c
                         let newaObj = a2c
                         for (const vf of virtualFloorList){
-                            if(vf._id.toString() == thisTabRef.current.vf_id.toString()){
-                                newfObj[thisTabRef.current.index] = vf.floor.f2c
+                            if(vf._id.toString() == currentTabRef.current.vf_id.toString()){
+                                newfObj[currentTabRef.current.index] = vf.floor.f2c
                                 console.log("thisF2c: " + vf.floor.f2c)
-                                newaObj[thisTabRef.current.index] = vf.floor.a2c
+                                newaObj[currentTabRef.current.index] = vf.floor.a2c
                             }
                         }
                 
@@ -74,11 +77,12 @@ function Home(){
                         console.log(vfTabReady)
 
                     }else{
+                         //brand new
                         let newfObj = f2c
                         let newaObj = a2c
         
-                        newfObj[thisTabRef.current.index] = []
-                        newaObj[thisTabRef.current.index] = []
+                        newfObj[currentTabRef.current.index] = []
+                        newaObj[currentTabRef.current.index] = []
                         setf2c(newfObj)
                         seta2c(newaObj)
         
@@ -88,6 +92,24 @@ function Home(){
                         console.log(vfTabReady)
                     }
                     
+                }else if(tabsRef.current.length < currentTabCount){
+                    //tab closed
+                    let newa2c = a2cRef.current
+                    let newf2c = f2cRef.current
+
+                    for (let i = recentlyDeletedRef.current; i<tabsRef.current.length - 1; i++){
+                        newa2c[i] = a2cRef.current[i + 1]
+                        newf2c[i] = f2cRef.current[i + 1]
+                    }
+                    newa2c.splice(tabsRef.current.length - 1, 1)
+                    newf2c.splice(tabsRef.current.length - 1, 1)
+
+                    seta2c(newa2c)
+                    setf2c(newf2c)
+
+
+                    setVfTabReady(true)
+                    setCurrentTabCount((currentTabCount) => currentTabCount - 1)
                 }else{
                     //already open tab               
                     setVfTabReady(true)
@@ -97,16 +119,16 @@ function Home(){
             }
         }
         
-    }, [thisTabRef.current])
+    }, [currentTabRef.current])
 
     const showCurrentTab = () => {
         if(vfTabReady){
-            if(thisTabRef.current.type == "floor"){
+            if(currentTabRef.current.type == "floor"){
                 return(
     
                     <>
     
-                    <VirtualFloor tab_index={thisTabRef.current.index} key={thisTabRef.current} changeTabName={changeTabName}></VirtualFloor>
+                    <VirtualFloor tab_index={currentTabRef.current.index} key={currentTabRef.current} changeTabName={changeTabName}></VirtualFloor>
                     
                     </>
                 )

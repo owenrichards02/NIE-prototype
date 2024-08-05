@@ -19,4 +19,9 @@ export default withMT( {
     },
   },
   plugins: [],
+  variants: {
+    extend: {
+        display: ["group-hover"],
+    },
+  },
 })

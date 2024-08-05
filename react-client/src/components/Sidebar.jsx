@@ -29,11 +29,12 @@ import {
     PlusCircleIcon,
     PlusIcon,
     DocumentDuplicateIcon,
+    XCircleIcon,
   } from "@heroicons/react/24/solid";
 import { useLocation, useNavigate } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
 import { useAtom } from "jotai";
-import { currentTab_atom, openTabs_atom, vfTabReady_atom, virtualFloors } from "../state";
+import { currentTab_atom, openTabs_atom, recentlyDeletedIndex_atom, vfTabReady_atom, virtualFloors } from "../state";
 import ItemList from "./ItemList";
    
 function Sidebar() {
@@ -53,6 +54,52 @@ function Sidebar() {
     const [openAccordion, setOpenAccordion] = React.useState(false);
 
     const [virtualFloorList, setVirtualFloorList] = useAtom(virtualFloors)
+
+    const [tabs, setTabs] = useAtom(openTabs_atom)
+    const tabsRef = useRef()
+    tabsRef.current = tabs
+
+    const [currentTab, setCurrentTab] = useAtom(currentTab_atom)
+    const [vfTabReady, setVfTabReady] = useAtom(vfTabReady_atom)
+    const [recentlyDeletedIndex, setRecentlyDeletedIndex] = useAtom(recentlyDeletedIndex_atom)
+
+    const closeTab = (index) => {
+      console.log(index)
+      setVfTabReady(false)
+
+      let i = 0
+      let deleted_found = false
+      let newListRe_indexed = []
+
+      for (const tab of tabsRef.current){
+
+        if(i == index){
+          deleted_found = true
+        }else{
+          if(deleted_found){
+            let updated_tab = tab
+            updated_tab.index = i - 1
+            newListRe_indexed.push(updated_tab)
+
+          }else{
+            newListRe_indexed.push(tab)
+          }
+          
+        }
+        i++
+      }
+      setTabs(newListRe_indexed)
+
+      setRecentlyDeletedIndex(index)
+
+      if(index > 0){
+        setCurrentTab(newListRe_indexed[index - 1])
+      }else{
+        setCurrentTab(null)
+      }
+      
+    }
+
 
     function chooseFloor(floor_id){
       setVfTabReady(false)
@@ -92,12 +139,6 @@ function Sidebar() {
     const handleNewWorkspaceDialog = () => setOpenNewWorkspace(!openNewWorkspace);
 
     const handleOpenAccordion = (value) => setOpenAccordion(openAccordion === value ? 0 : value);
-
-    const [tabs, setTabs] = useAtom(openTabs_atom)
-    const tabsRef = useRef()
-    tabsRef.current = tabs
-    const [currentTab, setCurrentTab] = useAtom(currentTab_atom)
-    const [vfTabReady, setVfTabReady] = useAtom(vfTabReady_atom)
 
 
     const newFloorCreated = () =>{
@@ -215,7 +256,7 @@ function Sidebar() {
 
         {/* EACH TAB ICON */}
         {tabs.map((item, _) => (
-            <ListItem onClick={() => existingTabSwitchedTo(item.index)} className={item.index == currentTab.index && location.pathname == "/" ? "outline-blue-200 bg-blue-50 !shadow-slate-500" : "outline"} key={item.key}>
+            <ListItem onClick={() => existingTabSwitchedTo(item.index)} className={item.index == currentTab.index && location.pathname == "/" ? "outline-blue-200 bg-blue-50 !shadow-slate-500 group" : "outline group"} key={item.key}>
               <ListItemPrefix>
                 {item.type == "floor" ? 
                 <RectangleGroupIcon className="h-6 w-6" /> : <DocumentDuplicateIcon className="h-6 w-6"></DocumentDuplicateIcon>}
@@ -223,6 +264,7 @@ function Sidebar() {
               <Typography color="black" className="mr-auto">
               <h2 className="block antialiased tracking-normal text-xl">{item.name}</h2>
               </Typography>
+              <XCircleIcon className="hidden group-hover:block relative left-3 h-7 w-7" onClick={() => closeTab(item.index)}></XCircleIcon>
             </ListItem>
         ))}
 
@@ -246,28 +288,28 @@ function Sidebar() {
           <div className="component-block-dia relative left-14 !gap-32">
             <div className="component-block-vert-xsmall3 !gap-8">
 
-              <Card className="w-60 h-40 bg-[#cdb1fa] hover:bg-[#bf96ff]" onClick={newFloorCreated}>
+              <Card className="w-70 h-40 bg-[#cdb1fa] hover:bg-[#bf96ff]" onClick={newFloorCreated}>
                 <CardBody>
                     <div className="component-block-vert-small">
                     <Typography color="white">
-                    <h2 className="block antialiased tracking-normal text-2xl font-extrabold text-center ">New Virtual Floor</h2>
+                    <h2 className="block antialiased tracking-normal text-2xl font-bold text-center ">New Virtual Floor</h2>
                     </Typography>
                     <div className="component-block-annot">
-                    <PlusIcon className="h-12 w-12 relative pt-4 left-8 bottom-8 fill-white"></PlusIcon>
-                    <RectangleGroupIcon className="h-16 w-16 relative left-0 bottom-8 fill-white"></RectangleGroupIcon>
+                    <PlusIcon className="h-12 w-12 relative pt-4 left-12 bottom-10 fill-white"></PlusIcon>
+                    <RectangleGroupIcon className="h-16 w-16 relative left-4 bottom-10 fill-white"></RectangleGroupIcon>
                     </div>
                     </div>
                   
                 </CardBody>
               </Card>
 
-              <Card className="w-62 h-36 bg-[#a8d5ff] hover:bg-[#94c8f7]" onClick={handleLoadDialog}>
+              <Card className="w-70 h-36 bg-[#a8d5ff] hover:bg-[#94c8f7]" onClick={handleLoadDialog}>
                 <CardBody>
                     <div className="component-block-vert-small">
                     <Typography color="black">
-                    <h2 className="block antialiased tracking-normal text-xl font-bold text-center ">Load Existing Floor</h2>
+                    <h2 className="block antialiased tracking-normal text-2xl font-bold text-center ">Load Existing Floor</h2>
                     </Typography>
-                    <RectangleGroupIcon className="h-14 w-14 relative left-16 bottom-8 "></RectangleGroupIcon>
+                    <RectangleGroupIcon className="h-14 w-14 relative left-20 bottom-10 "></RectangleGroupIcon>
                     </div>
                   
                 </CardBody>

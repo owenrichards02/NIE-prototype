@@ -8,7 +8,11 @@ export default defineConfig(({mode}) =>{
     define: {
       'process.env.DB_CONNECTION': JSON.stringify(env.DB_CONNECTION)
     },
-    plugins: [react()],
+    plugins: [react({
+      babel: {
+        presets: ['jotai/babel/preset'],
+      },
+    })],
     build: {
       target: 'esnext' //browsers can handle the latest ES features
     },

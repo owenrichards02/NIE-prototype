@@ -13,3 +13,5 @@ export const vfTabReady_atom = atom(false)
 
 export const f2c_atom = atomWithStorage('frag2canvas', [])
 export const a2c_atom = atomWithStorage('annot2canvas', [])
+
+export const recentlyDeletedIndex_atom = atomWithStorage('recentlyDeleted', -1)
