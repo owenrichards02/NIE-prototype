@@ -18,7 +18,7 @@ function Home(){
     const [f2c, setf2c] = useAtom(f2c_atom)
     const [a2c, seta2c] = useAtom(a2c_atom)
 
-    const [currentTabCount, setCurrentTabCount] = useAtom(openTabsCount_atom)
+    const [openTabsCount, setOpenTabsCount] = useAtom(openTabsCount_atom)
     const [virtualFloorList, setVirtualFloorList] = useAtom(virtualFloors)
     const [recentlyDeletedIndex, setRecentlyDeletedIndex] = useAtom(recentlyDeletedIndex_atom)
     const recentlyDeletedRef = useRef()
@@ -50,11 +50,15 @@ function Home(){
     
     useEffect(() => {
         /* setTabs(RESET)
-        setCurrentTabCount(RESET) */
+        setOpenTabsCount(RESET) 
+        setf2c(RESET)
+        seta2c(RESET)
+        setCurrentTab(RESET) */
+       
         
         if (currentTabRef.current != {}){
             if(currentTabRef.current.type == "floor"){
-                if (tabsRef.current.length > currentTabCount){
+                if (tabsRef.current.length > openTabsCount){
                     //new tab
                     if(currentTabRef.current.existing == true){
                         //load from atom
@@ -73,7 +77,7 @@ function Home(){
         
                         console.log("setting vfTab ready")
                         setVfTabReady(true)
-                        setCurrentTabCount((currentTabCount) => currentTabCount + 1)
+                        setOpenTabsCount((currentTabCount) => currentTabCount + 1)
                         console.log(vfTabReady)
 
                     }else{
@@ -88,14 +92,19 @@ function Home(){
         
                         console.log("setting vfTab ready")
                         setVfTabReady(true)
-                        setCurrentTabCount((currentTabCount) => currentTabCount + 1)
+                        setOpenTabsCount((currentTabCount) => currentTabCount + 1)
                         console.log(vfTabReady)
                     }
                     
-                }else if(tabsRef.current.length < currentTabCount){
+                }else if(tabsRef.current.length < openTabsCount){
+
+                    console.log("Deleting index: " + recentlyDeletedRef.current)
+                    console.log(f2cRef.current)
                     //tab closed
                     let newa2c = a2cRef.current
                     let newf2c = f2cRef.current
+
+                    
 
                     for (let i = recentlyDeletedRef.current; i<tabsRef.current.length - 1; i++){
                         newa2c[i] = a2cRef.current[i + 1]
@@ -109,7 +118,7 @@ function Home(){
 
 
                     setVfTabReady(true)
-                    setCurrentTabCount((currentTabCount) => currentTabCount - 1)
+                    setOpenTabsCount((currentTabCount) => currentTabCount - 1)
                 }else{
                     //already open tab               
                     setVfTabReady(true)
@@ -128,7 +137,7 @@ function Home(){
     
                     <>
     
-                    <VirtualFloor tab_index={currentTabRef.current.index} key={currentTabRef.current} changeTabName={changeTabName}></VirtualFloor>
+                    <VirtualFloor tab_index={currentTabRef.current.index} key={currentTabRef.current} changeTabName={changeTabName} savedName_initial={currentTabRef.current.name} savedID_initial={currentTabRef.current.vf_id}></VirtualFloor>
                     
                     </>
                 )

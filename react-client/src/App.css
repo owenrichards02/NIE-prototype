@@ -326,6 +326,12 @@
 .save-button{
   position: fixed;
   top: 1290px;
+  left: 1710px;
+}
+
+.save-as-button{
+  position: fixed;
+  top: 1290px;
   left: 1810px;
 }
 

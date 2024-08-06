@@ -36,6 +36,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useAtom } from "jotai";
 import { currentTab_atom, openTabs_atom, recentlyDeletedIndex_atom, vfTabReady_atom, virtualFloors } from "../state";
 import ItemList from "./ItemList";
+import { RESET } from "jotai/utils";
    
 function Sidebar() {
 
@@ -94,14 +95,16 @@ function Sidebar() {
 
       if(index > 0){
         setCurrentTab(newListRe_indexed[index - 1])
+      }else if (newListRe_indexed.length > 0){
+        setCurrentTab(newListRe_indexed[0])
       }else{
-        setCurrentTab(null)
+        setCurrentTab({})
       }
       
     }
 
 
-    function chooseFloor(floor_id){
+    function chooseSavedFloor(floor_id){
       setVfTabReady(false)
       
       let thisvf
@@ -348,7 +351,7 @@ function Sidebar() {
             <h1 className="text-3xl">Which Virtual Floor would you like to load?</h1>
             </DialogHeader>
           <DialogBody className="!text-black">
-          <ItemList itemList={virtualFloorList} setItemList={setVirtualFloorList} onDoubleClick={chooseFloor} name={"Available Virtual Floors"}></ItemList>
+          <ItemList itemList={virtualFloorList} setItemList={setVirtualFloorList} onDoubleClick={chooseSavedFloor} name={"Available Virtual Floors"}></ItemList>
 
           
 

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import FragmentSelector from '../components/FragmentSelector'
 import { useAtom, atom } from 'jotai'
 import { RESET, atomWithStorage } from 'jotai/utils'
-import { a2c_atom, annotations, f2c_atom, fragments } from '../state'
+import { a2c_atom, annotations, f2c_atom, fragments, virtualFloors } from '../state'
 
 import { FabricJSCanvas, useFabricJSEditor } from 'fabricjs-react'
 import parse from 'html-react-parser';
@@ -11,18 +11,18 @@ import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image'
 import { Button, Card, CardBody, CardHeader, Dialog, DialogBody, DialogFooter, DialogHeader, Input, Typography } from '@material-tailwind/react'
 import AnnotationCreator from '../components/AnnotationCreator'
 import { realm_deleteAnnotation } from '../api/realm_CRUD'
-import { floor_save } from '../api/react_api'
+import { floor_save, floor_update } from '../api/react_api'
 import { deleteIconSrc } from '../icons'
 
-function VirtualFloor({tab_index, changeTabName}){
+function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_initial=null}){
 
     //for the save dialog
     const [openDia, setOpenDia] = useState(false);
-    const handleOpenDia = () => setOpenDia(!openDia);
+    const toggleDialog = () => setOpenDia(!openDia);
     const [saveName, setSaveName] = useState("")
 
 
-
+    //f2c & a2c setup
     const [f2c, setf2c] = useAtom(f2c_atom)
     const [a2c, seta2c] = useAtom(a2c_atom)
 
@@ -75,22 +75,19 @@ function VirtualFloor({tab_index, changeTabName}){
         //save & load canvas
     
     const [fragmentList, setFragmentList] = useAtom(fragments) 
-    const [annotationList, setAnnotationList] = useAtom(annotations) 
-/*     const [frag2LocationList, setfrag2LocationList] = useAtom(f2c_atom) //objects {frag, canvasObj, locationObj, uuid}
-    const [annot2LocationList, setannot2LocationList] = useAtom(a2c_atom) */
-    const annotsRef = useRef()
-    /* const a2lRef = useRef()
-    const f2lRef = useRef() */
-    annotsRef.current = annotationList
-    /* a2lRef.current = annot2LocationList
-    f2lRef.current = frag2LocationList */
+    const [annotationList, setAnnotationList] = useAtom(annotations)
+    const [virtualFloorList, setVirtualFloorList] = useAtom(virtualFloors) 
 
+    const annotsRef = useRef()
+
+    annotsRef.current = annotationList
 
     const [loaded, setLoaded] = useState(false)
     const [annotsLoaded, setAnnotsLoaded] = useState(false)
     const [isReady, setisReady] = useState(false)
     const [isAnnotsReady, setisAnnotsReady] = useState(false)
     const [selectedObjects, setSelectedObjects] = useState([])
+    const [savedIDState, setSavedIDState] = useState(null)
     const selObjRef = useRef()
     selObjRef.current = selectedObjects
     let isMultiSelect = false
@@ -99,6 +96,8 @@ function VirtualFloor({tab_index, changeTabName}){
     
     //canvas event setup
     useEffect(() => {
+        setSavedIDState(savedID_initial)
+        setSaveName(savedName_initial)
         //setfrag2LocationList(RESET)
         editor?.canvas.on('object:modified', objModifiedHandler)
         editor?.canvas.on('selection:created', objSelectedHandler)
@@ -190,7 +189,7 @@ function VirtualFloor({tab_index, changeTabName}){
     }
 
     async function openSaveDialog(){
-        handleOpenDia()
+        toggleDialog()
         console.log("saving current canvas, index: " + tab_index) 
     }
 
@@ -203,8 +202,45 @@ function VirtualFloor({tab_index, changeTabName}){
         }
 
         let id = await floor_save(floorObj, saveName)
+        setSavedIDState(id)
 
-        handleOpenDia()
+        const newVFObj = {
+            _id: id,
+            floor : floorObj,
+            name: saveName
+        }
+
+        refreshVirtualFloorsAtom(newVFObj)
+
+        toggleDialog()
+    }
+
+    async function updateSave(){
+        let floorObj = {
+            f2c: thisf2cRef.current,
+            a2c: thisa2cRef.current
+        }
+
+        let id = await floor_update(floorObj, savedIDState, saveName)
+
+        const newVFObj = {
+            _id: id,
+            floor : floorObj,
+            name: saveName
+        }
+
+        refreshVirtualFloorsAtom(newVFObj)
+    }
+
+    function refreshVirtualFloorsAtom(newAddition){
+        let newList = []
+        for (const vf of virtualFloorList){
+            if (vf._id.toString() != newAddition._id.toString()) {
+                newList.push(newAddition)
+            }
+        }
+        newList.push(newAddition)
+        setVirtualFloorList(newList)
     }
 
     function load(){
@@ -840,7 +876,8 @@ function VirtualFloor({tab_index, changeTabName}){
                 
                 <FabricJSCanvas className="floorcanvas" onReady={onReady} style={{width : x_canvasSize.toString() + "px", height : y_canvasSize.toString() + "px"}} />
                 <button className='reset-button hover:bg-red-100 shadow-xl shadow-gray-400 outline outline-1 text-red-500' onClick={doReset}>Reset Canvas</button>
-                <button className='save-button hover:bg-green-100 shadow-xl shadow-gray-400 outline outline-1 text-green-500' onClick={openSaveDialog}>Save Canvas</button>
+                {savedIDState != null ? <button className='save-button hover:bg-green-100 shadow-xl shadow-gray-400 outline outline-1 text-green-500' onClick={updateSave}>Save</button> : <></>}
+                <button className='save-as-button hover:bg-green-100 shadow-xl shadow-gray-400 outline outline-1 text-green-500' onClick={openSaveDialog}>Save As</button>
             </div>
             <div className='component-block-vert-small'>
                 {thisf2cRef.current != null ? 
@@ -856,7 +893,7 @@ function VirtualFloor({tab_index, changeTabName}){
 
 
         {/* Save Floor Dialog */}
-        <Dialog open={openDia} handler={handleOpenDia} size="sm" className='!text-black'>
+        <Dialog open={openDia} handler={toggleDialog} size="sm" className='!text-black'>
           <DialogHeader>
             <h1 className="text-3xl">Name the new Virtual Floor</h1>
             </DialogHeader>
@@ -888,7 +925,7 @@ function VirtualFloor({tab_index, changeTabName}){
           <Button
               variant="text"
               color="red"
-              onClick={handleOpenDia}
+              onClick={toggleDialog}
               className="mr-1 text-lg"
             >
               <span>Cancel</span>
