@@ -32,10 +32,10 @@ const TextualList = ({itemList, onDoubleClick}) => {
         <>
             <div className='bottom-one'>
             <h2 className='mb-4 text-xl font-extrabold leading-none tracking-tight text-gray-900 md:text-xl lg:text-xl dark:text-white'>Choose textual section</h2>
-            
+            <Input label="Search for text content" icon={<i className="fas fa-heart" />}  onChange={searchChanged}/>
+
             {itemList.length > 0 ? 
                 <ul className="list-group">
-                    <Input label="Search for text content" icon={<i className="fas fa-heart" />}  onChange={searchChanged}/>
                     {listSubset.length > 0 ?
                     <div>
                     {listSubset.map((item, index) => (
