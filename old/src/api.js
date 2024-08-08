@@ -6,7 +6,7 @@ import { gethtmlFromFile, getBinaryFromFile, writehtmlBacktoFile } from "./fileT
 import { HTMLByAttribute, HTMLByAttributeValue, HTMLByTag, HTMLByTagValueContains, extractAllInterviewDialogueSections, extractAllSurveyQuestions, extractAllTextualFragments } from './fragment.js';
 import { Binary, ObjectId } from 'bson';
 import { imageToHTML } from './imageConversion.js';
-import { excelSurveyToHTML } from './surveyConversion.js';
+import { excelSurveyToHTML } from '../../content-scripts/surveyConversion.js';
 import { transcriptToHTML } from './transcriptConversion.js';
 
 import { existsSync } from 'fs';

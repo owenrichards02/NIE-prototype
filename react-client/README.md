@@ -9,9 +9,12 @@ npm run dev
 
 You will need to create a .env file with the following keys, for the NIE mongoDB cluster:
 
-    VITE_REALM_APP_KEY='xxxxxxxxx'
-    VITE_REALM_EMAIL='xxxxxxxx'
-    VITE_REALM_PASS='xxxxxxxx'
+```
+    VITE_REALM_APP_KEY='xxxxxxxxx'  # Realm app ID
+    VITE_REALM_EMAIL='xxxxxxxx'     # Realm app username
+    VITE_REALM_PASS='xxxxxxxx'      # Realm user's password
+    VITE_REALM_DB='xxx'             # Database name within the mongo cluster
+```
 
 env variables must be prefixed with VITE_ to work.They are queried with 
 ```javascript

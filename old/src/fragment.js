@@ -1,5 +1,5 @@
 import { load } from "cheerio";
-import { excelSurveyToHTML } from "./surveyConversion.js";
+import { excelSurveyToHTML } from "../../content-scripts/surveyConversion.js";
 import { transcriptToHTML } from "./transcriptConversion.js";
 
 

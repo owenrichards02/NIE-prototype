@@ -1,7 +1,7 @@
 import * as Realm from 'realm-web'
 
 const app_id = import.meta.env.VITE_REALM_APP_KEY
-const dbName = 'nie'
+const dbName = import.meta.env.VITE_REALM_DB
 
 const email = import.meta.env.VITE_REALM_EMAIL
 const passWd = import.meta.env.VITE_REALM_PASS

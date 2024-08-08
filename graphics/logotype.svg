@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="48.350983mm"
+   height="23.604946mm"
+   viewBox="0 0 48.350983 23.604946"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   sodipodi:docname="logotype.svg"
+   inkscape:export-filename="/home/richard/Documents-UoS/RA77_NIE/NIE-prototype/graphics/nie_logotype.png"
+   inkscape:export-xdpi="872.72998"
+   inkscape:export-ydpi="872.72998"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="1.8101934"
+     inkscape:cx="174.56699"
+     inkscape:cy="177.32912"
+     inkscape:window-width="1920"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-27.173197,-40.367248)">
+    <g
+       aria-label="NIE"
+       id="text8570"
+       style="font-weight:bold;font-size:33.0663px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';opacity:1;fill:#333333;fill-opacity:0.975211;stroke-width:6.88401;stroke-linecap:round;stroke-linejoin:round"
+       inkscape:export-filename="/home/richard/Documents-UoS/RA77_NIE/NIE-prototype/graphics/nie_logotype.png"
+       inkscape:export-xdpi="872.72998"
+       inkscape:export-ydpi="872.72998">
+      <path
+         d="M 46.52661,63.972195 H 40.165223 L 31.484087,46.115101 h -0.145311 c 0.204511,3.153785 0.370789,5.404937 0.306767,6.748884 v 11.10821 H 27.173197 V 40.367248 h 6.312951 l 8.66499,17.679492 h 0.11302 C 42.102701,54.979065 42.021973,52.810166 42.021973,51.540041 V 40.367248 h 4.504637 z"
+         style="letter-spacing:-2.85938;stroke-width:6.884;fill:#333333"
+         id="path13012"
+         sodipodi:nodetypes="ccccsccccccsccc" />
+      <path
+         d="M 49.608829,63.972195 V 40.367248 h 5.005153 v 23.604947 z"
+         style="letter-spacing:-2.85938;stroke-width:6.884;fill:#333333"
+         id="path13014" />
+      <path
+         d="M 75.524179,63.972195 H 57.696205 V 40.367248 h 17.827974 v 4.100997 H 62.701358 V 49.651 h 11.167099 v 4.100996 H 62.701358 v 6.086911 h 12.822821 z"
+         style="letter-spacing:-2.85938;stroke-width:6.884;fill:#333333"
+         id="path13016"
+         sodipodi:nodetypes="ccccccccccccc" />
+    </g>
+  </g>
+</svg>
