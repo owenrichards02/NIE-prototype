@@ -1,15 +1,19 @@
 import { load } from "cheerio";
 
 
-export async function query_jq(html, jqString){
+export function query_jq(html, jqString){
     const $ = load(html, null, true)
     const outer = $(jqString)
+
+    //console.log("Search for pattern", jqString, html, $.html());
 
     let matches = []
     outer.each((index, element) => {
         var $this = $(element);
         matches.push($.html($this))
     })
+
+    console.log("Found", jqString, matches);
 
     return matches
 }

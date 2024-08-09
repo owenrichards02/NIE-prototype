@@ -1,6 +1,7 @@
 import { Card, CardBody, Input } from "@material-tailwind/react"
 import { load } from "cheerio"
 import { useState } from "react"
+import { query_jq } from "../api/fragment"
 
 function QueryOptions({selectedDocs, setSearchResults, setRightSideHidden}){
 
@@ -74,21 +75,11 @@ function QueryOptions({selectedDocs, setSearchResults, setRightSideHidden}){
 
 
     function startJQSearch(){
-        let matches = []
+        let matches = [];
 
         for (const doc of selectedDocs){
-            const $ = load(doc.html, null, true)
-            const outer = $(customJQ)
-
-            outer.each((index, element) => {
-                var $this = $(element);
-
-                const match = {
-                    docid: doc._id,
-                    html: $.html($this)
-                }
-                matches.push(match)
-            })
+            let frags = query_jq(doc.html, customJQ);
+            matches.push(...frags);
         }
 
         setSearchResults(matches)
