@@ -79,7 +79,14 @@ function QueryOptions({selectedDocs, setSearchResults, setRightSideHidden}){
 
         for (const doc of selectedDocs){
             let frags = query_jq(doc.html, customJQ);
-            matches.push(...frags);
+
+            for(var frag of frags) {
+                let f = {
+                    docid: doc._id,
+                    html: frag
+                };
+                matches.push(f);
+            }
         }
 
         setSearchResults(matches)
