@@ -444,7 +444,7 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
 
     }
 
-    function spawnAtPosition(fragid, posx, posy){
+    function spawnFragAtPosition(fragid, posx, posy){
         console.log("spawnAtPosition called")
         //console.log("fragmentList: " + fragmentList.length)
         for (const frag of fragmentList){
@@ -521,7 +521,7 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
         }
         const offsetx = Math.floor(Math.random() * 40) 
         const offsety = Math.floor(Math.random() * 40) 
-        spawnAtPosition(fragid, 10 + offsetx, 10 + offsety)
+        spawnFragAtPosition(fragid, 10 + offsetx, 10 + offsety)
         console.log(thisf2cRef.current)
     }
 
@@ -535,14 +535,14 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
 
     }
 
-    function objModifiedHandler(event){
+    function objModifiedHandler(event){ //called when an object is scaled or moved
         console.log(event)
         if (!isMultiSelect) {
-            //move the delete butto
             let [newf2c, newa2c] = updateSingleLocation(event.target, event)
             seta2c_ForThisTab(newa2c)
             setf2c_ForThisTab(newf2c)
 
+            //move the delete button to the new location
             addDeleteBtn(event.target.left, event.target.top);
         }else{
             let list = event.target._objects
@@ -731,7 +731,6 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
     }
 
     function objSelectedHandler(event){
-        const list2use = thisf2cRef.current
         console.log("object selected handler entered")
 
         $(".deleteBtn").remove();
