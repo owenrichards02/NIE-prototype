@@ -605,12 +605,7 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
                     newLocObj.posy = f2loc.locationObj.posy + offsety
                 }
 
-                list2use[i] = {
-                    frag: f2loc.frag,
-                    canvasObj: f2loc.canvasObj,
-                    locationObj: newLocObj,
-                    uuid: f2loc.uuid
-                }
+                list2use[i].locationObj = newLocObj
 
                 newf2c = list2use
                 
@@ -644,15 +639,7 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
                         newLocObj.posy = a2loc.locationObj.posy + offsety
                     }
 
-                    list2use[i] = {
-                        fragids: a2loc.fragids,
-                        canvasObj: a2loc.canvasObj,
-                        locationObj: newLocObj,
-                        annot_id: a2loc.annot_id,
-                        uuid: a2loc.uuid,
-                        color: a2loc.color,
-                        text: a2loc.text
-                    }
+                    list2use[i].locationObj = newLocObj
     
                     newa2c = list2use
                     
