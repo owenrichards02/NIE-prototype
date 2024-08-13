@@ -61,7 +61,6 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
         newList[tab_index] = newValue
         setf2c(newList)
         thisf2cRef.current = f2c[tab_index]
-        console.log(thisa2cRef.current)
     }
 
 
@@ -540,37 +539,57 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
         console.log(event)
         if (!isMultiSelect) {
             //move the delete butto
-            updateSingleLocation(event.target, event)
+            let [newf2c, newa2c] = updateSingleLocation(event.target, event)
+            seta2c_ForThisTab(newa2c)
+            setf2c_ForThisTab(newf2c)
+
             addDeleteBtn(event.target.left, event.target.top);
         }else{
             let list = event.target._objects
-            console.log("updating the location of " + list.length + " objects")
+            console.log("MULTI-DRAG: updating the location of " + list.length + " objects")
             updateMultipleLocations(event, list)
         }
-        
+        console.log("Finished mulit-drag update")
         
     }
+
+    function updateMultipleLocations(event, objectList){
+        let rolling_f2c = thisf2cRef.current
+        let rolling_a2c = thisa2cRef.current
+        console.log("MULTIPLE LOCATIONS")
+        for (const object of objectList){
+            console.log("Updating object")
+            let [f, a] = updateSingleLocation(object, event, event.transform.original, rolling_f2c, rolling_a2c)
+            rolling_f2c = f
+            rolling_a2c = a
+            console.log(object)
+        }
+        
+
+        seta2c_ForThisTab(rolling_a2c)
+        setf2c_ForThisTab(rolling_f2c)
+    }
+
     
-    function updateSingleLocation(object, event, orig=null){
-        let list2use = thisf2cRef.current
-        console.log("object modified handler entered")
+    function updateSingleLocation(object, event, orig=null, prev_f2c=null, prev_a2c=null){
+        let newa2c = []
+        let newf2c = []
+        let list2use
+
+        if (prev_f2c){
+            list2use = prev_f2c
+        }else{
+            list2use = thisf2cRef.current
+        }
+
         let found = false
         
         for (const f2loc of list2use){
-            if (f2loc.uuid == object.id){
+            if (f2loc.uuid.toString() == object.id.toString()){
                 found = true
                 console.log("moving fragment")
                 const i = list2use.indexOf(f2loc)
-                let newList
-                if (i == 0){
-                    newList = list2use.slice(1)
-                }else{
-                    newList = [
-                        ...list2use.slice(0, i),
-                        ...list2use.slice(i + 1)
-                    ]
-                }
-
+    
                 let newLocObj = {
                     height: object.getScaledHeight(),
                     width: object.getScaledWidth(),
@@ -581,39 +600,35 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
                 if (orig){
                     let offsetx = event.target.left - orig.left 
                     let offsety = event.target.top - orig.top
+                    console.log(offsetx + " : " + offsety)
                     newLocObj.posx = f2loc.locationObj.posx + offsetx
                     newLocObj.posy = f2loc.locationObj.posy + offsety
                 }
 
-                const newObj = {
+                list2use[i] = {
                     frag: f2loc.frag,
                     canvasObj: f2loc.canvasObj,
                     locationObj: newLocObj,
                     uuid: f2loc.uuid
                 }
 
-                setf2c_ForThisTab([...newList, newObj])
+                newf2c = list2use
                 
             }
         }
 
         if (!found){
-            list2use = thisa2cRef.current
+            if (prev_a2c){
+                list2use = prev_a2c
+            }else{
+                list2use = thisa2cRef.current
+            }
+
             for (const a2loc of list2use){
                 if (a2loc.uuid == object.id){
+                    const i = list2use.indexOf(a2loc)
                     console.log("moving annotation")
                     found = true
-    
-                    const i = list2use.indexOf(a2loc)
-                    let newList
-                    if (i == 0){
-                        newList = list2use.slice(1)
-                    }else{
-                        newList = [
-                            ...list2use.slice(0, i),
-                            ...list2use.slice(i + 1)
-                        ]
-                    }
     
                     let newLocObj = {
                         height: object.getScaledHeight(),
@@ -627,10 +642,9 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
                         let offsety =  event.target.top - orig.top
                         newLocObj.posx = a2loc.locationObj.posx + offsetx
                         newLocObj.posy = a2loc.locationObj.posy + offsety
-                        console.log(offsetx + "," + offsety)
                     }
 
-                    const newObj = {
+                    list2use[i] = {
                         fragids: a2loc.fragids,
                         canvasObj: a2loc.canvasObj,
                         locationObj: newLocObj,
@@ -640,19 +654,15 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
                         text: a2loc.text
                     }
     
-                    seta2c_ForThisTab([...newList, newObj])
+                    newa2c = list2use
                     
                 }
             }
         }
+
+        return [newf2c, newa2c]
     }
 
-    function updateMultipleLocations(event, objectList){
-        for (const object of objectList){
-            updateSingleLocation(object, event, event.transform.original)
-            console.log(object)
-        }
-    }
 
     function addDeleteBtn(x, y){
         $(".deleteBtn").remove(); 
