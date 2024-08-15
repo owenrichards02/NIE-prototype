@@ -552,8 +552,6 @@ export async function floor_update(floor_object, floor_id, name){
 }
 
 
-
-
 export async function documents_findAll(){
     const docs = await realm_getAllDocuments()
     return docs
