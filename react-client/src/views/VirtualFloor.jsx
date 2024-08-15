@@ -235,7 +235,7 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
         let newList = []
         for (const vf of virtualFloorList){
             if (vf._id.toString() != newAddition._id.toString()) {
-                newList.push(newAddition)
+                newList.push(vf)
             }
         }
         newList.push(newAddition)
@@ -858,6 +858,9 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
             text: annotText,
             color: color
         }
+
+        //removes any circular references that stop JSON parsing from working when saving the floor.
+        a2lObj.canvasObj._element.attributes = []
 
         seta2c_ForThisTab([...thisa2cRef.current, a2lObj])
         console.log(thisa2cRef.current)

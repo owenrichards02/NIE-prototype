@@ -33,7 +33,7 @@ function Home(){
     const [vfTabReady, setVfTabReady] = useAtom(vfTabReady_atom)
 
     const changeTabName = (newName) => {
-        let newCurrent = currentTab
+        let newCurrent = currentTabRef.current
         newCurrent.name = newName
         setCurrentTab(newCurrent)
 
@@ -49,21 +49,23 @@ function Home(){
     }
     
     useEffect(() => {
-   /*      setTabs(RESET)
+        /* setTabs(RESET)
         setOpenTabsCount(RESET) 
         setf2c(RESET)
         seta2c(RESET)
-        setCurrentTab(RESET)
-        */
+        setCurrentTab(RESET) */
+        console.log("WHAT I THINK THE CURRENT TAB IS: ")
+        console.log(currentTabRef.current)
+        console.log(Object.keys(currentTabRef.current).length)
         
-        if (currentTabRef.current != {}){
+        if (Object.keys(currentTabRef.current).length != 0){
             if(currentTabRef.current.type == "floor"){
                 if (tabsRef.current.length > openTabsCount){
                     //new tab
                     if(currentTabRef.current.existing == true){
                         //load from atom
-                        let newfObj = f2c
-                        let newaObj = a2c
+                        let newfObj = f2cRef.current
+                        let newaObj = a2cRef.current
                         for (const vf of virtualFloorList){
                             if(vf._id.toString() == currentTabRef.current.vf_id.toString()){
                                 newfObj[currentTabRef.current.index] = vf.floor.f2c
@@ -82,8 +84,8 @@ function Home(){
 
                     }else{
                          //brand new
-                        let newfObj = f2c
-                        let newaObj = a2c
+                        let newfObj = f2cRef.current
+                        let newaObj = a2cRef.current
         
                         newfObj[currentTabRef.current.index] = []
                         newaObj[currentTabRef.current.index] = []
@@ -119,7 +121,6 @@ function Home(){
                         newa2c.splice(tabsRef.current.length - 1, 1)
                         newf2c.splice(tabsRef.current.length - 1, 1)
                     }
-
                     
                     seta2c(newa2c)
                     setf2c(newf2c)
@@ -134,9 +135,13 @@ function Home(){
                 }
                
             }
+        }else{
+            console.log("RESETTING ALL A2C AND F2C")
+            seta2c(RESET)
+            setf2c(RESET)
         }
         
-    }, [currentTabRef.current])
+    }, [currentTab])
 
     const showCurrentTab = () => {
         if(vfTabReady){
