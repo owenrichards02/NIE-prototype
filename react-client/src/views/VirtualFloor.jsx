@@ -223,7 +223,7 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
         let id = await floor_update(floorObj, savedIDState, saveName)
 
         const newVFObj = {
-            _id: id,
+            _id: savedIDState,
             floor : floorObj,
             name: saveName
         }
@@ -234,6 +234,8 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
     function refreshVirtualFloorsAtom(newAddition){
         let newList = []
         for (const vf of virtualFloorList){
+            console.log(vf)
+            console.log(newAddition)
             if (vf._id.toString() != newAddition._id.toString()) {
                 newList.push(vf)
             }
