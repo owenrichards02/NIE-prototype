@@ -49,12 +49,12 @@ function Home(){
     }
     
     useEffect(() => {
-        /* setTabs(RESET)
+   /*      setTabs(RESET)
         setOpenTabsCount(RESET) 
         setf2c(RESET)
         seta2c(RESET)
-        setCurrentTab(RESET) */
-       
+        setCurrentTab(RESET)
+        */
         
         if (currentTabRef.current != {}){
             if(currentTabRef.current.type == "floor"){
@@ -104,15 +104,23 @@ function Home(){
                     let newa2c = a2cRef.current
                     let newf2c = f2cRef.current
 
-                    
+                    if (recentlyDeletedRef.current == tabsRef.current.length){
+                        let i = recentlyDeletedRef.current
+                        console.log("LOOK AT THIS")
+                        console.log(newf2c)
+                        newa2c.pop()
+                        newf2c.pop()
+                    }else{
+                        for (let i = recentlyDeletedRef.current; i<tabsRef.current.length - 1; i++){
+                            newa2c[i] = a2cRef.current[i + 1]
+                            newf2c[i] = f2cRef.current[i + 1]
+                        }
 
-                    for (let i = recentlyDeletedRef.current; i<tabsRef.current.length - 1; i++){
-                        newa2c[i] = a2cRef.current[i + 1]
-                        newf2c[i] = f2cRef.current[i + 1]
+                        newa2c.splice(tabsRef.current.length - 1, 1)
+                        newf2c.splice(tabsRef.current.length - 1, 1)
                     }
-                    newa2c.splice(tabsRef.current.length - 1, 1)
-                    newf2c.splice(tabsRef.current.length - 1, 1)
 
+                    
                     seta2c(newa2c)
                     setf2c(newf2c)
 
