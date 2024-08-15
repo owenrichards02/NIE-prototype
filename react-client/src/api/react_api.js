@@ -2,6 +2,7 @@ import { HTMLByAttribute, HTMLByAttributeValue, HTMLByTag, HTMLByTagValueContain
 import { Binary, ObjectId } from 'bson';
 
 import { realm_addNewItem, realm_deleteDocument, realm_deleteFragment, realm_getAllAnnotations, realm_getAllAnnotations_fromSpecificFragment, realm_getAllDocuments, realm_getAllFloors, realm_getAllFragments, realm_getAllFragments_fromSpecificDoc, realm_getItem, realm_searchByTagList_AND, realm_searchByTagList_OR, realm_tagItem, realm_updateItem } from './realm_CRUD.js';
+import { parse, stringify } from 'flatted';
 
 
 
@@ -522,50 +523,27 @@ export async function transcript_DialogueFromASpecificSpeaker(doc_id, speakerNam
 
 export async function floor_save(floor_object, name){
 
+    //removes any circular references that stop JSON parsing from working when saving the floor.
+    let flat_floor = stringify(floor_object)
+
     let realmObj = {
-        floor: floor_object,
+        floor: flat_floor,
         name: name
     }
 
-    
-    //removes any circular references that stop JSON parsing from working when saving the floor.
-
-    for (const eachFrag of realmObj.floor.f2c){
-        if(eachFrag.canvasObj._element.attributes){
-            eachFrag.canvasObj._element.attributes = []
-        }
-    }
-
-    for (const eachAnnot of realmObj.floor.a2c){
-        if(eachAnnot.canvasObj._element.attributes){
-            eachAnnot.canvasObj._element.attributes = []
-        }
-        
-    }
-
-    
     const id = await realm_addNewItem('virtualFloors', realmObj)
 
     return id
 }
 
 export async function floor_update(floor_object, floor_id, name){
-    let realmObj = {
-        floor: floor_object,
-        name: name
-    }
 
     //removes any circular references that stop JSON parsing from working when saving the floor.
-    for (const this_floor_obj of realmObj.floor){
+    let flat_floor = stringify(floor_object)
 
-        for (const eachFrag of this_floor_obj.f2c){
-
-            eachFrag.canvasObj._element.attributes = []
-        }
-
-        for (const eachAnnot of this_floor_obj.a2c){
-            eachAnnot.canvasObj._element.attributes = []
-        }
+    let realmObj = {
+        floor: flat_floor,
+        name: name
     }
 
     const id = await realm_updateItem('virtualFloors', floor_id, realmObj)
@@ -582,16 +560,23 @@ export async function documents_findAll(){
 }
 
 export async function annotations_findAll(){
-    const docs = await realm_getAllAnnotations()
-    return docs
+    const annots = await realm_getAllAnnotations()
+    return annots
 }
 
 export async function fragments_findAll(){
-    const docs = await realm_getAllFragments()
-    return docs
+    const fragments = await realm_getAllFragments()
+    return fragments
 }
 
 export async function floors_findAll(){
-    const docs = await realm_getAllFloors()
-    return docs
+    const vfs = await realm_getAllFloors()
+
+    //undo flatten serialisation
+    for (const vf of vfs){
+        let flat_floor = parse(vf.floor)
+        vf.floor = flat_floor
+    }
+
+    return vfs
 }
