@@ -521,10 +521,29 @@ export async function transcript_DialogueFromASpecificSpeaker(doc_id, speakerNam
 
 
 export async function floor_save(floor_object, name){
+
     let realmObj = {
         floor: floor_object,
         name: name
     }
+
+    
+    //removes any circular references that stop JSON parsing from working when saving the floor.
+
+    for (const eachFrag of realmObj.floor.f2c){
+        if(eachFrag.canvasObj._element.attributes){
+            eachFrag.canvasObj._element.attributes = []
+        }
+    }
+
+    for (const eachAnnot of realmObj.floor.a2c){
+        if(eachAnnot.canvasObj._element.attributes){
+            eachAnnot.canvasObj._element.attributes = []
+        }
+        
+    }
+
+    
     const id = await realm_addNewItem('virtualFloors', realmObj)
 
     return id
@@ -535,6 +554,20 @@ export async function floor_update(floor_object, floor_id, name){
         floor: floor_object,
         name: name
     }
+
+    //removes any circular references that stop JSON parsing from working when saving the floor.
+    for (const this_floor_obj of realmObj.floor){
+
+        for (const eachFrag of this_floor_obj.f2c){
+
+            eachFrag.canvasObj._element.attributes = []
+        }
+
+        for (const eachAnnot of this_floor_obj.a2c){
+            eachAnnot.canvasObj._element.attributes = []
+        }
+    }
+
     const id = await realm_updateItem('virtualFloors', floor_id, realmObj)
 
     return id

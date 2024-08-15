@@ -136,9 +136,13 @@ function Home(){
                
             }
         }else{
-            console.log("RESETTING ALL A2C AND F2C")
-            seta2c(RESET)
-            setf2c(RESET)
+            if (openTabsCount == 1){
+                console.log("RESETTING ALL A2C AND F2C")
+                seta2c(RESET)
+                setf2c(RESET)
+                setOpenTabsCount(0)
+            }
+            
         }
         
     }, [currentTab])
