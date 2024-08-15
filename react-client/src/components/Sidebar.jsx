@@ -98,6 +98,7 @@ function Sidebar() {
       }else if (newListRe_indexed.length > 0){
         setCurrentTab(newListRe_indexed[0])
       }else{
+        console.log("SETTING CURRENT TAB TO {}")
         setCurrentTab({})
       }
       
