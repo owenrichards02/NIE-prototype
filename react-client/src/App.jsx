@@ -4,7 +4,6 @@ import './App.css'
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import DocumentViewer from './views/DocumentViewer';
-import Home from './views/Home';
 import Sidebar from './components/Sidebar';
 import VirtualFloor from './views/VirtualFloor';
 import FragmentExtractorTextual from './views/FragmentExtractorTextual';
@@ -18,6 +17,7 @@ import FragmentImage from './views/FragmentImage';
 import { DevTools } from 'jotai-devtools';
 import 'jotai-devtools/styles.css';
 import MyFragments from './views/MyFragments';
+import WorkspaceArea from './views/WorkspaceArea';
 
 function App() {
 
@@ -60,13 +60,12 @@ function App() {
           </div>
             <div>
             <Routes>
-              <Route path='/' Component={Home}></Route>
+              <Route path='/' Component={WorkspaceArea}></Route>
               <Route path='/doc-viewer' Component={DocumentViewer}></Route>
               <Route path='/my-frags' Component={MyFragments}></Route>
               <Route path='/frag-extract-textual' Component={FragmentExtractorTextual}></Route>
               <Route path='/frag-extract-query' Component={FragmentExtractorQuery}></Route>
               <Route path='/frag-image' Component={FragmentImage}></Route>
-              <Route path='/virtual-floor' Component={VirtualFloor}></Route>
             </Routes>
             </div>
         </BrowserRouter>

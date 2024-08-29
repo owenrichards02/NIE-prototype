@@ -16,12 +16,17 @@ import { deleteIconSrc } from '../icons'
 
 function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_initial=null}){
 
+    const x_canvasSize = 1550
+    const y_canvasSize = 1250
+
     //for the save dialog
     const [openDia, setOpenDia] = useState(false);
     const toggleDialog = () => setOpenDia(!openDia);
     const [saveName, setSaveName] = useState("")
 
-
+    const [fragmentList, setFragmentList] = useAtom(fragments) 
+    const [annotationList, setAnnotationList] = useAtom(annotations)
+    const [virtualFloorList, setVirtualFloorList] = useAtom(virtualFloors) 
     //f2c & a2c setup
     const [f2c, setf2c] = useAtom(f2c_atom)
     const [a2c, seta2c] = useAtom(a2c_atom)
@@ -31,7 +36,6 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
 
     f2cRef.current = f2c
     a2cRef.current = a2c
-
 
     //USE THESE!
     const thisf2cRef = useRef()
@@ -62,20 +66,6 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
         setf2c(newList)
         thisf2cRef.current = f2c[tab_index]
     }
-
-
-    const x_canvasSize = 1550
-    const y_canvasSize = 1250
-
-    //canvas on the left
-    //toolbar on the right
-        //fragment selector
-        //annotation creation
-        //save & load canvas
-    
-    const [fragmentList, setFragmentList] = useAtom(fragments) 
-    const [annotationList, setAnnotationList] = useAtom(annotations)
-    const [virtualFloorList, setVirtualFloorList] = useAtom(virtualFloors) 
 
     const annotsRef = useRef()
 
@@ -187,6 +177,12 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
          //delete to enable storage
     }
 
+
+
+    /* * * * * * */
+    /*  Saving   */
+    /* * * * * * */
+
     async function openSaveDialog(){
         toggleDialog()
         console.log("saving current canvas, index: " + tab_index) 
@@ -243,6 +239,13 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
         newList.push(newAddition)
         setVirtualFloorList(newList)
     }
+
+
+
+    /* * * * * * */
+    /*  Loading  */
+    /* * * * * * */
+
 
     function load(){
         
@@ -301,7 +304,7 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
 
         doSpawnLoadAnnot(annot, annot2location, locObj, uuid)
 
-        function doSpawnLoadAnnot(annot, a2l, locObj, uuid){
+        function doSpawnLoadAnnot(annot, a2c, locObj, uuid){
             console.log("adding annot from load")
 
             annot.scaleToWidth(locObj.width)
@@ -309,9 +312,6 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
             annot.left = locObj.posx
             annot.top = locObj.posy
             var canObj = editor?.canvas.add(annot);
-
-            
-                  
 
             annot.controls = {
                 ...fabric.Textbox.prototype.controls,
@@ -322,10 +322,8 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
                 mr: new fabric.Control({ visible: false }),
                 
             }
-            
-           
 
-            const i = thisa2cRef.current.indexOf(a2l)
+            const i = thisa2cRef.current.indexOf(a2c)
             let newList
             if (i == 0){
                 newList = thisa2cRef.current.slice(1)
@@ -335,19 +333,18 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
                     ...thisa2cRef.current.slice(i + 1)
                 ]
             }
-           
-            
 
-            const a2lObj = {
+            const a2cObj = {
                 locationObj: locObj,
                 canvasObj: annot,
                 uuid: uuid,
-                fragids: a2l.fragids,
-                annot_id: a2l.annot_id,
-                text: a2l.text,
-                color: a2l.color
+                fragids: a2c.fragids,
+                annot_id: a2c.annot_id,
+                text: a2c.text,
+                color: a2c.color
             }
-            seta2c_ForThisTab([...newList, a2lObj])
+
+            seta2c_ForThisTab([...newList, a2cObj])
 
             let toLoad = []
             let uuidsLoaded = []
@@ -446,15 +443,18 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
 
     }
 
+
+    /* * * * * * * * * */
+    /* Fragment Spawns */
+    /* * * * * * * * * */
+
+
     function spawnFragAtPosition(fragid, posx, posy){
         console.log("spawnAtPosition called")
         //console.log("fragmentList: " + fragmentList.length)
         for (const frag of fragmentList){
             if (frag._id == fragid){
                 const uuid = crypto.randomUUID()
-                console.log("uuid generated for canvas object instance")
-                //console.log("VF: adding fragment id: " + frag._id.toString())   
-                //console.log(f2cRef) 
 
                 //if image!
                 if (frag.type == "image"){
@@ -505,14 +505,10 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
                 uuid: uuid
             }
 
-
             setf2c_ForThisTab([...thisf2cRef.current, frag2LocationObj])
-            
-            console.log(thisf2cRef.current)
             
             editor?.canvas.add(oImg);
             console.log("adding to canvas")
-            console.log(f2c)
         }
     }
 
@@ -524,10 +520,11 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
         const offsetx = Math.floor(Math.random() * 40) 
         const offsety = Math.floor(Math.random() * 40) 
         spawnFragAtPosition(fragid, 10 + offsetx, 10 + offsety)
-        console.log(thisf2cRef.current)
     }
 
-    function bulkSpawn(fragidList){
+    /* Doesn't work properly, f2c is not updated correctly */
+    function bulkSpawn(fragidList){   
+    
         if(thisf2cRef.current.length == 0){
             setLoaded(true) //avoids reload  
         }
@@ -536,6 +533,90 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
         }
 
     }
+
+       
+    /* * * * * * * * * * */
+    /* Annotation Spawns */
+    /* * * * * * * * * * */
+
+    function onAnnotCreated(annotText, selObjList, color, realm_id){
+        if(thisa2cRef.current.length == 0){
+            setAnnotsLoaded(true)
+        }
+        //need to create canvas object for annotation
+        const uuid = crypto.randomUUID()
+        console.log("uuid generated for new annotation")
+
+        var annot = new fabric.Textbox(annotText, { 
+            fill: 'black',
+            fontFamily: "Arial",
+            fontSize: 28,
+            fontStyle: "italic",
+            backgroundColor: color,
+            id: uuid
+        });
+
+        let x = selObjList[0].oCoords.mt.x
+        let y = selObjList[0].oCoords.mt.y
+        console.log(x + "," + y)
+
+        doAnnotSpawn(annot, uuid, selObjList, x, y, annotText, color, realm_id) //CHANGE FOR SPAWNING NEAR THE SELECTION
+        
+    }
+
+    function doAnnotSpawn(annot, uuid, selObjList, posx, posy, annotText, color, realm_id){
+        annot.left = posx
+        annot.top = posy
+
+        annot.getScaledHeight() >= annot.getScaledWidth() ? annot.scaleToHeight(200) : annot.scaleToWidth(200)
+        
+        var cObj = editor.canvas.add(annot)
+
+        annot.controls = {
+            ...fabric.Textbox.prototype.controls,
+            mtr: new fabric.Control({ visible: false }),
+            mt: new fabric.Control({ visible: false }),
+            mb: new fabric.Control({ visible: false }),
+            ml: new fabric.Control({ visible: false }),
+            mr: new fabric.Control({ visible: false }),
+        }
+
+        const locObj = {
+            height: annot.getScaledHeight(),
+            width: annot.getScaledWidth(),
+            posx: annot.left,
+            posy: annot.top
+        }
+
+        let fidList = []
+        for (const selObj of selObjList){
+            const thisId = selObj.id
+
+            for (const f2l of thisf2cRef.current){
+                if(f2l.uuid == thisId){
+                    fidList.push(f2l.frag._id)
+                }
+            }
+        }
+
+        const a2lObj = {
+            canvasObj: annot,
+            locationObj: locObj,
+            uuid: uuid,
+            annot_id: realm_id,
+            fragids: fidList,
+            text: annotText,
+            color: color
+        }
+
+        seta2c_ForThisTab([...thisa2cRef.current, a2lObj])
+        console.log(thisa2cRef.current)
+        console.log(thisa2cRef.current)
+    }
+
+    /* * * * * * * * * * */
+    /* Moving & Resizing */
+    /* * * * * * * * * * */
 
     function objModifiedHandler(event){ //called when an object is scaled or moved
         console.log(event)
@@ -567,7 +648,6 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
             console.log(object)
         }
         
-
         seta2c_ForThisTab(rolling_a2c)
         setf2c_ForThisTab(rolling_f2c)
     }
@@ -655,6 +735,63 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
     }
 
 
+    /* * * * * * * * * * * */
+    /* Tracking Selections */
+    /* * * * * * * * * * * */
+
+    function objSelectedHandler(event){
+        console.log("object selected handler entered")
+
+        $(".deleteBtn").remove();
+        if (event.selected.length == 1){
+            addDeleteBtn(event.selected[0].left, event.selected[0].top);
+            isMultiSelect = false
+        }else{
+            isMultiSelect = true
+        }
+
+        setSelectedObjects(event.selected)
+    }
+
+    function objSelectUpdatedHandler(event){
+        console.log("object select UPDATED handler entered")
+
+        $(".deleteBtn").remove();
+
+        if (event.deselected.length == 0){
+            isMultiSelect = true
+        }else{
+            isMultiSelect = false
+            if(event.selected.length > 0){
+                addDeleteBtn(event.selected[0].left, event.selected[0].top);
+            }
+        }
+
+
+        const current = []
+        for (const c of selObjRef.current){
+            if (!event.deselected.includes(c)){
+                current.push(c)
+            }
+        }
+
+        for (const selectedCanvasObj of event.selected){
+            current.push(selectedCanvasObj)
+        }
+
+        setSelectedObjects(current)
+
+    }
+
+    function objSelectClearedHandler(event){
+        setSelectedObjects([])
+    }
+
+ 
+    /* * * * * * * * * * * * */
+    /*  Deleting From Canvas */
+    /* * * * * * * * * * * * */
+
     function addDeleteBtn(x, y){
         $(".deleteBtn").remove(); 
         var btnLeft = x-35;
@@ -734,141 +871,8 @@ function VirtualFloor({tab_index, changeTabName, savedName_initial, savedID_init
         
     }
 
-    function objSelectedHandler(event){
-        console.log("object selected handler entered")
 
-        $(".deleteBtn").remove();
-        if (event.selected.length == 1){
-            addDeleteBtn(event.selected[0].left, event.selected[0].top);
-            isMultiSelect = false
-        }else{
-            isMultiSelect = true
-        }
-
-        setSelectedObjects(event.selected)
-    }
-
-    function objSelectUpdatedHandler(event){
-        console.log("object select UPDATED handler entered")
-
-        $(".deleteBtn").remove();
-
-        if (event.deselected.length == 0){
-            isMultiSelect = true
-        }else{
-            isMultiSelect = false
-            if(event.selected.length > 0){
-                addDeleteBtn(event.selected[0].left, event.selected[0].top);
-            }
-        }
-
-
-        const current = []
-        for (const c of selObjRef.current){
-            if (!event.deselected.includes(c)){
-                current.push(c)
-            }
-        }
-
-       /*  for (const selectedCanvasObj of event.deselected){
-            const i = current.indexOf(selectedCanvasObj)
-            if (i == -1){
-                //idk
-            }else{
-                current.splice(i, 1)
-            }
-
-        } */
-
-        for (const selectedCanvasObj of event.selected){
-            current.push(selectedCanvasObj)
-        }
-
-        setSelectedObjects(current)
-
-    }
-
-    function objSelectClearedHandler(event){
-        setSelectedObjects([])
-    }
-
-
-    function onAnnotCreated(annotText, selObjList, color, realm_id){
-        if(thisa2cRef.current.length == 0){
-            setAnnotsLoaded(true)
-        }
-        //need to create canvas object for annotation
-        const uuid = crypto.randomUUID()
-        console.log("uuid generated for new annotation")
-
-        var annot = new fabric.Textbox(annotText, { 
-            fill: 'black',
-            fontFamily: "Arial",
-            fontSize: 28,
-            fontStyle: "italic",
-            backgroundColor: color,
-            id: uuid
-        });
-
-        let x = selObjList[0].oCoords.mt.x
-        let y = selObjList[0].oCoords.mt.y
-        console.log(x + "," + y)
-
-        doAnnotSpawn(annot, uuid, selObjList, x, y, annotText, color, realm_id) //CHANGE FOR SPAWNING NEAR THE SELECTION
-        
-    }
-
-    function doAnnotSpawn(annot, uuid, selObjList, posx, posy, annotText, color, realm_id){
-        annot.left = posx
-        annot.top = posy
-
-        annot.getScaledHeight() >= annot.getScaledWidth() ? annot.scaleToHeight(200) : annot.scaleToWidth(200)
-        
-        var cObj = editor.canvas.add(annot)
-
-        annot.controls = {
-            ...fabric.Textbox.prototype.controls,
-            mtr: new fabric.Control({ visible: false }),
-            mt: new fabric.Control({ visible: false }),
-            mb: new fabric.Control({ visible: false }),
-            ml: new fabric.Control({ visible: false }),
-            mr: new fabric.Control({ visible: false }),
-        }
-
-        const locObj = {
-            height: annot.getScaledHeight(),
-            width: annot.getScaledWidth(),
-            posx: annot.left,
-            posy: annot.top
-        }
-
-        let fidList = []
-        for (const selObj of selObjList){
-            const thisId = selObj.id
-
-            for (const f2l of thisf2cRef.current){
-                if(f2l.uuid == thisId){
-                    fidList.push(f2l.frag._id)
-                }
-            }
-        }
-
-        const a2lObj = {
-            canvasObj: annot,
-            locationObj: locObj,
-            uuid: uuid,
-            annot_id: realm_id,
-            fragids: fidList,
-            text: annotText,
-            color: color
-        }
-
-        seta2c_ForThisTab([...thisa2cRef.current, a2lObj])
-        console.log(thisa2cRef.current)
-        console.log(thisa2cRef.current)
-    }
-
-
+    
     return(
         <>
         <div id="hi" className='component-block'>
